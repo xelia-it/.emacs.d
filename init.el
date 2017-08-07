@@ -37,7 +37,7 @@
     ("a4c9e536d86666d4494ef7f43c84807162d9bd29b0dfd39bdf2c3d845dcc7b2e" default)))
  '(package-selected-packages
    (quote
-    (helm-projectile flycheck projectile multiple-cursors helm use-package))))
+    (ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -72,11 +72,18 @@
 (global-linum-mode 1)
 (setq linum-format " %d ")
 
+;; Show parenthesis
+(require 'paren)
+(set-face-background 'show-paren-match (face-background 'default))
+(set-face-foreground 'show-paren-match "#def")
+(set-face-attribute 'show-paren-match nil :weight 'extra-bold)
+(show-paren-mode 1)
+
 ;; Makes *scratch* empty.
 (setq initial-scratch-message "")
 
 ;; Slip window in vertical
-(split-window-right 50)
+(split-window-horizontally)
 
 ;; Removes *scratch* from buffer after the mode has been set.
 ;; TODO: delete when ok!
@@ -115,15 +122,32 @@
       target-window)))
 
 ;; -----------------------------------------------------------------------------
-;;  Editing
+;;  Editing (and movement between files)
 
+;; Setup Ctrl-C, Ctrl-V, Ctrl-X like Windows
 (cua-mode t)
-(delete-selection-mode t)              ;; Typed text deletes selected text
-(setq cua-auto-tabify-rectangles nil)  ;; Don't tabify after rectangle commands
-(transient-mark-mode 1)                ;; No region when it is not highlighted
-(setq cua-keep-region-after-copy t)    ;; Standard Windows behaviour
+
+;; Standard Windows behaviour
+(setq cua-keep-region-after-copy t)
+
+;; Don't tabify after rectangle commands
+(setq cua-auto-tabify-rectangles nil)
+
+;; Typed text deletes selected text
+(delete-selection-mode t)
+
+;; No region when it is not highlighted
+(transient-mark-mode 1)
 
 ;; Delete trailing whitespace when save
+;; Show trailing whitespaces, tabs, lines
+(use-package whitespace
+  :ensure t
+  :init
+  )
+(global-whitespace-mode t)
+(setq whitespace-style '(face empty tabs lines-tail trailing))
+
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 ;; Do not indent using tab
@@ -143,25 +167,36 @@
   :ensure t
   :init
   :bind (("M-S-<down>" . mc/mark-next-like-this)
-	 ("M-S-<up>" . mc/mark-previous-like-this)
-	 ("C-d" . mc/mark-all-like-this))
+         ("M-S-<up>" . mc/mark-previous-like-this)
+         ("S-C-d" . mc/mark-all-symbols-like-this)
+         ("C-d" . mc/mark-all-symbols-like-this-in-defun))
   )
 
+;; Switch from .c/.h and vicevarsa
+(global-set-key (kbd "C-S-a") 'ff-find-other-file)
+
+;; ----------------------------------------------------------------------------
+;;  Advanced: incremental completion (Support for AngularJS 2+)
+
+(use-package ng2-mode
+  :ensure t
+  :init
+  )
 
 ;; ----------------------------------------------------------------------------
 ;;  Advanced: incremental completion (Helm)
 
-;; (global-unset-key "\C-<tab>")
-(global-unset-key "\C-o")
+(global-unset-key (kbd "C-o"))
+(global-unset-key (kbd "C-j"))
 
 (use-package helm
   :ensure t
   :init
-  :bind (
-	 ("C-<tab>" . helm-multi-files)
-      	 ("C-o" . helm-find-files)
+  :bind (("C-<tab>" . helm-multi-files)
+         ("C-o" . helm-find-files)
          ("C-x C-f" . helm-find-files)
-	 )
+         ("C-j" . helm-imenu)
+         ("S-C-j" . helm-occur))
   )
 
 (add-to-list 'special-display-buffer-names '("*helm buffers*" my-display-completions))
@@ -179,11 +214,9 @@
 (use-package helm-projectile
   :ensure t
   :init (helm-projectile-on)
-  :bind (
-         ("C-p" . helm-projectile-find-file-dwim)
-         ("S-C-a" . helm-projectile-switch-project)
-         ("S-C-f" . helm-projectile-grep)
-	 )
+  :bind (("C-p" . helm-projectile-find-file-dwim)
+         ("S-C-o" . helm-projectile-switch-project)
+         ("S-C-f" . helm-projectile-grep))
   )
 
 ;; ----------------------------------------------------------------------------
