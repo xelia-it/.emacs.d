@@ -1,4 +1,11 @@
-;;; Emacs configps
+;;; package --- Emacs configuration with batteries included
+
+;;; ----------------------------------------------------------------------------
+;;; Commentary:
+
+
+;;; ----------------------------------------------------------------------------
+;;; Code:
 
 ;; -----------------------------------------------------------------------------
 ;;  Package repositories
@@ -78,7 +85,7 @@
 ;;      (kill-buffer "*scratch*")))
 ;;(add-hook 'after-change-major-mode-hook 'remove-scratch-buffer)
 
-;; Removes *messages* from the buffer.
+;; Removes *messages* from the buffer list.
 (setq-default message-log-max nil)
 (kill-buffer "*Messages*")
 
@@ -96,7 +103,7 @@
 (add-to-list 'special-display-buffer-names '("*Completions*" my-display-completions))
 
 (defun my-display-completions (buf)
-  "Put the buffer on the right of the frame"
+  "Put the buffer on the right of the frame.  BUF is the buffer."
   (let ((windows (delete (minibuffer-window) (window-list))))
     (if (eq 1 (length windows))
         (progn
@@ -158,6 +165,7 @@
   )
 
 (add-to-list 'special-display-buffer-names '("*helm buffers*" my-display-completions))
+(add-to-list 'special-display-buffer-names '("*helm multi files*" my-display-completions))
 (add-to-list 'special-display-buffer-names '("*helm find files*" my-display-completions))
 
 ;; ----------------------------------------------------------------------------
@@ -185,3 +193,7 @@
   :ensure t
   :init
   )
+(add-hook 'after-init-hook #'global-flycheck-mode)
+
+(provide 'init)
+;;; init.el ends here
