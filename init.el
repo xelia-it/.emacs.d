@@ -81,6 +81,9 @@
 
 ;; Makes *scratch* empty.
 (setq initial-scratch-message "")
+;; Initial minibuffer message
+(defun display-startup-echo-area-message ()
+  (message "Let the hacking begin!"))
 
 ;; Slip window in vertical
 (split-window-horizontally)
@@ -120,6 +123,14 @@
           (pop-up-windows t))
       (set-window-buffer target-window buf)
       target-window)))
+
+;; Move between buffers
+(global-set-key (kbd "M-<right>") 'next-buffer)
+(global-set-key (kbd "M-<left>") 'previous-buffer)
+
+;; Close current buffer and window
+(global-set-key (kbd "C-w") 'kill-this-buffer)
+(global-set-key (kbd "<C-iso-lefttab>") 'other-window)
 
 ;; -----------------------------------------------------------------------------
 ;;  Editing (and movement between files)
@@ -172,9 +183,6 @@
          ("C-d" . mc/mark-all-symbols-like-this-in-defun))
   )
 
-;; Switch from .c/.h and vicevarsa
-(global-set-key (kbd "C-S-a") 'ff-find-other-file)
-
 ;; ----------------------------------------------------------------------------
 ;;  Advanced: incremental completion (Support for AngularJS 2+)
 
@@ -196,7 +204,8 @@
          ("C-o" . helm-find-files)
          ("C-x C-f" . helm-find-files)
          ("C-j" . helm-imenu)
-         ("S-C-j" . helm-occur))
+         ("S-C-j" . helm-occur)
+         ("M-x" . helm-M-x))
   )
 
 (add-to-list 'special-display-buffer-names '("*helm buffers*" my-display-completions))
@@ -227,6 +236,35 @@
   :init
   )
 (add-hook 'after-init-hook #'global-flycheck-mode)
+
+;; ----------------------------------------------------------------------------
+;;  Keybindings
+
+;; Compile Project
+(global-set-key (kbd "<f5>") 'projectile-compile-project)
+
+;; Show flycheck errors
+(global-set-key (kbd "<f8>") 'flycheck-list-errors)
+
+(defun save-all ()
+  "Save buffer without confirmation."
+  (interactive) (save-some-buffers t))
+
+;; Ctrl-S: save current file
+;; Shift-Ctrl-S: save all files without confirmation
+(global-unset-key (kbd "C-s"))
+(global-set-key (kbd "C-s") 'save-buffer)
+(global-unset-key (kbd "S-C-s"))
+(global-set-key (kbd "S-C-s") 'save-all)
+
+;; Change Search and Replace keys
+(global-unset-key "\C-f")
+(global-set-key (kbd "\C-f") 'isearch-forward)
+(define-key isearch-mode-map "\C-f" 'isearch-repeat-forward)
+
+;; Switch from .c/.h and vicevarsa
+(global-set-key (kbd "C-S-a") 'ff-find-other-file)
+
 
 (provide 'init)
 ;;; init.el ends here
