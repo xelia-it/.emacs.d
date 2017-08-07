@@ -28,7 +28,9 @@
  '(custom-safe-themes
    (quote
     ("a4c9e536d86666d4494ef7f43c84807162d9bd29b0dfd39bdf2c3d845dcc7b2e" default)))
- '(package-selected-packages (quote (multiple-cursors helm use-package))))
+ '(package-selected-packages
+   (quote
+    (helm-projectile flycheck projectile multiple-cursors helm use-package))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -40,7 +42,7 @@
 ;; Setup color theme and window
 
 ;; Set the default font
-(set-default-font "noto mono 11")
+;; (set-default-font "noto mono 11")
 
 ;; Load theme
 (use-package atom-one-dark-theme
@@ -149,10 +151,37 @@
   :ensure t
   :init
   :bind (
-	 ("C-<tab>" . helm-buffers-list)
+	 ("C-<tab>" . helm-multi-files)
       	 ("C-o" . helm-find-files)
+         ("C-x C-f" . helm-find-files)
 	 )
   )
 
 (add-to-list 'special-display-buffer-names '("*helm buffers*" my-display-completions))
 (add-to-list 'special-display-buffer-names '("*helm find files*" my-display-completions))
+
+;; ----------------------------------------------------------------------------
+;;  Advanced: incremental completion (Projectile)
+
+(use-package projectile
+  :ensure t
+  :init (projectile-mode)
+  )
+
+(use-package helm-projectile
+  :ensure t
+  :init (helm-projectile-on)
+  :bind (
+         ("C-p" . helm-projectile-find-file-dwim)
+         ("S-C-a" . helm-projectile-switch-project)
+         ("S-C-f" . helm-projectile-grep)
+	 )
+  )
+
+;; ----------------------------------------------------------------------------
+;;  Advanced: incremental completion (Flycheck)
+
+(use-package flycheck
+  :ensure t
+  :init
+  )
