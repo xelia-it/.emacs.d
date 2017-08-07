@@ -181,7 +181,8 @@
 ;; Setup multiple cursors. With this package you can have multiple cursors
 ;; and type the same data into multiple positions at the same time
 ;; Ctrl-D is used by Emacs su we unset it before binding.
-(global-unset-key "\C-d")
+
+(global-unset-key (kbd "C-d"))
 (use-package multiple-cursors
   :ensure t
   :init
@@ -190,6 +191,13 @@
          ("S-C-d" . mc/mark-all-symbols-like-this)
          ("C-d" . mc/mark-all-symbols-like-this-in-defun))
   )
+
+;; In C++ mode the Ctrl-D is reactivated: force unset.
+(defun my-disable-ctrl-d ()
+  "Disable Ctrl-D"
+  (local-unset-key (kbd "C-d"))
+  )
+(add-hook 'c++-mode-hook 'my-disable-ctrl-d)
 
 ;; ----------------------------------------------------------------------------
 ;;  Advanced: incremental completion (Support for AngularJS 2+)
