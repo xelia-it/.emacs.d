@@ -37,7 +37,7 @@
     ("a4c9e536d86666d4494ef7f43c84807162d9bd29b0dfd39bdf2c3d845dcc7b2e" default)))
  '(package-selected-packages
    (quote
-    (ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
+    (company ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -83,7 +83,8 @@
 (setq initial-scratch-message "")
 ;; Initial minibuffer message
 (defun display-startup-echo-area-message ()
-  (message "Let the hacking begin!"))
+  "Overwrite default startup message."
+  (message ""))
 
 ;; Slip window in vertical
 (split-window-horizontally)
@@ -236,6 +237,26 @@
   :init
   )
 (add-hook 'after-init-hook #'global-flycheck-mode)
+
+;; -----------------------------------------------------------------------------
+;;  Advanced: autocomplete framework (Company)
+
+(use-package company
+  :ensure t
+  :init
+  )
+
+;;(require 'company)
+(add-hook 'after-init-hook 'global-company-mode)
+;; Use Ctrl-<space> for completion
+(global-set-key (kbd "C-SPC") 'company-complete)
+
+;; Use clang for backends
+(setq company-backends (delete 'company-semantic company-backends))
+(add-to-list 'company-backends 'company-web-html)
+(add-to-list 'company-backends 'company-web-jade)
+(add-to-list 'company-backends 'company-web-slim)
+(add-to-list 'company-backends 'company-c-headers)
 
 ;; ----------------------------------------------------------------------------
 ;;  Keybindings
