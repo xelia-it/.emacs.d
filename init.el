@@ -37,7 +37,7 @@
     ("a4c9e536d86666d4494ef7f43c84807162d9bd29b0dfd39bdf2c3d845dcc7b2e" default)))
  '(package-selected-packages
    (quote
-    (company ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
+    (powerline company ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -124,6 +124,13 @@
           (pop-up-windows t))
       (set-window-buffer target-window buf)
       target-window)))
+
+;; Change mode line
+(use-package powerline
+  :ensure t
+  :init
+  )
+(powerline-center-theme)
 
 ;; Move between buffers
 (global-set-key (kbd "M-<right>") 'next-buffer)
