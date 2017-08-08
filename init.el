@@ -37,7 +37,7 @@
     ("a4c9e536d86666d4494ef7f43c84807162d9bd29b0dfd39bdf2c3d845dcc7b2e" default)))
  '(package-selected-packages
    (quote
-    (powerline company ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
+    (company-rtags rtags company-clang irony-eldoc company-c-headers powerline company ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -105,8 +105,8 @@
 ;;(add-hook 'after-change-major-mode-hook 'remove-scratch-buffer)
 
 ;; Removes *messages* from the buffer list.
-(setq-default message-log-max nil)
-(kill-buffer "*Messages*")
+;;(setq-default message-log-max nil)
+;;(kill-buffer "*Messages*")
 
 ;; Removes *Completions* from buffer after you've opened a file.
 (add-hook 'minibuffer-exit-hook
@@ -194,7 +194,7 @@
 
 ;; In C++ mode the Ctrl-D is reactivated: force unset.
 (defun my-disable-ctrl-d ()
-  "Disable Ctrl-D"
+  "Disable Ctrl-D."
   (local-unset-key (kbd "C-d"))
   )
 (add-hook 'c++-mode-hook 'my-disable-ctrl-d)
@@ -260,17 +260,14 @@
   :ensure t
   :init
   )
-
-;;(require 'company)
+(use-package company-c-headers
+  :ensure t
+  :init
+  )
 (add-hook 'after-init-hook 'global-company-mode)
-;; Use Ctrl-<space> for completion
-(global-set-key (kbd "C-SPC") 'company-complete)
 
 ;; Use clang for backends
 (setq company-backends (delete 'company-semantic company-backends))
-(add-to-list 'company-backends 'company-web-html)
-(add-to-list 'company-backends 'company-web-jade)
-(add-to-list 'company-backends 'company-web-slim)
 (add-to-list 'company-backends 'company-c-headers)
 
 ;; ----------------------------------------------------------------------------
@@ -281,6 +278,11 @@
 
 ;; Show flycheck errors
 (global-set-key (kbd "<f8>") 'flycheck-list-errors)
+
+;; Ctrl-<space>: code completion (with company)
+(global-set-key (kbd "C-SPC") 'company-complete)
+(define-key c-mode-map (kbd "C-SPC") 'company-complete)
+(define-key c++-mode-map (kbd "C-SPC") 'company-complete)
 
 (defun save-all ()
   "Save buffer without confirmation."
@@ -308,6 +310,9 @@
 ;; Close current buffer and window
 (global-set-key (kbd "C-w") 'kill-this-buffer)
 (global-set-key (kbd "<C-iso-lefttab>") 'other-window)
+
+;; activate whitespace-mode to view all whitespace characters
+(global-set-key (kbd "C-c w") 'whitespace-mode)
 
 ;; ----------------------------------------------------------------------------
 
