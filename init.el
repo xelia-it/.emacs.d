@@ -49,6 +49,14 @@
 ;; Setup color theme and window
 
 ;; Set the default font
+(cond
+ ((find-font (font-spec :name "Noto Mono"))
+  (set-frame-font "Noto Mono-11"))
+ ((find-font (font-spec :name "DejaVu Sans Mono"))
+  (set-frame-font "DejaVu Sans Mono-11"))
+ ((find-font (font-spec :name "Lucida Console"))
+  (set-frame-font "Lucida Console-11"))
+)
 ;; (set-default-font "noto mono 11")
 
 ;; Load theme
@@ -131,14 +139,6 @@
   :init
   )
 (powerline-center-theme)
-
-;; Move between buffers
-(global-set-key (kbd "M-<right>") 'next-buffer)
-(global-set-key (kbd "M-<left>") 'previous-buffer)
-
-;; Close current buffer and window
-(global-set-key (kbd "C-w") 'kill-this-buffer)
-(global-set-key (kbd "<C-iso-lefttab>") 'other-window)
 
 ;; -----------------------------------------------------------------------------
 ;;  Editing (and movement between files)
@@ -301,6 +301,15 @@
 ;; Switch from .c/.h and vicevarsa
 (global-set-key (kbd "C-S-a") 'ff-find-other-file)
 
+;; Move between buffers
+(global-set-key (kbd "M-<right>") 'next-buffer)
+(global-set-key (kbd "M-<left>") 'previous-buffer)
+
+;; Close current buffer and window
+(global-set-key (kbd "C-w") 'kill-this-buffer)
+(global-set-key (kbd "<C-iso-lefttab>") 'other-window)
+
+;; ----------------------------------------------------------------------------
 
 (provide 'init)
 ;;; init.el ends here
