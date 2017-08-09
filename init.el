@@ -3,7 +3,6 @@
 ;;; ----------------------------------------------------------------------------
 ;;; Commentary:
 
-
 ;;; ----------------------------------------------------------------------------
 ;;; Code:
 
@@ -37,7 +36,7 @@
     ("a4c9e536d86666d4494ef7f43c84807162d9bd29b0dfd39bdf2c3d845dcc7b2e" default)))
  '(package-selected-packages
    (quote
-    (powerline company ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
+    (move-dup powerline company ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -57,7 +56,6 @@
  ((find-font (font-spec :name "Lucida Console"))
   (set-frame-font "Lucida Console-11"))
 )
-;; (set-default-font "noto mono 11")
 
 ;; Load theme
 (use-package atom-one-dark-theme
@@ -96,13 +94,6 @@
 
 ;; Slip window in vertical
 (split-window-horizontally)
-
-;; Removes *scratch* from buffer after the mode has been set.
-;; TODO: delete when ok!
-;;(defun remove-scratch-buffer ()
-;;  (if (get-buffer "*scratch*")
-;;      (kill-buffer "*scratch*")))
-;;(add-hook 'after-change-major-mode-hook 'remove-scratch-buffer)
 
 ;; Removes *messages* from the buffer list.
 (setq-default message-log-max nil)
@@ -198,6 +189,11 @@
   (local-unset-key (kbd "C-d"))
   )
 (add-hook 'c++-mode-hook 'my-disable-ctrl-d)
+
+(use-package move-dup
+  :ensure t
+  :init (global-move-dup-mode)
+  )
 
 ;; ----------------------------------------------------------------------------
 ;;  Advanced: incremental completion (Support for AngularJS 2+)
