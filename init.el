@@ -24,6 +24,9 @@
 
 (require 'use-package)
 
+;; Set default lisp path
+(add-to-list 'load-path "~/.emacs.d/lisp")
+
 ;; -----------------------------------------------------------------------------
 ;; Custom set variable
 
@@ -94,7 +97,7 @@
   "Overwrite default startup message."
   (message ""))
 
-;; Slip window in vertical
+;; Start with window splitted in vertical
 (split-window-horizontally)
 
 ;; Removes *scratch* from buffer after the mode has been set.
@@ -123,7 +126,7 @@
 
 (defun my-display-completions (buf)
   "Put the buffer on the right of the frame.  BUF is the buffer."
-  (let ((windows (delete (minibuffer-window) (window-list))))
+   (let ((windows (delete (minibuffer-window) (window-list))))
     (if (eq 1 (length windows))
         (progn
           (select-window (car windows))
@@ -133,12 +136,8 @@
       (set-window-buffer target-window buf)
       target-window)))
 
-;; Change mode line
-(use-package powerline
-  :ensure t
-  :init
-  )
-(powerline-center-theme)
+;; Load powerline settings
+(load "init-powerline")
 
 ;; -----------------------------------------------------------------------------
 ;;  Editing (and movement between files)
@@ -157,7 +156,6 @@
 
 ;; No region when it is not highlighted
 (transient-mark-mode 1)
-
 ;; Delete trailing whitespace when save
 ;; Show trailing whitespaces, tabs, lines
 (use-package whitespace
@@ -224,9 +222,20 @@
          ("M-x" . helm-M-x))
   )
 
-(add-to-list 'special-display-buffer-names '("*helm buffers*" my-display-completions))
-(add-to-list 'special-display-buffer-names '("*helm multi files*" my-display-completions))
-(add-to-list 'special-display-buffer-names '("*helm find files*" my-display-completions))
+
+;; helm-split-window-in-side-p           t ; open helm buffer inside current window, not occupy whole other window
+;;       helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
+;;     helm-ff-search-library-in-sexp        t ; search for library in `require' and `declare-function' sexp.
+;;     helm-scroll-amount                    8 ; scroll 8 lines other window using M-<next>/M-<prior>
+;;     helm-ff-file-name-history-use-recentf t
+;;     helm-echo-input-in-header-line t)
+
+;; Open helm on right side
+(setq helm-split-window-default-side 'right)
+
+;;(add-to-list 'special-display-buffer-names '("*helm buffers*" my-display-completions))
+;;(add-to-list 'special-display-buffer-names '("*helm multi files*" my-display-completions))
+;;(add-to-list 'special-display-buffer-names '("*helm find files*" my-display-completions))
 
 ;; ----------------------------------------------------------------------------
 ;;  Advanced: incremental completion (Projectile)
