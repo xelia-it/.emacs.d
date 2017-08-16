@@ -40,7 +40,7 @@
     ("a4c9e536d86666d4494ef7f43c84807162d9bd29b0dfd39bdf2c3d845dcc7b2e" default)))
  '(package-selected-packages
    (quote
-    (company-rtags rtags company-clang irony-eldoc company-c-headers powerline company ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
+    (expand-region highlight-indent-guides company-rtags rtags company-clang irony-eldoc company-c-headers powerline company ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -139,6 +139,23 @@
 ;; Load powerline settings
 (load "init-powerline")
 
+;; Show indent guides
+(use-package highlight-indent-guides
+  :ensure t
+  :init)
+
+(add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
+(setq highlight-indent-guides-method 'character)
+(setq highlight-indent-guides-character ?\┆)
+(set-face-foreground 'highlight-indent-guides-character-face "#345")
+
+(defun close-all-buffers ()
+  (interactive)
+  (mapc 'kill-buffer (buffer-list)))
+
+(global-set-key (kbd "S-C-w") 'close-all-buffers)
+
+
 ;; -----------------------------------------------------------------------------
 ;;  Editing (and movement between files)
 
@@ -197,6 +214,20 @@
   )
 (add-hook 'c++-mode-hook 'my-disable-ctrl-d)
 
+;; Move and copy line like Eclipse and Netbeans
+(use-package move-dup
+  :ensure t
+  :init)
+(global-move-dup-mode)
+
+;; Expand region
+(use-package expand-region
+  :ensure t
+  :init
+  :bind (("C-l" . er/expand-region))
+
+  )
+
 ;; ----------------------------------------------------------------------------
 ;;  Advanced: incremental completion (Support for AngularJS 2+)
 
@@ -217,8 +248,8 @@
   :bind (("C-<tab>" . helm-multi-files)
          ("C-o" . helm-find-files)
          ("C-x C-f" . helm-find-files)
-         ("C-j" . helm-imenu)
-         ("S-C-j" . helm-occur)
+         ("C-r" . helm-imenu)
+         ("C-j" . helm-occur)
          ("M-x" . helm-M-x))
   )
 
@@ -243,6 +274,7 @@
 (use-package projectile
   :ensure t
   :init (projectile-mode)
+  :bind (("S-C-j" . projectile-multi-occur))
   )
 
 (use-package helm-projectile
