@@ -40,6 +40,7 @@
  '(package-selected-packages
    (quote
     (expand-region highlight-indent-guides company-rtags rtags company-clang irony-eldoc company-c-headers powerline company ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
+
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -214,16 +215,15 @@
 ;; Move and copy line like Eclipse and Netbeans
 (use-package move-dup
   :ensure t
-  :init (global-move-dup-mode)
-  )
+  :init)
+(global-move-dup-mode)
 
 ;; Expand region
 (use-package expand-region
   :ensure t
   :init
   :bind (("C-l" . er/expand-region))
-
-
+  )
 
 ;; ----------------------------------------------------------------------------
 ;;  Advanced: incremental completion (Support for AngularJS 2+)
