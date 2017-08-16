@@ -39,11 +39,7 @@
     ("a4c9e536d86666d4494ef7f43c84807162d9bd29b0dfd39bdf2c3d845dcc7b2e" default)))
  '(package-selected-packages
    (quote
-<<<<<<< HEAD
     (expand-region highlight-indent-guides company-rtags rtags company-clang irony-eldoc company-c-headers powerline company ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
-=======
-    (move-dup powerline company ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
->>>>>>> Duplicate rows
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
