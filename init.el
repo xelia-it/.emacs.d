@@ -51,6 +51,12 @@
  ;; If there is more than one, they won't work right.
  )
 
+;;
+;; (put 'company-clang-arguments 'safe-local-variable #'listp)
+;; (put 'flycheck-clang-args 'safe-local-variable #'listp)
+(put 'company-clang-arguments 'safe-local-variable (lambda(xx) t))
+(put 'flycheck-clang-args 'safe-local-variable (lambda(xx) t))
+
 ;; -----------------------------------------------------------------------------
 ;; Setup color theme and window
 
