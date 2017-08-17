@@ -53,6 +53,7 @@
 ;; (put 'flycheck-clang-args 'safe-local-variable #'listp)
 (put 'company-clang-arguments 'safe-local-variable (lambda(xx) t))
 (put 'flycheck-clang-args 'safe-local-variable (lambda(xx) t))
+(put 'projectile-project-compilation-cmd 'safe-local-variable (lambda(xx) t))
 
 ;; -----------------------------------------------------------------------------
 ;; Setup color theme and window
@@ -245,11 +246,14 @@
   :bind (("C-<tab>" . helm-multi-files)
          ("C-o" . helm-find-files)
          ("C-x C-f" . helm-find-files)
-         ("C-r" . helm-imenu)
-         ("C-j" . helm-occur)
+         ("C-j" . helm-imenu)
+         ("S-C-j" . helm-occur)
          ("M-x" . helm-M-x))
   )
+(require 'helm-config)
 
+;; Open helm on right side
+(setq helm-split-window-default-side 'right)
 
 ;; helm-split-window-in-side-p           t ; open helm buffer inside current window, not occupy whole other window
 ;;       helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
@@ -257,9 +261,6 @@
 ;;     helm-scroll-amount                    8 ; scroll 8 lines other window using M-<next>/M-<prior>
 ;;     helm-ff-file-name-history-use-recentf t
 ;;     helm-echo-input-in-header-line t)
-
-;; Open helm on right side
-(setq helm-split-window-default-side 'right)
 
 ;;(add-to-list 'special-display-buffer-names '("*helm buffers*" my-display-completions))
 ;;(add-to-list 'special-display-buffer-names '("*helm multi files*" my-display-completions))
@@ -271,13 +272,12 @@
 (use-package projectile
   :ensure t
   :init (projectile-mode)
-  :bind (("S-C-j" . projectile-multi-occur))
   )
 
 (use-package helm-projectile
   :ensure t
   :init (helm-projectile-on)
-  :bind (("C-p" . helm-projectile-find-file-dwim)
+  :bind (("C-p" . helm-projectile-find-file)
          ("S-C-o" . helm-projectile-switch-project)
          ("S-C-f" . helm-projectile-grep))
   )
@@ -311,8 +311,10 @@
 ;; ----------------------------------------------------------------------------
 ;;  Keybindings
 
-;; Compile Project
+;; Compile Project and show errors
 (global-set-key (kbd "<f5>") 'projectile-compile-project)
+(global-set-key (kbd "<f6>") 'previous-error)
+(global-set-key (kbd "<f7>") 'next-error)
 
 ;; Show flycheck errors
 (global-set-key (kbd "<f8>") 'flycheck-list-errors)
@@ -351,6 +353,12 @@
 
 ;; activate whitespace-mode to view all whitespace characters
 (global-set-key (kbd "C-c w") 'whitespace-mode)
+
+
+(global-unset-key (kbd "<escape>"))
+(global-set-key (kbd "<escape>")      'keyboard-escape-quit)
+(global-unset-key (kbd "C-g"))
+(global-set-key (kbd "C-g")      'goto-line)
 
 ;; ----------------------------------------------------------------------------
 
