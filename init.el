@@ -39,7 +39,7 @@
     ("a4c9e536d86666d4494ef7f43c84807162d9bd29b0dfd39bdf2c3d845dcc7b2e" default)))
  '(package-selected-packages
    (quote
-    (expand-region highlight-indent-guides company-rtags rtags company-clang irony-eldoc company-c-headers powerline company ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
+    (helm-company expand-region highlight-indent-guides company-rtags rtags company-clang irony-eldoc company-c-headers powerline company ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -54,6 +54,8 @@
 (put 'company-clang-arguments 'safe-local-variable (lambda(xx) t))
 (put 'flycheck-clang-args 'safe-local-variable (lambda(xx) t))
 (put 'projectile-project-compilation-cmd 'safe-local-variable (lambda(xx) t))
+(put 'tab-width 'safe-local-variable (lambda(xx) t))
+
 
 ;; -----------------------------------------------------------------------------
 ;; Setup color theme and window
@@ -226,6 +228,11 @@
   :bind (("C-l" . er/expand-region))
   )
 
+;; Do not use tabs by default
+(setq-default indent-tabs-mode nil)
+;; Use 4 spaces by default
+(setq-default tab-width 4)
+
 ;; ----------------------------------------------------------------------------
 ;;  Advanced: incremental completion (Support for AngularJS 2+)
 
@@ -356,7 +363,7 @@
 
 
 (global-unset-key (kbd "<escape>"))
-(global-set-key (kbd "<escape>")      'keyboard-escape-quit)
+(global-set-key (kbd "<escape>")      'keyboard-quit)
 (global-unset-key (kbd "C-g"))
 (global-set-key (kbd "C-g")      'goto-line)
 
