@@ -34,12 +34,15 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(company-idle-delay nil)
+ '(company-minimum-prefix-length 1)
+ '(company-selection-wrap-around t)
  '(custom-safe-themes
    (quote
     ("a4c9e536d86666d4494ef7f43c84807162d9bd29b0dfd39bdf2c3d845dcc7b2e" default)))
  '(package-selected-packages
    (quote
-    (helm-company expand-region highlight-indent-guides company-rtags rtags company-clang irony-eldoc company-c-headers powerline company ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
+    (scss-mode yaml-mode ac-html-csswatcher ac-html-bootstrap company-web helm-company expand-region highlight-indent-guides company company-rtags company-clang company-c-headers powerline ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -48,14 +51,10 @@
  ;; If there is more than one, they won't work right.
  )
 
-;;
-;; (put 'company-clang-arguments 'safe-local-variable #'listp)
-;; (put 'flycheck-clang-args 'safe-local-variable #'listp)
+;; Some variables can be put into .dir-locals-el scripts
 (put 'company-clang-arguments 'safe-local-variable (lambda(xx) t))
 (put 'flycheck-clang-args 'safe-local-variable (lambda(xx) t))
 (put 'projectile-project-compilation-cmd 'safe-local-variable (lambda(xx) t))
-(put 'tab-width 'safe-local-variable (lambda(xx) t))
-
 
 ;; -----------------------------------------------------------------------------
 ;; Setup color theme and window
@@ -73,7 +72,7 @@
 ;; Load theme
 (use-package atom-one-dark-theme
   :ensure t
-  :init (load-theme 'atom-one-dark))
+  :config (load-theme 'atom-one-dark))
 
 ;; Basic settings
 (toggle-frame-maximized)          ;; Start with maximized frame
@@ -88,8 +87,9 @@
 
 ;; Add line numbers to the right
 (require 'linum)
-(global-linum-mode 1)
+;; (global-linum-mode 1)
 (setq linum-format " %d ")
+(add-hook 'prog-mode-hook #'linum-mode)
 
 ;; Show parenthesis
 (require 'paren)
@@ -109,8 +109,8 @@
 (split-window-horizontally)
 
 ;; Removes *messages* from the buffer list.
-;;(setq-default message-log-max nil)
-;;(kill-buffer "*Messages*")
+(setq-default message-log-max nil)
+(kill-buffer "*Messages*")
 
 ;; Removes *Completions* from buffer after you've opened a file.
 (add-hook 'minibuffer-exit-hook
@@ -148,9 +148,14 @@
 (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
 (setq highlight-indent-guides-method 'character)
 (setq highlight-indent-guides-character ?\┆)
-(set-face-foreground 'highlight-indent-guides-character-face "#345")
+;; (set-face-foreground 'highlight-indent-guides-character-face "#345")
+(setq highlight-indent-guides-auto-odd-face-perc 10)
+(setq highlight-indent-guides-auto-even-face-perc 10)
+(setq highlight-indent-guides-auto-character-face-perc 10)
+
 
 (defun close-all-buffers ()
+  "Close all buffers."
   (interactive)
   (mapc 'kill-buffer (buffer-list)))
 
@@ -236,10 +241,15 @@
 ;; ----------------------------------------------------------------------------
 ;;  Advanced: incremental completion (Support for AngularJS 2+)
 
-(use-package ng2-mode
+(use-package ng2-mode :ensure t)
+
+;; ----------------------------------------------------------------------------
+;;  Advanced: support for YAML
+
+(use-package yaml-mode
   :ensure t
-  :init
   )
+(add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
 
 ;; ----------------------------------------------------------------------------
 ;;  Advanced: incremental completion (Helm)
@@ -292,37 +302,36 @@
 ;; ----------------------------------------------------------------------------
 ;;  Advanced: incremental completion (Flycheck)
 
-(use-package flycheck
-  :ensure t
-  :init
-  )
+(use-package flycheck :ensure t)
 (add-hook 'after-init-hook #'global-flycheck-mode)
 
 ;; -----------------------------------------------------------------------------
 ;;  Advanced: autocomplete framework (Company)
 
-(use-package company
-  :ensure t
-  :init
-  )
-(use-package company-c-headers
-  :ensure t
-  :init
-  )
+(use-package company :ensure t)
+(use-package company-c-headers :ensure t)
 (add-hook 'after-init-hook 'global-company-mode)
+
+(use-package company-web :ensure t)
+(use-package ac-html-bootstrap :ensure t)
+(use-package ac-html-csswatcher :ensure t)
 
 ;; Use clang for backends
 (setq company-backends (delete 'company-semantic company-backends))
 (add-to-list 'company-backends 'company-c-headers)
+(add-to-list 'company-backends 'company-web-html)
+(add-to-list 'company-backends 'company-web-jade)
+(add-to-list 'company-backends 'company-web-slim)
 
 ;; ----------------------------------------------------------------------------
 ;;  Keybindings
 
-;; Compile Project and show errors
+;; Compile Project
 (global-set-key (kbd "<f5>") 'projectile-compile-project)
+;; Move to the previous error found during compiling
 (global-set-key (kbd "<f6>") 'previous-error)
+;; Move to the next error found during compiling
 (global-set-key (kbd "<f7>") 'next-error)
-
 ;; Show flycheck errors
 (global-set-key (kbd "<f8>") 'flycheck-list-errors)
 
@@ -331,14 +340,15 @@
 (define-key c-mode-map (kbd "C-SPC") 'company-complete)
 (define-key c++-mode-map (kbd "C-SPC") 'company-complete)
 
+
+;; Ctrl-S: save current file
+(global-unset-key (kbd "C-s"))
+(global-set-key (kbd "C-s") 'save-buffer)
+
+;; Shift-Ctrl-S: save all files without confirmation
 (defun save-all ()
   "Save buffer without confirmation."
   (interactive) (save-some-buffers t))
-
-;; Ctrl-S: save current file
-;; Shift-Ctrl-S: save all files without confirmation
-(global-unset-key (kbd "C-s"))
-(global-set-key (kbd "C-s") 'save-buffer)
 (global-unset-key (kbd "S-C-s"))
 (global-set-key (kbd "S-C-s") 'save-all)
 
@@ -361,11 +371,13 @@
 ;; activate whitespace-mode to view all whitespace characters
 (global-set-key (kbd "C-c w") 'whitespace-mode)
 
+;; Use ESC to quit command. This free Ctrl-G for moving to a specific line.
+(define-key key-translation-map (kbd "<escape>") (kbd "C-g"))
 
-(global-unset-key (kbd "<escape>"))
-(global-set-key (kbd "<escape>")      'keyboard-quit)
-(global-unset-key (kbd "C-g"))
-(global-set-key (kbd "C-g")      'goto-line)
+;;(global-unset-key (kbd "<escape>"))
+;; (global-set-key (kbd "<escape>")      'keyboard-quit)
+;; (global-unset-key (kbd "C-g"))
+;; (global-set-key (kbd "C-g")      'goto-line)
 
 ;; ----------------------------------------------------------------------------
 
