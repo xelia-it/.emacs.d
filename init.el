@@ -42,7 +42,7 @@
     ("a4c9e536d86666d4494ef7f43c84807162d9bd29b0dfd39bdf2c3d845dcc7b2e" default)))
  '(package-selected-packages
    (quote
-    (ggtags yaml-mode ac-html-csswatcher ac-html-bootstrap company-web expand-region highlight-indent-guides company company-rtags company-clang company-c-headers powerline ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
+    (atom-one-dark-theme move-dup ggtags yaml-mode ac-html-csswatcher ac-html-bootstrap company-web expand-region highlight-indent-guides company company-rtags company-clang company-c-headers powerline ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -55,6 +55,7 @@
 (put 'company-clang-arguments 'safe-local-variable (lambda(xx) t))
 (put 'flycheck-clang-args 'safe-local-variable (lambda(xx) t))
 (put 'projectile-project-compilation-cmd 'safe-local-variable (lambda(xx) t))
+(put 'c-default-style 'safe-local-variable (lambda(xx) t))
 
 ;; -----------------------------------------------------------------------------
 ;; Setup color theme and window
@@ -316,15 +317,6 @@
 (add-to-list 'company-backends 'company-web-html)
 (add-to-list 'company-backends 'company-web-jade)
 (add-to-list 'company-backends 'company-web-slim)
-
-
-;; -----------------------------------------------------------------------------
-;;  Advanced: GIT suppoert (Magit)
-
-(use-package magit :ensure t
-  )
-  (define-key magit-status-mode-map (kbd "<escape>") 'magit-mode-quit-window)
-
 
 ;; ----------------------------------------------------------------------------
 ;;  Keybindings
