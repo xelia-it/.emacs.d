@@ -42,7 +42,7 @@
     ("a4c9e536d86666d4494ef7f43c84807162d9bd29b0dfd39bdf2c3d845dcc7b2e" default)))
  '(package-selected-packages
    (quote
-    (scss-mode yaml-mode ac-html-csswatcher ac-html-bootstrap company-web helm-company expand-region highlight-indent-guides company company-rtags company-clang company-c-headers powerline ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
+    (ggtags yaml-mode ac-html-csswatcher ac-html-bootstrap company-web expand-region highlight-indent-guides company company-rtags company-clang company-c-headers powerline ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -127,7 +127,7 @@
 
 (defun my-display-completions (buf)
   "Put the buffer on the right of the frame.  BUF is the buffer."
-   (let ((windows (delete (minibuffer-window) (window-list))))
+  (let ((windows (delete (minibuffer-window) (window-list))))
     (if (eq 1 (length windows))
         (progn
           (select-window (car windows))
@@ -149,10 +149,9 @@
 (setq highlight-indent-guides-method 'character)
 (setq highlight-indent-guides-character ?\┆)
 ;; (set-face-foreground 'highlight-indent-guides-character-face "#345")
-(setq highlight-indent-guides-auto-odd-face-perc 10)
-(setq highlight-indent-guides-auto-even-face-perc 10)
-(setq highlight-indent-guides-auto-character-face-perc 10)
-
+;; (setq highlight-indent-guides-auto-odd-face-perc 5)
+;; (setq highlight-indent-guides-auto-even-face-perc 10)
+;; (setq highlight-indent-guides-auto-character-face-perc 15)
 
 (defun close-all-buffers ()
   "Close all buffers."
@@ -160,7 +159,6 @@
   (mapc 'kill-buffer (buffer-list)))
 
 (global-set-key (kbd "S-C-w") 'close-all-buffers)
-
 
 ;; -----------------------------------------------------------------------------
 ;;  Editing (and movement between files)
@@ -267,21 +265,17 @@
          ("S-C-j" . helm-occur)
          ("M-x" . helm-M-x))
   )
+(require 'helm)
 (require 'helm-config)
 
 ;; Open helm on right side
 (setq helm-split-window-default-side 'right)
 
-;; helm-split-window-in-side-p           t ; open helm buffer inside current window, not occupy whole other window
-;;       helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
-;;     helm-ff-search-library-in-sexp        t ; search for library in `require' and `declare-function' sexp.
-;;     helm-scroll-amount                    8 ; scroll 8 lines other window using M-<next>/M-<prior>
-;;     helm-ff-file-name-history-use-recentf t
-;;     helm-echo-input-in-header-line t)
-
-;;(add-to-list 'special-display-buffer-names '("*helm buffers*" my-display-completions))
-;;(add-to-list 'special-display-buffer-names '("*helm multi files*" my-display-completions))
-;;(add-to-list 'special-display-buffer-names '("*helm find files*" my-display-completions))
+;; Redefine some helm keys: TAB run persistent action
+(define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebind tab to run persistent action
+(define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; make TAB work in terminal
+(define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
+(define-key helm-map (kbd "<escape>")  'keyboard-escape-quit)
 
 ;; ----------------------------------------------------------------------------
 ;;  Advanced: incremental completion (Projectile)
@@ -322,6 +316,15 @@
 (add-to-list 'company-backends 'company-web-html)
 (add-to-list 'company-backends 'company-web-jade)
 (add-to-list 'company-backends 'company-web-slim)
+
+
+;; -----------------------------------------------------------------------------
+;;  Advanced: GIT suppoert (Magit)
+
+(use-package magit :ensure t
+  )
+  (define-key magit-status-mode-map (kbd "<escape>") 'magit-mode-quit-window)
+
 
 ;; ----------------------------------------------------------------------------
 ;;  Keybindings
@@ -372,12 +375,12 @@
 (global-set-key (kbd "C-c w") 'whitespace-mode)
 
 ;; Use ESC to quit command. This free Ctrl-G for moving to a specific line.
-(define-key key-translation-map (kbd "<escape>") (kbd "C-g"))
+;; (define-key key-translation-map (kbd "<escape>") (kbd "C-g"))
 
-;;(global-unset-key (kbd "<escape>"))
-;; (global-set-key (kbd "<escape>")      'keyboard-quit)
-;; (global-unset-key (kbd "C-g"))
-;; (global-set-key (kbd "C-g")      'goto-line)
+(global-unset-key (kbd "<escape>"))
+(global-set-key (kbd "<escape>")      'keyboard-quit)
+(global-unset-key (kbd "C-g"))
+(global-set-key (kbd "C-g")      'goto-line)
 
 ;; ----------------------------------------------------------------------------
 
