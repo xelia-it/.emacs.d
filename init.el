@@ -322,19 +322,18 @@
 ;;  Keybindings
 
 ;; Compile Project
-(global-set-key (kbd "<f5>") 'projectile-compile-project)
+(global-set-key (kbd "<f9>") 'projectile-compile-project)
 ;; Move to the previous error found during compiling
-(global-set-key (kbd "<f6>") 'previous-error)
+(global-set-key (kbd "<f10>") 'previous-error)
 ;; Move to the next error found during compiling
-(global-set-key (kbd "<f7>") 'next-error)
+(global-set-key (kbd "<f11>") 'next-error)
 ;; Show flycheck errors
-(global-set-key (kbd "<f8>") 'flycheck-list-errors)
+(global-set-key (kbd "<f12>") 'flycheck-list-errors)
 
 ;; Ctrl-<space>: code completion (with company)
 (global-set-key (kbd "C-SPC") 'company-complete)
 (define-key c-mode-map (kbd "C-SPC") 'company-complete)
 (define-key c++-mode-map (kbd "C-SPC") 'company-complete)
-
 
 ;; Ctrl-S: save current file
 (global-unset-key (kbd "C-s"))
@@ -370,7 +369,7 @@
 ;; (define-key key-translation-map (kbd "<escape>") (kbd "C-g"))
 
 (global-unset-key (kbd "<escape>"))
-(global-set-key (kbd "<escape>")      'keyboard-quit)
+(global-set-key (kbd "<escape>")      'keyboard-escape-quit)
 (global-unset-key (kbd "C-g"))
 (global-set-key (kbd "C-g")      'goto-line)
 
