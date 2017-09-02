@@ -42,7 +42,7 @@
     ("a4c9e536d86666d4494ef7f43c84807162d9bd29b0dfd39bdf2c3d845dcc7b2e" default)))
  '(package-selected-packages
    (quote
-    (syntax-subword atom-dark-theme zerodark-theme atom-one-dark-theme move-dup ggtags yaml-mode ac-html-csswatcher ac-html-bootstrap company-web expand-region highlight-indent-guides company company-rtags company-clang company-c-headers powerline ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
+    (visual-regexp visual-regexpr syntax-subword atom-dark-theme zerodark-theme atom-one-dark-theme move-dup ggtags yaml-mode ac-html-csswatcher ac-html-bootstrap company-web expand-region highlight-indent-guides company company-rtags company-clang company-c-headers powerline ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -233,14 +233,31 @@
 ;; Expand region
 (use-package expand-region
   :ensure t
-  :init
   :bind (("C-l" . er/expand-region))
+  )
+
+(use-package visual-regexp
+  :ensure t
   )
 
 ;; Do not use tabs by default
 (setq-default indent-tabs-mode nil)
 ;; Use 4 spaces by default
 (setq-default tab-width 4)
+
+
+;; Stop C-<left> movements in CamelCase words.
+;; (global-subword-mode)
+
+;; Search word under cursor using TAGS files
+(global-unset-key "\M-.")
+(global-set-key (kbd "C-b") 'find-tag)
+(global-unset-key "\M-*")
+(global-set-key (kbd "C-S-b") 'pop-tag-mark)
+
+;; Switch from .c/.h and vicevarsa
+;; (global-set-key (kbd "C-S-a") 'ff-find-other-file)
+
 
 ;; ----------------------------------------------------------------------------
 ;;  Advanced: incremental completion (Support for AngularJS 2+)
@@ -365,6 +382,11 @@
 (global-unset-key "\C-f")
 (global-set-key (kbd "\C-f") 'isearch-forward)
 (define-key isearch-mode-map "\C-f" 'isearch-repeat-forward)
+
+(define-key global-map (kbd "C-r") 'vr/replace)
+(define-key global-map (kbd "C-c q") 'vr/query-replace)
+;; if you use multiple-cursors, this is for you:
+;;(define-key global-map (kbd "C-m") 'vr/mc-mark)
 
 ;; Switch from .c/.h and vicevarsa
 (global-set-key (kbd "C-S-a") 'ff-find-other-file)
