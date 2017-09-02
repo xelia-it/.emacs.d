@@ -42,7 +42,7 @@
     ("a4c9e536d86666d4494ef7f43c84807162d9bd29b0dfd39bdf2c3d845dcc7b2e" default)))
  '(package-selected-packages
    (quote
-    (atom-one-dark-theme move-dup ggtags yaml-mode ac-html-csswatcher ac-html-bootstrap company-web expand-region highlight-indent-guides company company-rtags company-clang company-c-headers powerline ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
+    (syntax-subword atom-dark-theme zerodark-theme atom-one-dark-theme move-dup ggtags yaml-mode ac-html-csswatcher ac-html-bootstrap company-web expand-region highlight-indent-guides company company-rtags company-clang company-c-headers powerline ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -83,7 +83,7 @@
 (scroll-bar-mode -1)              ;; No more scrollbars
 (blink-cursor-mode t)             ;; Blink cursor
 (setq-default cursor-type 'bar)   ;; Cursor like a bar
-(set-cursor-color "#ffffff")      ;; Color white
+(set-cursor-color "#def")      ;; Color white
 (global-hl-line-mode)             ;; Hightlight current line
 
 ;; Add line numbers to the right
@@ -160,6 +160,11 @@
   (mapc 'kill-buffer (buffer-list)))
 
 (global-set-key (kbd "S-C-w") 'close-all-buffers)
+
+(use-package syntax-subword
+  :ensure t
+  )
+(syntax-subword-mode t)
 
 ;; -----------------------------------------------------------------------------
 ;;  Editing (and movement between files)
@@ -298,6 +303,16 @@
 ;;  Advanced: incremental completion (Flycheck)
 
 (use-package flycheck :ensure t)
+
+;; flycheck with Google C Style
+;; (eval-after-load 'flycheck
+;;   '(progn
+;;      (require 'flycheck-google-cpplint)
+;;      ;; Add Google C++ Style checker.
+;;      ;; In default, syntax checked by Clang and Cppcheck.
+;;      (flycheck-add-next-checker 'c/c++-clang
+;;                                 'c/c++-googlelint 'append)))
+
 (add-hook 'after-init-hook #'global-flycheck-mode)
 
 ;; -----------------------------------------------------------------------------
@@ -366,11 +381,10 @@
 (global-set-key (kbd "C-c w") 'whitespace-mode)
 
 ;; Use ESC to quit command. This free Ctrl-G for moving to a specific line.
-;; (define-key key-translation-map (kbd "<escape>") (kbd "C-g"))
-
 (global-unset-key (kbd "<escape>"))
-(global-set-key (kbd "<escape>")      'keyboard-escape-quit)
 (global-unset-key (kbd "C-g"))
+(define-key key-translation-map (kbd "<escape>") (kbd "C-g"))
+(global-set-key (kbd "<escape>")      'keyboard-escape-quit)
 (global-set-key (kbd "C-g")      'goto-line)
 
 ;; ----------------------------------------------------------------------------
