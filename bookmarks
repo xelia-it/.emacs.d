@@ -1,0 +1,20 @@
+;;;; Emacs Bookmark Format Version 1 ;;;;
+;;; This format is meant to be slightly human-readable;
+;;; nevertheless, you probably don't want to edit it.
+;;; -*- End Of Bookmark File Format Version Stamp -*-
+(("RTags_2"
+ (filename . "~/Projects/cryptolab/cse_encryption_engine/tools/jobs/cse_ee_jobs.cpp")
+ (front-context-string . "running_) {\n    ")
+ (rear-context-string . " 0;\n\n    while (")
+ (position . 1147))
+("RTags_1"
+ (filename . "~/Projects/cryptolab/cse_encryption_engine/tools/jobs/cse_ee_jobs.cpp")
+ (front-context-string . "running_ = true;")
+ (rear-context-string . "bs::run() {\n    ")
+ (position . 1029))
+("RTags_0"
+ (filename . "~/Projects/cryptolab/cse_encryption_engine/tools/jobs/cse_ee_jobs.cpp")
+ (front-context-string . "running_(false) ")
+ (rear-context-string . "::CseEeJobs() : ")
+ (position . 869))
+)

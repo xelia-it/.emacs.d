@@ -23,7 +23,7 @@
 
 (require 'use-package)
 
-;; Set default lisp path
+;; Our scripts are into a subdirectory
 (add-to-list 'load-path "~/.emacs.d/lisp")
 
 ;; -----------------------------------------------------------------------------
@@ -42,7 +42,7 @@
     ("a4c9e536d86666d4494ef7f43c84807162d9bd29b0dfd39bdf2c3d845dcc7b2e" default)))
  '(package-selected-packages
    (quote
-    (visual-regexp syntax-subword atom-one-dark-theme move-dup ggtags yaml-mode ac-html-csswatcher ac-html-bootstrap company-web expand-region highlight-indent-guides company company-rtags company-clang company-c-headers powerline ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
+    (helm-rtags flycheck-rtags visual-regexp syntax-subword atom-one-dark-theme move-dup ggtags yaml-mode ac-html-csswatcher ac-html-bootstrap company-web expand-region highlight-indent-guides company company-rtags company-clang company-c-headers powerline ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -227,6 +227,7 @@
   :bind (("C-l" . er/expand-region))
   )
 
+;; Visual feedback for search and replace
 (use-package visual-regexp :ensure t)
 
 ;; Do not use tabs by default
@@ -236,12 +237,6 @@
 
 ;; Stop C-<left> movements in CamelCase words.
 ;; (global-subword-mode)
-
-;; Search word under cursor using TAGS files
-(global-unset-key "\M-.")
-(global-set-key (kbd "C-b") 'find-tag)
-(global-unset-key "\M-*")
-(global-set-key (kbd "C-S-b") 'pop-tag-mark)
 
 ;; Switch from .c/.h and vicevarsa
 ;; (global-set-key (kbd "C-S-a") 'ff-find-other-file)
@@ -325,6 +320,7 @@
 
 (use-package company :ensure t)
 (use-package company-c-headers :ensure t)
+
 (add-hook 'after-init-hook 'global-company-mode)
 
 (use-package company-web :ensure t)
@@ -337,6 +333,12 @@
 (add-to-list 'company-backends 'company-web-html)
 (add-to-list 'company-backends 'company-web-jade)
 (add-to-list 'company-backends 'company-web-slim)
+
+;; ----------------------------------------------------------------------------
+;;  Indexer and symbol (rtags)
+
+;; Load powerline settings
+(load "init-rtags")
 
 ;; ----------------------------------------------------------------------------
 ;;  Keybindings
