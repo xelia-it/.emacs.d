@@ -97,6 +97,9 @@
 (set-face-background 'show-paren-match (face-background 'default))
 (set-face-foreground 'show-paren-match "#def")
 (set-face-attribute 'show-paren-match nil :weight 'extra-bold)
+(defvar match-paren--idle-timer nil)
+(defvar match-paren--delay 0.5)
+(setq match-paren--idle-timer (run-with-idle-timer match-paren--delay t #'blink-matching-open))
 (show-paren-mode 1)
 
 ;; Makes *scratch* empty.
