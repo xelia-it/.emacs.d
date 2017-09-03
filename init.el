@@ -42,7 +42,7 @@
     ("a4c9e536d86666d4494ef7f43c84807162d9bd29b0dfd39bdf2c3d845dcc7b2e" default)))
  '(package-selected-packages
    (quote
-    (visual-regexp visual-regexpr syntax-subword atom-dark-theme zerodark-theme atom-one-dark-theme move-dup ggtags yaml-mode ac-html-csswatcher ac-html-bootstrap company-web expand-region highlight-indent-guides company company-rtags company-clang company-c-headers powerline ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
+    (visual-regexp syntax-subword atom-one-dark-theme move-dup ggtags yaml-mode ac-html-csswatcher ac-html-bootstrap company-web expand-region highlight-indent-guides company company-rtags company-clang company-c-headers powerline ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -142,9 +142,7 @@
 (load "init-powerline")
 
 ;; Show indent guides
-(use-package highlight-indent-guides
-  :ensure t
-  :init)
+(use-package highlight-indent-guides :ensure t)
 
 (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
 (setq highlight-indent-guides-method 'character)
@@ -161,9 +159,7 @@
 
 (global-set-key (kbd "S-C-w") 'close-all-buffers)
 
-(use-package syntax-subword
-  :ensure t
-  )
+(use-package syntax-subword :ensure t)
 (syntax-subword-mode t)
 
 ;; -----------------------------------------------------------------------------
@@ -185,10 +181,7 @@
 (transient-mark-mode 1)
 ;; Delete trailing whitespace when save
 ;; Show trailing whitespaces, tabs, lines
-(use-package whitespace
-  :ensure t
-  :init
-  )
+(use-package whitespace :ensure t)
 (global-whitespace-mode t)
 (setq whitespace-style '(face empty tabs lines-tail trailing))
 
@@ -225,9 +218,7 @@
 (add-hook 'c++-mode-hook 'my-disable-ctrl-d)
 
 ;; Move and copy line like Eclipse and Netbeans
-(use-package move-dup
-  :ensure t
-  :init)
+(use-package move-dup :ensure t)
 (global-move-dup-mode)
 
 ;; Expand region
@@ -236,15 +227,12 @@
   :bind (("C-l" . er/expand-region))
   )
 
-(use-package visual-regexp
-  :ensure t
-  )
+(use-package visual-regexp :ensure t)
 
 ;; Do not use tabs by default
 (setq-default indent-tabs-mode nil)
 ;; Use 4 spaces by default
 (setq-default tab-width 4)
-
 
 ;; Stop C-<left> movements in CamelCase words.
 ;; (global-subword-mode)
@@ -406,8 +394,13 @@
 (global-unset-key (kbd "<escape>"))
 (global-unset-key (kbd "C-g"))
 (define-key key-translation-map (kbd "<escape>") (kbd "C-g"))
+<<<<<<< HEAD
 (global-set-key (kbd "<escape>")      'keyboard-escape-quit)
 (global-set-key (kbd "C-g")      'goto-line)
+=======
+(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+(global-set-key (kbd "C-g") 'goto-line)
+>>>>>>> Cleanup
 
 ;; ----------------------------------------------------------------------------
 
