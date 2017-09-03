@@ -394,13 +394,8 @@
 (global-unset-key (kbd "<escape>"))
 (global-unset-key (kbd "C-g"))
 (define-key key-translation-map (kbd "<escape>") (kbd "C-g"))
-<<<<<<< HEAD
-(global-set-key (kbd "<escape>")      'keyboard-escape-quit)
-(global-set-key (kbd "C-g")      'goto-line)
-=======
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 (global-set-key (kbd "C-g") 'goto-line)
->>>>>>> Cleanup
 
 ;; ----------------------------------------------------------------------------
 
