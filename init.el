@@ -42,7 +42,7 @@
     ("a4c9e536d86666d4494ef7f43c84807162d9bd29b0dfd39bdf2c3d845dcc7b2e" default)))
  '(package-selected-packages
    (quote
-    (helm-rtags flycheck-rtags visual-regexp syntax-subword atom-one-dark-theme move-dup ggtags yaml-mode ac-html-csswatcher ac-html-bootstrap company-web expand-region highlight-indent-guides company company-rtags company-clang company-c-headers powerline ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
+    (helm-rtags company company-rtags flycheck-rtags visual-regexp syntax-subword atom-one-dark-theme move-dup yaml-mode ac-html-csswatcher ac-html-bootstrap company-web expand-region highlight-indent-guides  company-clang company-c-headers powerline ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -253,9 +253,7 @@
 ;; ----------------------------------------------------------------------------
 ;;  Advanced: support for YAML
 
-(use-package yaml-mode
-  :ensure t
-  )
+(use-package yaml-mode :ensure t)
 (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
 
 ;; ----------------------------------------------------------------------------
@@ -322,10 +320,9 @@
 ;;  Advanced: autocomplete framework (Company)
 
 (use-package company :ensure t)
+
+;; Add some autocomplete engines
 (use-package company-c-headers :ensure t)
-
-(add-hook 'after-init-hook 'global-company-mode)
-
 (use-package company-web :ensure t)
 (use-package ac-html-bootstrap :ensure t)
 (use-package ac-html-csswatcher :ensure t)
@@ -336,6 +333,8 @@
 (add-to-list 'company-backends 'company-web-html)
 (add-to-list 'company-backends 'company-web-jade)
 (add-to-list 'company-backends 'company-web-slim)
+
+(add-hook 'after-init-hook 'global-company-mode)
 
 ;; ----------------------------------------------------------------------------
 ;;  Indexer and symbol (rtags)
