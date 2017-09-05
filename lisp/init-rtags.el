@@ -57,6 +57,8 @@
   ;; c-mode-common-hook is also called by c++-mode
   (add-hook 'c-mode-common-hook #'setup-flycheck-rtags))
 
+
+;;
 ;; -- Experiment with code from documentation
 
 ;; (define-key c-mode-base-map (kbd "M-.") (function tags-find-symbol-at-point))

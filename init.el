@@ -42,7 +42,7 @@
     ("a4c9e536d86666d4494ef7f43c84807162d9bd29b0dfd39bdf2c3d845dcc7b2e" default)))
  '(package-selected-packages
    (quote
-    (helm-rtags flycheck-rtags visual-regexp syntax-subword atom-one-dark-theme move-dup ggtags yaml-mode ac-html-csswatcher ac-html-bootstrap company-web expand-region highlight-indent-guides company company-rtags company-clang company-c-headers powerline ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
+    (helm-gtags rtags helm-rtags flycheck-rtags visual-regexp syntax-subword atom-one-dark-theme move-dup ggtags yaml-mode ac-html-csswatcher ac-html-bootstrap company-web expand-region highlight-indent-guides company company-rtags company-clang company-c-headers powerline ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -271,7 +271,6 @@
          ("C-o" . helm-find-files)
          ("C-x C-f" . helm-find-files)
          ("C-j" . helm-imenu)
-         ("S-C-j" . helm-occur)
          ("M-x" . helm-M-x))
   )
 (require 'helm)
@@ -333,6 +332,7 @@
 ;; Use clang for backends
 (setq company-backends (delete 'company-semantic company-backends))
 (add-to-list 'company-backends 'company-c-headers)
+(add-to-list 'company-backends 'company-clang)
 (add-to-list 'company-backends 'company-web-html)
 (add-to-list 'company-backends 'company-web-jade)
 (add-to-list 'company-backends 'company-web-slim)
@@ -341,7 +341,42 @@
 ;;  Indexer and symbol (rtags)
 
 ;; Load powerline settings
-(load "init-rtags")
+;; (load "init-rtags")
+
+
+;; ----------------------------------------------------------------------------
+;;  Global (gtags)
+
+(use-package helm-gtags :ensure t)
+
+(setq
+ helm-gtags-ignore-case t
+ helm-gtags-auto-update t
+ helm-gtags-use-input-at-cursor t
+ helm-gtags-pulse-at-cursor t
+ helm-gtags-prefix-key "\C-cg"
+ helm-gtags-suggested-key-mapping t
+ )
+
+
+;; Enable helm-gtags-mode
+(add-hook 'dired-mode-hook 'helm-gtags-mode)
+(add-hook 'eshell-mode-hook 'helm-gtags-mode)
+(add-hook 'c-mode-hook 'helm-gtags-mode)
+(add-hook 'c++-mode-hook 'helm-gtags-mode)
+(add-hook 'asm-mode-hook 'helm-gtags-mode)
+
+(eval-after-load "helm-gtags"
+  '(progn
+     (define-key helm-gtags-mode-map (kbd "C-b") 'helm-gtags-find-tag)
+     (define-key helm-gtags-mode-map (kbd "S-C-b") 'helm-gtags-pop-stack)
+     (define-key helm-gtags-mode-map (kbd "S-C-j") 'helm-gtags-find-rtag)
+     (define-key helm-gtags-mode-map (kbd "M-s") 'helm-gtags-find-symbol)
+     (define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history)
+     (define-key helm-gtags-mode-map (kbd "M-g M-p") 'helm-gtags-parse-file)
+     (define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
+     ))
+
 
 ;; ----------------------------------------------------------------------------
 ;;  Keybindings
