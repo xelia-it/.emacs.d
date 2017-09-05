@@ -23,9 +23,6 @@
 
 (require 'use-package)
 
-;; Our scripts are into a subdirectory
-(add-to-list 'load-path "~/.emacs.d/lisp")
-
 ;; -----------------------------------------------------------------------------
 ;; Custom set variable
 
@@ -42,7 +39,7 @@
     ("a4c9e536d86666d4494ef7f43c84807162d9bd29b0dfd39bdf2c3d845dcc7b2e" default)))
  '(package-selected-packages
    (quote
-    (helm-rtags company company-rtags flycheck-rtags visual-regexp syntax-subword atom-one-dark-theme move-dup yaml-mode ac-html-csswatcher ac-html-bootstrap company-web expand-region highlight-indent-guides  company-clang company-c-headers powerline ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
+    (emmet-mode yasnippet-snippets helm-rtags company company-rtags flycheck-rtags visual-regexp syntax-subword atom-one-dark-theme move-dup yaml-mode ac-html-csswatcher ac-html-bootstrap company-web expand-region highlight-indent-guides company-clang company-c-headers powerline ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -56,6 +53,12 @@
 (put 'flycheck-clang-args 'safe-local-variable (lambda(xx) t))
 (put 'projectile-project-compilation-cmd 'safe-local-variable (lambda(xx) t))
 (put 'c-default-style 'safe-local-variable (lambda(xx) t))
+
+;; -----------------------------------------------------------------------------
+;; Custom scripts and environment variables
+
+;; Our scripts are into a subdirectory
+(add-to-list 'load-path "~/.emacs.d/lisp")
 
 ;; -----------------------------------------------------------------------------
 ;; Setup color theme and window
@@ -337,10 +340,26 @@
 (add-hook 'after-init-hook 'global-company-mode)
 
 ;; ----------------------------------------------------------------------------
-;;  Indexer and symbol (rtags)
+;;  Advanced: Indexer and symbol (rtags)
 
 ;; Load powerline settings
 (load "init-rtags")
+
+;; ----------------------------------------------------------------------------
+;;  Advanced: Snippets
+
+(use-package yasnippet :ensure t)
+(use-package yasnippet-snippets :ensure t)
+(yas-global-mode 1)
+
+;; For HTML and CSS use emmet
+(use-package emmet-mode :ensure t)
+ ;; Auto-start on any markup modes
+(add-hook 'sgml-mode-hook 'emmet-mode)
+(add-hook 'sgml-mode-hook 'emmet-preview-mode)
+;; enable Emmet's css abbreviation
+(add-hook 'css-mode-hook  'emmet-mode)
+(add-hook 'css-mode-hook  'emmet-preview-mode)
 
 ;; ----------------------------------------------------------------------------
 ;;  Keybindings
