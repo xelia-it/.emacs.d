@@ -162,8 +162,14 @@
 
 (global-set-key (kbd "S-C-w") 'close-all-buffers)
 
+;; Move between words
 (use-package syntax-subword :ensure t)
 (syntax-subword-mode t)
+
+;; Bookmarks - using helm
+(global-set-key (kbd "C-*")     'bookmark-delete)
+(global-set-key (kbd "C-,")     'bookmark-set)
+(global-set-key (kbd "C-.")     'helm-filtered-bookmarks)
 
 ;; -----------------------------------------------------------------------------
 ;;  Editing (and movement between files)
@@ -235,15 +241,9 @@
 
 ;; Do not use tabs by default
 (setq-default indent-tabs-mode nil)
+
 ;; Use 4 spaces by default
 (setq-default tab-width 4)
-
-;; Stop C-<left> movements in CamelCase words.
-;; (global-subword-mode)
-
-;; Switch from .c/.h and vicevarsa
-;; (global-set-key (kbd "C-S-a") 'ff-find-other-file)
-
 
 ;; ----------------------------------------------------------------------------
 ;;  Advanced: incremental completion (Support for AngularJS 2+)
@@ -271,6 +271,7 @@
          ("C-o" . helm-find-files)
          ("C-x C-f" . helm-find-files)
          ("C-j" . helm-imenu)
+         ("S-C-j" . helm-occur)
          ("M-x" . helm-M-x))
   )
 (require 'helm)
@@ -338,14 +339,7 @@
 (add-to-list 'company-backends 'company-web-slim)
 
 ;; ----------------------------------------------------------------------------
-;;  Indexer and symbol (rtags)
-
-;; Load powerline settings
-;; (load "init-rtags")
-
-
-;; ----------------------------------------------------------------------------
-;;  Global (gtags)
+;;  Indexer and symbol (gtags)
 
 (use-package helm-gtags :ensure t)
 
@@ -358,7 +352,6 @@
  helm-gtags-suggested-key-mapping t
  )
 
-
 ;; Enable helm-gtags-mode
 (add-hook 'dired-mode-hook 'helm-gtags-mode)
 (add-hook 'eshell-mode-hook 'helm-gtags-mode)
@@ -370,13 +363,12 @@
   '(progn
      (define-key helm-gtags-mode-map (kbd "C-b") 'helm-gtags-find-tag)
      (define-key helm-gtags-mode-map (kbd "S-C-b") 'helm-gtags-pop-stack)
-     (define-key helm-gtags-mode-map (kbd "S-C-j") 'helm-gtags-find-rtag)
-     (define-key helm-gtags-mode-map (kbd "M-s") 'helm-gtags-find-symbol)
+     (define-key helm-gtags-mode-map (kbd "C-t") 'helm-gtags-find-rtag)
+     (define-key helm-gtags-mode-map (kbd "S-C-t") 'helm-gtags-find-symbol)
      (define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history)
      (define-key helm-gtags-mode-map (kbd "M-g M-p") 'helm-gtags-parse-file)
      (define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
      ))
-
 
 ;; ----------------------------------------------------------------------------
 ;;  Keybindings
