@@ -39,7 +39,7 @@
     ("a4c9e536d86666d4494ef7f43c84807162d9bd29b0dfd39bdf2c3d845dcc7b2e" default)))
  '(package-selected-packages
    (quote
-    (emmet-mode yasnippet-snippets helm-rtags company company-rtags flycheck-rtags visual-regexp syntax-subword atom-one-dark-theme move-dup yaml-mode ac-html-csswatcher ac-html-bootstrap company-web expand-region highlight-indent-guides company-clang company-c-headers powerline ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
+    (yasnippet emmet-mode yasnippet-snippets helm-rtags company company-rtags flycheck-rtags visual-regexp syntax-subword atom-one-dark-theme move-dup yaml-mode ac-html-csswatcher ac-html-bootstrap company-web expand-region highlight-indent-guides company-clang company-c-headers powerline ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
