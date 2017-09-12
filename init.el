@@ -39,7 +39,7 @@
     ("a4c9e536d86666d4494ef7f43c84807162d9bd29b0dfd39bdf2c3d845dcc7b2e" default)))
  '(package-selected-packages
    (quote
-    (yasnippet emmet-mode yasnippet-snippets helm-rtags company company-rtags flycheck-rtags visual-regexp syntax-subword atom-one-dark-theme move-dup yaml-mode ac-html-csswatcher ac-html-bootstrap company-web expand-region highlight-indent-guides company-clang company-c-headers powerline ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
+    (helm-gtags yasnippet emmet-mode yasnippet-snippets helm-rtags company company-rtags flycheck-rtags visual-regexp syntax-subword atom-one-dark-theme move-dup yaml-mode ac-html-csswatcher ac-html-bootstrap company-web expand-region highlight-indent-guides company-clang company-c-headers powerline ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -165,8 +165,14 @@
 
 (global-set-key (kbd "S-C-w") 'close-all-buffers)
 
+;; Move between words
 (use-package syntax-subword :ensure t)
 (syntax-subword-mode t)
+
+;; Bookmarks - using helm
+(global-set-key (kbd "C-*")     'bookmark-delete)
+(global-set-key (kbd "C-,")     'bookmark-set)
+(global-set-key (kbd "C-.")     'helm-filtered-bookmarks)
 
 ;; -----------------------------------------------------------------------------
 ;;  Editing (and movement between files)
@@ -238,15 +244,9 @@
 
 ;; Do not use tabs by default
 (setq-default indent-tabs-mode nil)
+
 ;; Use 4 spaces by default
 (setq-default tab-width 4)
-
-;; Stop C-<left> movements in CamelCase words.
-;; (global-subword-mode)
-
-;; Switch from .c/.h and vicevarsa
-;; (global-set-key (kbd "C-S-a") 'ff-find-other-file)
-
 
 ;; ----------------------------------------------------------------------------
 ;;  Advanced: incremental completion (Support for AngularJS 2+)
@@ -333,6 +333,7 @@
 ;; Use clang for backends
 (setq company-backends (delete 'company-semantic company-backends))
 (add-to-list 'company-backends 'company-c-headers)
+(add-to-list 'company-backends 'company-clang)
 (add-to-list 'company-backends 'company-web-html)
 (add-to-list 'company-backends 'company-web-jade)
 (add-to-list 'company-backends 'company-web-slim)
@@ -342,8 +343,34 @@
 ;; ----------------------------------------------------------------------------
 ;;  Advanced: Indexer and symbol (rtags)
 
-;; Load powerline settings
-(load "init-rtags")
+(use-package helm-gtags :ensure t)
+
+(setq
+ helm-gtags-ignore-case t
+ helm-gtags-auto-update t
+ helm-gtags-use-input-at-cursor t
+ helm-gtags-pulse-at-cursor t
+ helm-gtags-prefix-key "\C-cg"
+ helm-gtags-suggested-key-mapping t
+ )
+
+;; Enable helm-gtags-mode
+(add-hook 'dired-mode-hook 'helm-gtags-mode)
+(add-hook 'eshell-mode-hook 'helm-gtags-mode)
+(add-hook 'c-mode-hook 'helm-gtags-mode)
+(add-hook 'c++-mode-hook 'helm-gtags-mode)
+(add-hook 'asm-mode-hook 'helm-gtags-mode)
+
+(eval-after-load "helm-gtags"
+  '(progn
+     (define-key helm-gtags-mode-map (kbd "C-b") 'helm-gtags-find-tag)
+     (define-key helm-gtags-mode-map (kbd "S-C-b") 'helm-gtags-pop-stack)
+     (define-key helm-gtags-mode-map (kbd "C-t") 'helm-gtags-find-rtag)
+     (define-key helm-gtags-mode-map (kbd "S-C-t") 'helm-gtags-find-symbol)
+     (define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history)
+     (define-key helm-gtags-mode-map (kbd "M-g M-p") 'helm-gtags-parse-file)
+     (define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
+     ))
 
 ;; ----------------------------------------------------------------------------
 ;;  Advanced: Snippets
