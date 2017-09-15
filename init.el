@@ -39,7 +39,7 @@
     ("a4c9e536d86666d4494ef7f43c84807162d9bd29b0dfd39bdf2c3d845dcc7b2e" default)))
  '(package-selected-packages
    (quote
-    (helm-gtags yasnippet emmet-mode yasnippet-snippets helm-rtags company company-rtags flycheck-rtags visual-regexp syntax-subword atom-one-dark-theme move-dup yaml-mode ac-html-csswatcher ac-html-bootstrap company-web expand-region highlight-indent-guides company-clang company-c-headers powerline ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
+    (git-gutter helm-gtags yasnippet emmet-mode yasnippet-snippets helm-rtags company company-rtags flycheck-rtags visual-regexp syntax-subword atom-one-dark-theme move-dup yaml-mode ac-html-csswatcher ac-html-bootstrap company-web expand-region highlight-indent-guides company-clang company-c-headers powerline ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -153,6 +153,7 @@
 (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
 (setq highlight-indent-guides-method 'character)
 (setq highlight-indent-guides-character ?\┆)
+;; (setq highlight-indent-guides-character ?\¦)
 ;; (set-face-foreground 'highlight-indent-guides-character-face "#345")
 ;; (setq highlight-indent-guides-auto-odd-face-perc 5)
 ;; (setq highlight-indent-guides-auto-even-face-perc 10)
@@ -173,6 +174,19 @@
 (global-set-key (kbd "C-*")     'bookmark-delete)
 (global-set-key (kbd "C-,")     'bookmark-set)
 (global-set-key (kbd "C-.")     'helm-filtered-bookmarks)
+
+;; Load theme
+(use-package git-gutter :ensure t)
+
+;; Use git-gutter.el and linum-mode
+(git-gutter:linum-setup)
+
+;; Enable git-gutter-mode for some modes
+(add-hook 'prog-mode-hook 'git-gutter-mode)
+
+;; Update git-gutter every 2 seconds
+(custom-set-variables
+ '(git-gutter:update-interval 2))
 
 ;; -----------------------------------------------------------------------------
 ;;  Editing (and movement between files)
@@ -383,10 +397,8 @@
 (use-package emmet-mode :ensure t)
  ;; Auto-start on any markup modes
 (add-hook 'sgml-mode-hook 'emmet-mode)
-(add-hook 'sgml-mode-hook 'emmet-preview-mode)
 ;; enable Emmet's css abbreviation
 (add-hook 'css-mode-hook  'emmet-mode)
-(add-hook 'css-mode-hook  'emmet-preview-mode)
 
 ;; ----------------------------------------------------------------------------
 ;;  Keybindings
