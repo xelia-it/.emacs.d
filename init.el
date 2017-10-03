@@ -232,7 +232,7 @@
   :init
   :bind (("M-S-<down>" . mc/mark-next-like-this)
          ("M-S-<up>" . mc/mark-previous-like-this)
-         ("S-C-d" . mc/mark-all-symbols-like-this)
+         ("S-C-d" . mc/mark-next-like-this-word)
          ("C-d" . mc/mark-all-symbols-like-this-in-defun))
   )
 
