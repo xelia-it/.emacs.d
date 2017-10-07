@@ -40,7 +40,7 @@
  '(git-gutter:update-interval 2)
  '(package-selected-packages
    (quote
-    (git-gutter helm-gtags yasnippet emmet-mode yasnippet-snippets helm-rtags company company-rtags flycheck-rtags visual-regexp syntax-subword atom-one-dark-theme move-dup yaml-mode ac-html-csswatcher ac-html-bootstrap company-web expand-region highlight-indent-guides company-clang company-c-headers powerline ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
+    (scss-mode git-gutter helm-gtags yasnippet emmet-mode yasnippet-snippets helm-rtags company company-rtags flycheck-rtags visual-regexp syntax-subword atom-one-dark-theme move-dup yaml-mode ac-html-csswatcher ac-html-bootstrap company-web expand-region highlight-indent-guides company-clang company-c-headers powerline ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -268,13 +268,17 @@
 ;;  Advanced: support for HTML/CSS/Javascript
 
 ;; For HTML and CSS use emmet
-(use-package emmet-mode :ensure t)
+;;(use-package emmet-mode :ensure t)
  ;; Auto-start on any markup modes
-(add-hook 'sgml-mode-hook 'emmet-mode)
+;;(add-hook 'sgml-mode-hook 'emmet-mode)
 ;; enable Emmet's css abbreviation
-(add-hook 'css-mode-hook  'emmet-mode)
+;;(add-hook 'css-mode-hook  'emmet-mode)
 
-(add-to-list 'auto-mode-alist '("\\.css$" . html-mode))
+(use-package scss-mode :ensure t)
+(add-to-list 'auto-mode-alist '("\\.scss\\'" . scss-mode))
+(add-to-list 'auto-mode-alist '("\\.css\\'" . scss-mode))
+
+;; (add-to-list 'auto-mode-alist '("\\.css$" . html-mode))
 (add-to-list 'auto-mode-alist '("\\.cfm$" . html-mode))
 (add-to-list 'auto-mode-alist '("\\.erb$" . html-mode))
 (add-to-list 'auto-mode-alist '("\\.mustache$" . html-mode))
@@ -464,6 +468,7 @@
 ;; TODO: delete if ok
 ;; (define-key key-translation-map (kbd "<escape>") (kbd "C-g"))
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+(define-key company-mode-map (kbd "<escape>") 'company-abort)
 (define-key prog-mode-map (kbd "C-g") 'goto-line)
 ;; TODO: delete if ok
 ;;(global-set-key (kbd "C-g") 'goto-line)
