@@ -37,6 +37,7 @@
  '(custom-safe-themes
    (quote
     ("a4c9e536d86666d4494ef7f43c84807162d9bd29b0dfd39bdf2c3d845dcc7b2e" default)))
+ '(git-gutter:update-interval 2)
  '(package-selected-packages
    (quote
     (git-gutter helm-gtags yasnippet emmet-mode yasnippet-snippets helm-rtags company company-rtags flycheck-rtags visual-regexp syntax-subword atom-one-dark-theme move-dup yaml-mode ac-html-csswatcher ac-html-bootstrap company-web expand-region highlight-indent-guides company-clang company-c-headers powerline ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
@@ -184,10 +185,6 @@
 ;; Enable git-gutter-mode for some modes
 (add-hook 'prog-mode-hook 'git-gutter-mode)
 
-;; Update git-gutter every 2 seconds
-(custom-set-variables
- '(git-gutter:update-interval 2))
-
 ;; -----------------------------------------------------------------------------
 ;;  Editing (and movement between files)
 
@@ -266,6 +263,21 @@
 ;;  Advanced: incremental completion (Support for AngularJS 2+)
 
 (use-package ng2-mode :ensure t)
+
+;; ----------------------------------------------------------------------------
+;;  Advanced: support for HTML/CSS/Javascript
+
+;; For HTML and CSS use emmet
+(use-package emmet-mode :ensure t)
+ ;; Auto-start on any markup modes
+(add-hook 'sgml-mode-hook 'emmet-mode)
+;; enable Emmet's css abbreviation
+(add-hook 'css-mode-hook  'emmet-mode)
+
+(add-to-list 'auto-mode-alist '("\\.css$" . html-mode))
+(add-to-list 'auto-mode-alist '("\\.cfm$" . html-mode))
+(add-to-list 'auto-mode-alist '("\\.erb$" . html-mode))
+(add-to-list 'auto-mode-alist '("\\.mustache$" . html-mode))
 
 ;; ----------------------------------------------------------------------------
 ;;  Advanced: support for YAML
@@ -393,12 +405,6 @@
 (use-package yasnippet-snippets :ensure t)
 (yas-global-mode 1)
 
-;; For HTML and CSS use emmet
-(use-package emmet-mode :ensure t)
- ;; Auto-start on any markup modes
-(add-hook 'sgml-mode-hook 'emmet-mode)
-;; enable Emmet's css abbreviation
-(add-hook 'css-mode-hook  'emmet-mode)
 
 ;; ----------------------------------------------------------------------------
 ;;  Keybindings
@@ -455,9 +461,12 @@
 ;; Use ESC to quit command. This free Ctrl-G for moving to a specific line.
 (global-unset-key (kbd "<escape>"))
 (global-unset-key (kbd "C-g"))
-(define-key key-translation-map (kbd "<escape>") (kbd "C-g"))
+;; TODO: delete if ok
+;; (define-key key-translation-map (kbd "<escape>") (kbd "C-g"))
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-(global-set-key (kbd "C-g") 'goto-line)
+(define-key prog-mode-map (kbd "C-g") 'goto-line)
+;; TODO: delete if ok
+;;(global-set-key (kbd "C-g") 'goto-line)
 
 ;; ----------------------------------------------------------------------------
 
