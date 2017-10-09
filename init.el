@@ -267,12 +267,6 @@
 ;; ----------------------------------------------------------------------------
 ;;  Advanced: support for HTML/CSS/Javascript
 
-;; For HTML and CSS use emmet
-;;(use-package emmet-mode :ensure t)
- ;; Auto-start on any markup modes
-;;(add-hook 'sgml-mode-hook 'emmet-mode)
-;; enable Emmet's css abbreviation
-;;(add-hook 'css-mode-hook  'emmet-mode)
 
 (use-package scss-mode :ensure t)
 (add-to-list 'auto-mode-alist '("\\.scss\\'" . scss-mode))
@@ -282,6 +276,13 @@
 (add-to-list 'auto-mode-alist '("\\.cfm$" . html-mode))
 (add-to-list 'auto-mode-alist '("\\.erb$" . html-mode))
 (add-to-list 'auto-mode-alist '("\\.mustache$" . html-mode))
+
+;; For HTML and CSS use emmet
+(use-package emmet-mode :ensure t)
+ ;; Auto-start on any markup modes
+(add-hook 'sgml-mode-hook 'emmet-mode)
+;; enable Emmet's css abbreviation
+(add-hook 'css-mode-hook  'emmet-mode)
 
 ;; ----------------------------------------------------------------------------
 ;;  Advanced: support for YAML
