@@ -259,6 +259,9 @@
 ;; Use 4 spaces by default
 (setq-default tab-width 4)
 
+;; Auto-save before compiling
+(setq compilation-ask-about-save nil)
+
 ;; ----------------------------------------------------------------------------
 ;;  Advanced: incremental completion (Support for AngularJS 2+)
 
