@@ -202,12 +202,13 @@
 
 ;; No region when it is not highlighted
 (transient-mark-mode 1)
-;; Delete trailing whitespace when save
+
 ;; Show trailing whitespaces, tabs, lines
 (use-package whitespace :ensure t)
 (global-whitespace-mode t)
 (setq whitespace-style '(face empty tabs lines-tail trailing))
 
+;; Delete trailing whitespaecs before saving
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 ;; Do not indent using tab
@@ -270,17 +271,17 @@
 ;; ----------------------------------------------------------------------------
 ;;  Advanced: support for HTML/CSS/Javascript
 
-
+;; Support for CSS/SCSS
 (use-package scss-mode :ensure t)
 (add-to-list 'auto-mode-alist '("\\.scss\\'" . scss-mode))
 (add-to-list 'auto-mode-alist '("\\.css\\'" . scss-mode))
 
-;; (add-to-list 'auto-mode-alist '("\\.css$" . html-mode))
+;; Support for HTML tags
 (add-to-list 'auto-mode-alist '("\\.cfm$" . html-mode))
 (add-to-list 'auto-mode-alist '("\\.erb$" . html-mode))
 (add-to-list 'auto-mode-alist '("\\.mustache$" . html-mode))
 
-;; For HTML and CSS use emmet
+;; Also add emmet abbreviations for HTML and CSS
 (use-package emmet-mode :ensure t)
  ;; Auto-start on any markup modes
 (add-hook 'sgml-mode-hook 'emmet-mode)
@@ -463,19 +464,24 @@
 (global-set-key (kbd "C-w") 'kill-this-buffer)
 (global-set-key (kbd "<C-iso-lefttab>") 'other-window)
 
-;; activate whitespace-mode to view all whitespace characters
+;; Activate whitespace-mode to view all whitespace characters
 (global-set-key (kbd "C-c w") 'whitespace-mode)
 
 ;; Use ESC to quit command. This free Ctrl-G for moving to a specific line.
 (global-unset-key (kbd "<escape>"))
 (global-unset-key (kbd "C-g"))
-;; TODO: delete if ok
-;; (define-key key-translation-map (kbd "<escape>") (kbd "C-g"))
+
+;; Use escape for "abort" operations
+;; (company needs a specific command)
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 (define-key company-mode-map (kbd "<escape>") 'company-abort)
+
+;; Use goto-line for Ctrl-G
+;; The mapping do not work in c-mode and c++ mode
+;; so we need to force the behaviour
 (define-key prog-mode-map (kbd "C-g") 'goto-line)
-;; TODO: delete if ok
-;;(global-set-key (kbd "C-g") 'goto-line)
+(define-key c-mode-map (kbd "C-g") 'goto-line)
+(define-key c++-mode-map (kbd "C-g") 'goto-line)
 
 ;; ----------------------------------------------------------------------------
 
