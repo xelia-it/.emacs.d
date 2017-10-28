@@ -54,6 +54,7 @@
 (put 'flycheck-clang-args 'safe-local-variable (lambda(xx) t))
 (put 'projectile-project-compilation-cmd 'safe-local-variable (lambda(xx) t))
 (put 'c-default-style 'safe-local-variable (lambda(xx) t))
+(put 'c-offsets-alist 'safe-local-variable (lambda(xx) t))
 
 ;; -----------------------------------------------------------------------------
 ;; Custom scripts and environment variables
@@ -287,6 +288,10 @@
 (add-hook 'sgml-mode-hook 'emmet-mode)
 ;; enable Emmet's css abbreviation
 (add-hook 'css-mode-hook  'emmet-mode)
+
+;; Colorize #RGB tags
+(use-package rainbow-mode :ensure t)
+(add-hook 'scss-mode-hook 'rainbow-mode)
 
 ;; ----------------------------------------------------------------------------
 ;;  Advanced: support for YAML
