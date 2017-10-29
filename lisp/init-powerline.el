@@ -47,12 +47,6 @@
 ;; Load the above theme
 (powerline-my-theme)
 
-;; Experiment with powerline
-;;(custom-set-faces
-;; '(mode-line ((t (:foreground "#030303" :background "#f8d85c" :box nil))))
-;; '(mode-line-inactive ((t (:foreground "#f9f9f9" :background "#030303" :box nil))))
-;; )
-
 ;; ----------------------------------------------------------------------------
 
 (provide 'init-powerline)
