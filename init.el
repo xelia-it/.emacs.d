@@ -155,11 +155,6 @@
 (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
 (setq highlight-indent-guides-method 'character)
 (setq highlight-indent-guides-character ?\┆)
-;; (setq highlight-indent-guides-character ?\¦)
-;; (set-face-foreground 'highlight-indent-guides-character-face "#345")
-;; (setq highlight-indent-guides-auto-odd-face-perc 5)
-;; (setq highlight-indent-guides-auto-even-face-perc 10)
-;; (setq highlight-indent-guides-auto-character-face-perc 15)
 
 (defun close-all-buffers ()
   "Close all buffers."
@@ -263,9 +258,15 @@
 
 ;; Auto-save before compiling
 (setq compilation-ask-about-save nil)
+;; Never prompt to kill a compilation session.
+(setq compilation-always-kill t)
+;; Always scroll to the bottom.
+(setq compilation-scroll-output t)
 
 ;; ----------------------------------------------------------------------------
 ;;  Advanced: incremental completion (Support for AngularJS 2+)
+
+(use-package ng2-mode :ensure t)
 
 (use-package tide :ensure t)
 
@@ -286,10 +287,11 @@
 
 ;; formats the buffer before saving
 (add-hook 'before-save-hook 'tide-format-before-save)
-
 (add-hook 'typescript-mode-hook #'setup-tide-mode)
-
-(use-package ng2-mode :ensure t)
+;; (add-hook 'js2-mode-hook #'setup-tide-mode)
+(add-hook 'ng2-mode-hook #'setup-tide-mode)
+;; configure javascript-tide checker to run after your default javascript checker
+(flycheck-add-next-checker 'javascript-eslint 'javascript-tide 'append)
 
 ;; ----------------------------------------------------------------------------
 ;;  Advanced: support for HTML/CSS/Javascript
@@ -306,7 +308,7 @@
 
 ;; Also add emmet abbreviations for HTML and CSS
 (use-package emmet-mode :ensure t)
- ;; Auto-start on any markup modes
+;; Auto-start on any markup modes
 (add-hook 'sgml-mode-hook 'emmet-mode)
 ;; enable Emmet's css abbreviation
 (add-hook 'css-mode-hook  'emmet-mode)
