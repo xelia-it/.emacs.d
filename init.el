@@ -62,6 +62,10 @@
 ;; Our scripts are into a subdirectory
 (add-to-list 'load-path "~/.emacs.d/lisp")
 
+;; Executable
+;; (modify this list to match your needs)
+(setq exec-path (append exec-path '("/opt/node/bin")))
+
 ;; -----------------------------------------------------------------------------
 ;; Setup color theme and window
 
@@ -282,8 +286,8 @@
   ;; `M-x package-install [ret] company`
   (company-mode +1))
 
-;; aligns annotation to the right hand side
-(setq company-tooltip-align-annotations t)
+;; enable typescript-tslint checker
+(flycheck-add-mode 'typescript-tslint 'web-mode)
 
 ;; formats the buffer before saving
 (add-hook 'before-save-hook 'tide-format-before-save)
@@ -371,16 +375,6 @@
 ;;  Advanced: incremental completion (Flycheck)
 
 (use-package flycheck :ensure t)
-
-;; flycheck with Google C Style
-;; (eval-after-load 'flycheck
-;;   '(progn
-;;      (require 'flycheck-google-cpplint)
-;;      ;; Add Google C++ Style checker.
-;;      ;; In default, syntax checked by Clang and Cppcheck.
-;;      (flycheck-add-next-checker 'c/c++-clang
-;;                                 'c/c++-googlelint 'append)))
-
 (add-hook 'after-init-hook #'global-flycheck-mode)
 
 ;; -----------------------------------------------------------------------------
