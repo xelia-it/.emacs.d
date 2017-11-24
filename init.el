@@ -65,6 +65,8 @@
 ;; Executable
 ;; (modify this list to match your needs)
 (setq exec-path (append exec-path '("/opt/node/bin")))
+(setq exec-path (append exec-path '("/home/administrator/.rbenv/shims")))
+(setenv "PATH" (concat (getenv "PATH") ":/opt/node/bin:/home/administrator/.rbenv/shims"))
 
 ;; -----------------------------------------------------------------------------
 ;; Setup color theme and window
