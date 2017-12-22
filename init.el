@@ -162,21 +162,15 @@
 (setq highlight-indent-guides-method 'character)
 (setq highlight-indent-guides-character ?\┆)
 
+;; Utility to close buffers
 (defun close-all-buffers ()
   "Close all buffers."
   (interactive)
   (mapc 'kill-buffer (buffer-list)))
 
-(global-set-key (kbd "S-C-w") 'close-all-buffers)
-
 ;; Move between words
 (use-package syntax-subword :ensure t)
 (syntax-subword-mode t)
-
-;; Bookmarks - using helm
-(global-set-key (kbd "C-*")     'bookmark-delete)
-(global-set-key (kbd "C-,")     'bookmark-set)
-(global-set-key (kbd "C-.")     'helm-filtered-bookmarks)
 
 ;; Load theme
 (use-package git-gutter :ensure t)
@@ -338,7 +332,7 @@
 (use-package helm
   :ensure t
   :init
-  :bind (("C-<tab>" . helm-multi-files)
+  :bind (("<C-iso-lefttab>" . helm-multi-files)
          ("C-o" . helm-find-files)
          ("C-x C-f" . helm-find-files)
          ("C-j" . helm-imenu)
@@ -468,6 +462,9 @@
 (global-unset-key (kbd "S-C-s"))
 (global-set-key (kbd "S-C-s") 'save-all)
 
+;; Close all buffers
+(global-set-key (kbd "S-C-w") 'close-all-buffers)
+
 ;; Change Search and Replace keys
 (global-unset-key "\C-f")
 (global-set-key (kbd "\C-f") 'isearch-forward)
@@ -484,10 +481,10 @@
 ;; Move between buffers
 (global-set-key (kbd "M-<right>") 'next-buffer)
 (global-set-key (kbd "M-<left>") 'previous-buffer)
-
-;; Close current buffer and window
+;;(global-set-key (kbd "C-<tab>") 'previous-buffer)
 (global-set-key (kbd "C-w") 'kill-this-buffer)
-(global-set-key (kbd "<C-iso-lefttab>") 'other-window)
+;;(global-unset-key (kbd "<C-iso-lefttab>"))
+(global-set-key (kbd "C-<tab>") 'other-window)
 
 ;; Activate whitespace-mode to view all whitespace characters
 (global-set-key (kbd "C-c w") 'whitespace-mode)
@@ -507,6 +504,11 @@
 (define-key prog-mode-map (kbd "C-g") 'goto-line)
 (define-key c-mode-map (kbd "C-g") 'goto-line)
 (define-key c++-mode-map (kbd "C-g") 'goto-line)
+
+;; Bookmarks - using helm
+(global-set-key (kbd "C-*")     'bookmark-delete)
+(global-set-key (kbd "C-,")     'bookmark-set)
+(global-set-key (kbd "C-.")     'helm-filtered-bookmarks)
 
 ;; ----------------------------------------------------------------------------
 
