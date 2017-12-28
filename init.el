@@ -36,18 +36,11 @@
  '(company-selection-wrap-around t)
  '(custom-safe-themes
    (quote
-    ("a4c9e536d86666d4494ef7f43c84807162d9bd29b0dfd39bdf2c3d845dcc7b2e" default)))
+    ("0be964eabe93f09be5a943679ced8d98e08fe7a92b01bf24478e56eee7b6b21d" default)))
  '(git-gutter:update-interval 2)
  '(package-selected-packages
    (quote
-    (tide rainbow-mode scss-mode git-gutter helm-gtags yasnippet emmet-mode yasnippet-snippets helm-rtags company company-rtags flycheck-rtags visual-regexp syntax-subword atom-one-dark-theme move-dup yaml-mode ac-html-csswatcher ac-html-bootstrap company-web expand-region highlight-indent-guides company-clang company-c-headers powerline ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
-
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+    (helm-swoop tide rainbow-mode scss-mode git-gutter helm-gtags yasnippet emmet-mode yasnippet-snippets helm-rtags company company-rtags flycheck-rtags visual-regexp syntax-subword atom-one-dark-theme move-dup yaml-mode ac-html-csswatcher ac-html-bootstrap company-web expand-region highlight-indent-guides company-clang company-c-headers powerline ng2-mode helm-projectile flycheck projectile multiple-cursors helm use-package))))
 
 ;; Some variables can be put into .dir-locals-el scripts
 (put 'company-clang-arguments 'safe-local-variable (lambda(xx) t))
@@ -271,6 +264,7 @@
 (use-package tide :ensure t)
 
 (defun setup-tide-mode ()
+  "Setup tide mode for Angular."
   (interactive)
   (tide-setup)
   (flycheck-mode +1)
@@ -345,6 +339,11 @@
 ;; Open helm on right side
 (setq helm-split-window-default-side 'right)
 
+(use-package helm-swoop
+  :ensure t
+  :init
+  )
+
 ;; Redefine some helm keys: TAB run persistent action
 (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebind tab to run persistent action
 (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; make TAB work in terminal
@@ -361,11 +360,11 @@
 
 (use-package helm-projectile
   :ensure t
-  :init (helm-projectile-on)
   :bind (("C-p" . helm-projectile-find-file)
-         ("S-C-o" . helm-projectile-switch-project)
-         ("S-C-f" . helm-projectile-grep))
+         ("S-C-o" . helm-projectile-switch-project))
   )
+;; FIXME: disabled due to a possible bug
+;; :init (helm-projectile-on)
 
 ;; ----------------------------------------------------------------------------
 ;;  Advanced: incremental completion (Flycheck)
@@ -414,6 +413,7 @@
 (add-hook 'c-mode-hook 'helm-gtags-mode)
 (add-hook 'c++-mode-hook 'helm-gtags-mode)
 (add-hook 'asm-mode-hook 'helm-gtags-mode)
+(add-hook 'ruby-mode-hook 'helm-gtags-mode)
 
 (eval-after-load "helm-gtags"
   '(progn
@@ -432,7 +432,6 @@
 (use-package yasnippet :ensure t)
 (use-package yasnippet-snippets :ensure t)
 (yas-global-mode 1)
-
 
 ;; ----------------------------------------------------------------------------
 ;;  Keybindings
@@ -466,9 +465,10 @@
 (global-set-key (kbd "S-C-w") 'close-all-buffers)
 
 ;; Change Search and Replace keys
-(global-unset-key "\C-f")
-(global-set-key (kbd "\C-f") 'isearch-forward)
-(define-key isearch-mode-map "\C-f" 'isearch-repeat-forward)
+(global-unset-key (kbd "C-f"))
+(global-set-key (kbd "C-f") 'helm-swoop)
+(global-unset-key (kbd "C-S-f"))
+(global-set-key (kbd "C-S-f") 'projectile-grep)
 
 (define-key global-map (kbd "C-r") 'vr/replace)
 (define-key global-map (kbd "C-c q") 'vr/query-replace)
@@ -481,9 +481,7 @@
 ;; Move between buffers
 (global-set-key (kbd "M-<right>") 'next-buffer)
 (global-set-key (kbd "M-<left>") 'previous-buffer)
-;;(global-set-key (kbd "C-<tab>") 'previous-buffer)
 (global-set-key (kbd "C-w") 'kill-this-buffer)
-;;(global-unset-key (kbd "<C-iso-lefttab>"))
 (global-set-key (kbd "C-<tab>") 'other-window)
 
 ;; Activate whitespace-mode to view all whitespace characters
