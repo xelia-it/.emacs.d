@@ -50,3 +50,4 @@ site-lisp/package/
 /.uptimes.el
 /rake.cache
 projectile.cache
+/irony
