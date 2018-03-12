@@ -1,5 +1,10 @@
-;; -----------------------------------------------------------------------------
-;; Other config scripts
+;;; package --- Emacs configuration with batteries included
+
+;;; ----------------------------------------------------------------------------
+;;; Commentary:
+
+;;; ----------------------------------------------------------------------------
+;;; Code:
 
 (require 'use-package)
 
@@ -11,10 +16,13 @@
 (use-package projectile
   :ensure t
   :config
-  (projectile-global-mode))
+  (projectile-mode))
 
 (use-package helm-projectile
   :ensure t
   :after (helm projectile)
   :config
   (helm-projectile-on))
+
+(provide 'init-projects)
+;;; init-projects.el ends here

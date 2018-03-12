@@ -1,8 +1,14 @@
-;; -------------
+;;; package --- Emacs configuration with batteries included
 
-;; ----------------------------------------------------------------------------
-;;  Keybindings
+;;; ----------------------------------------------------------------------------
+;;; Commentary:
+;;;
+;;; Keybindings
 
+;;; ----------------------------------------------------------------------------
+;;; Code:
+
+;; M-x is better managed by helm
 (global-set-key (kbd "M-x") 'helm-M-x)
 
 ;; Project navigation
@@ -25,8 +31,15 @@
 
 ;; Ctrl-<space>: code completion (with company)
 (global-set-key (kbd "C-SPC") 'company-complete-common)
-;;(define-key c-mode-map (kbd "C-SPC") 'company-complete)
-;;(define-key c++-mode-map (kbd "C-SPC") 'company-complete)
+
+;; Set key bindings
+(define-key helm-gtags-mode-map (kbd "C-b") 'helm-gtags-find-tag)
+(define-key helm-gtags-mode-map (kbd "S-C-b") 'helm-gtags-pop-stack)
+(define-key helm-gtags-mode-map (kbd "C-t") 'helm-gtags-find-rtag)
+(define-key helm-gtags-mode-map (kbd "S-C-t") 'helm-gtags-find-symbol)
+;;(define-key helm-gtags-mode-map (kbd "M-g M-p") 'helm-gtags-parse-file)
+;;(define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
+;;(define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history)
 
 ;; Ctrl-S: save current file
 (global-unset-key (kbd "C-s"))
@@ -77,7 +90,6 @@
 (add-hook 'c++-mode-hook 'my-disable-ctrl-d)
 
 
-
 ;; Activate whitespace-mode to view all whitespace characters
 ;;(global-set-key (kbd "C-c w") 'whitespace-mode)
 
@@ -102,3 +114,6 @@
 (global-set-key (kbd "C-*") 'bookmark-delete)
 (global-set-key (kbd "C-,") 'bookmark-set)
 (global-set-key (kbd "C-.") 'helm-filtered-bookmarks)
+
+(provide 'init-keybinding)
+;;; init-keybinding.el ends here

@@ -12,6 +12,11 @@
 ;; Empty scratch buffer
 (setq initial-scratch-message nil)
 
+;; Empty minibuffer message
+(defun display-startup-echo-area-message ()
+  "Overwrite default startup message."
+  (message ""))
+
 ;; Setup color theme and window
 (use-package atom-one-dark-theme
   :ensure t
@@ -44,11 +49,6 @@
 
 ;; -----------------------------------------------------------------------------
 
-
-;;(use-package all-the-icons
-;;  :ensure t
-;;  )
-
 (use-package powerline
   :ensure t)
 
@@ -67,4 +67,20 @@
   (spaceline-toggle-buffer-position-off)
   )
 
+;; -----------------------------------------------------------------------------
+
+;; Removes *messages* from the buffer list.
+(setq-default message-log-max nil)
+(kill-buffer "*Messages*")
+
+;; Removes *Completions* from buffer after you've opened a file.
+(add-hook 'minibuffer-exit-hook
+      '(lambda ()
+         (let ((buffer "*Completions*"))
+           (and (get-buffer buffer)
+                (kill-buffer buffer)))))
+
+;; -----------------------------------------------------------------------------
+
+(provide 'init-face)
 ;;; init-face.el ends here
