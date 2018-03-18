@@ -22,6 +22,7 @@
   :ensure t
   :init
   :config
+
   ;; Frame settings
   (tool-bar-mode -1)                ;; Disable toolbar on top
   (menu-bar-mode -1)                ;; Disable menu bar on top
@@ -48,6 +49,7 @@
 (show-paren-mode 1)
 
 ;; -----------------------------------------------------------------------------
+;; Powerline
 
 (use-package powerline
   :ensure t)
@@ -56,6 +58,8 @@
   :ensure t
   :after (powerline)
   :config
+
+  ;; Show only a subset of all information available
   (require 'spaceline-config)
   (spaceline-spacemacs-theme)
   (spaceline-toggle-buffer-size-off)
@@ -68,6 +72,7 @@
   )
 
 ;; -----------------------------------------------------------------------------
+;; Cleanup interface and buffers
 
 ;; Removes *messages* from the buffer list.
 (setq-default message-log-max nil)

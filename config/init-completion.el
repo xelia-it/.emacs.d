@@ -6,11 +6,20 @@
 ;;; ----------------------------------------------------------------------------
 ;;; Code:
 
+;; -----------------------------------------------------------------------------
+;; On the fly check
+
+
 (use-package flycheck
   :ensure t
   :config
+  ;; Disable ruby-reek checker: it's too verbose
+  (setq-default flycheck-disabled-checkers '(ruby-reek))
   (global-flycheck-mode)
   )
+
+;; -----------------------------------------------------------------------------
+;; Autocomplete
 
 (use-package company
   :ensure t
@@ -18,38 +27,45 @@
   (add-to-list 'company-backends 'company-clang)
   (add-to-list 'company-backends 'company-gcc)
   (add-to-list 'company-backends 'company-cppcheck)
-  (global-company-mode)
+  (global-company-mode))
+
+(use-package company-quickhelp
+  :ensure t
+  :after (company)
+  :config
+  (company-quickhelp-mode))
+
+;; -----------------------------------------------------------------------------
+;; Code tagging and movement
+
+;; Use GNU Global for code tagging
+(use-package helm-gtags
+  :ensure t
+  :after (helm)
+  :config
+
+  ;; Enable helm-gtags-mode
+  (add-hook 'c-mode-hook 'helm-gtags-mode)
+  (add-hook 'c++-mode-hook 'helm-gtags-mode)
+  (add-hook 'asm-mode-hook 'helm-gtags-mode)
+  (setq helm-gtags-ignore-case t
+        helm-gtags-auto-update t
+        helm-gtags-use-input-at-cursor t
+        helm-gtags-pulse-at-cursor t
+        helm-gtags-prefix-key "\C-cg"
+        helm-gtags-suggested-key-mapping t)
+
+  ;; Enable helm-gtags-mode
+  (add-hook 'dired-mode-hook 'helm-gtags-mode)
+  (add-hook 'eshell-mode-hook 'helm-gtags-mode)
+  (add-hook 'c-mode-hook 'helm-gtags-mode)
+  (add-hook 'c++-mode-hook 'helm-gtags-mode)
+  (add-hook 'asm-mode-hook 'helm-gtags-mode)
+  (add-hook 'ruby-mode-hook 'helm-gtags-mode)
   )
 
 ;; -----------------------------------------------------------------------------
-;; GNU Global
-
-(use-package helm-gtags
-  :ensure t
-  :config
-
-    ;; Enable helm-gtags-mode
-    (add-hook 'c-mode-hook 'helm-gtags-mode)
-    (add-hook 'c++-mode-hook 'helm-gtags-mode)
-    (add-hook 'asm-mode-hook 'helm-gtags-mode)
-    (setq
-     helm-gtags-ignore-case t
-     helm-gtags-auto-update t
-     helm-gtags-use-input-at-cursor t
-     helm-gtags-pulse-at-cursor t
-     helm-gtags-prefix-key "\C-cg"
-     helm-gtags-suggested-key-mapping t
-     )
-    ;; Enable helm-gtags-mode
-    (add-hook 'dired-mode-hook 'helm-gtags-mode)
-    (add-hook 'eshell-mode-hook 'helm-gtags-mode)
-    (add-hook 'c-mode-hook 'helm-gtags-mode)
-    (add-hook 'c++-mode-hook 'helm-gtags-mode)
-    (add-hook 'asm-mode-hook 'helm-gtags-mode)
-    )
-
-;; -----------------------------------------------------------------------------
-;; C/C++
+;; Language: C/C++
 
 (use-package company-c-headers
   :ensure t
@@ -101,7 +117,7 @@
  )
 
 ;; -----------------------------------------------------------------------------
-;; HTML
+;; Language: HTML/CSS/Javascript
 
 (use-package company-web
   :ensure t
@@ -124,6 +140,36 @@
   :ensure t
   :after (company))
 
+
+(use-package js2-mode
+  :ensure t)
+
+(use-package rainbow-mode
+  :ensure t)
+
+(use-package emmet-mode
+  :ensure t)
+
+(use-package helm-emmet
+  :ensure t)
+
+;; (use-package skewer-mode
+;;   :ensure t
+;;   :config
+;;   (add-hook 'js2-mode-hook 'skewer-mode)
+;;   (add-hook 'css-mode-hook 'skewer-css-mode)
+;;   (add-hook 'html-mode-hook 'skewer-html-mode)
+;;   )
+
+;; -----------------------------------------------------------------------------
+;; Language: Ruby
+
+(use-package company-inf-ruby
+  :ensure t
+  :after (company)
+  :config
+  (add-to-list 'company-backends 'company-inf-ruby)
+  )
 
 ;; -----------------------------------------------------------------------------
 

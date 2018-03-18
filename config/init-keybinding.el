@@ -37,9 +37,6 @@
 (define-key helm-gtags-mode-map (kbd "S-C-b") 'helm-gtags-pop-stack)
 (define-key helm-gtags-mode-map (kbd "C-t") 'helm-gtags-find-rtag)
 (define-key helm-gtags-mode-map (kbd "S-C-t") 'helm-gtags-find-symbol)
-;;(define-key helm-gtags-mode-map (kbd "M-g M-p") 'helm-gtags-parse-file)
-;;(define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
-;;(define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history)
 
 ;; Ctrl-S: save current file
 (global-unset-key (kbd "C-s"))
@@ -74,6 +71,7 @@
 (global-set-key (kbd "M-<left>") 'previous-buffer)
 (global-set-key (kbd "C-w") 'kill-this-buffer)
 (global-set-key (kbd "C-<tab>") 'other-window)
+(global-set-key (kbd "C-<iso-lefttab>") 'helm-buffers-list)
 
 ;; Editing
 (global-unset-key (kbd "C-d"))
@@ -89,6 +87,8 @@
   )
 (add-hook 'c++-mode-hook 'my-disable-ctrl-d)
 
+;; Expand region
+(global-set-key (kbd "C-l") 'er/expand-region)
 
 ;; Activate whitespace-mode to view all whitespace characters
 ;;(global-set-key (kbd "C-c w") 'whitespace-mode)
@@ -114,6 +114,9 @@
 (global-set-key (kbd "C-*") 'bookmark-delete)
 (global-set-key (kbd "C-,") 'bookmark-set)
 (global-set-key (kbd "C-.") 'helm-filtered-bookmarks)
+
+(global-set-key (kbd "C-c C-w") 'whitespace-mode)
+(global-set-key (kbd "C-c C-i") 'highlight-indent-guides-mode)
 
 (provide 'init-keybinding)
 ;;; init-keybinding.el ends here
