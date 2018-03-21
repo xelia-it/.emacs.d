@@ -80,12 +80,23 @@
 (global-set-key (kbd "C-d") 'mc/mark-all-symbols-like-this-in-defun)
 (global-set-key (kbd "S-C-d") 'mc/mark-next-like-this-word)
 
-;; In C++ mode the Ctrl-D is reactivated: force unset.
+;; In C++ mode some keystrokes overlaps: force unset.
 (defun my-disable-ctrl-d ()
   "Disable Ctrl-D."
   (local-unset-key (kbd "C-d"))
+  (local-unset-key (kbd "C-c C-u"))
   )
 (add-hook 'c++-mode-hook 'my-disable-ctrl-d)
+
+;; Whitespace
+(global-set-key (kbd "C-c C-w") 'whitespace-mode)
+(global-set-key (kbd "C-c C-i") 'highlight-indent-guides-mode)
+
+;; Change case
+(global-set-key (kbd "C-c C-u") 'string-inflection-all-cycle)
+
+;; Switch cpp <--> hpp
+(global-set-key (kbd "S-C-a") 'ff-find-related-file)
 
 ;; Expand region
 (global-set-key (kbd "C-l") 'er/expand-region)
@@ -114,9 +125,6 @@
 (global-set-key (kbd "C-*") 'bookmark-delete)
 (global-set-key (kbd "C-,") 'bookmark-set)
 (global-set-key (kbd "C-.") 'helm-filtered-bookmarks)
-
-(global-set-key (kbd "C-c C-w") 'whitespace-mode)
-(global-set-key (kbd "C-c C-i") 'highlight-indent-guides-mode)
 
 (provide 'init-keybinding)
 ;;; init-keybinding.el ends here

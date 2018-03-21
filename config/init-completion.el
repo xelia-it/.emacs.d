@@ -142,7 +142,11 @@
 
 
 (use-package js2-mode
-  :ensure t)
+  :ensure t
+  :config
+  ;; open files ending in “.js” with js2-mode
+  (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+  )
 
 (use-package rainbow-mode
   :ensure t)
@@ -152,6 +156,33 @@
 
 (use-package helm-emmet
   :ensure t)
+
+(use-package web-mode
+  :ensure t
+  :config
+  ;; associate extensions with web-mode
+  (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.handlebars\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
+  ;;
+  (setq web-mode-enable-auto-pairing t)
+  (setq web-mode-enable-css-colorization t)
+  (setq web-mode-enable-block-face t)
+  (setq web-mode-enable-part-face t)
+  (setq web-mode-enable-comment-keywords t)
+  (setq web-mode-enable-heredoc-fontification t)
+  ;;
+  (setq web-mode-enable-current-element-highlight t)
+  (setq web-mode-enable-current-column-highlight t)
+
+  (setq web-mode-html-tag-unclosed-face t)
+  )
+
+(use-package impatient-mode
+  :ensure t
+  :config
+  (add-hook 'c-mode-hook 'httpd-start))
 
 ;; (use-package skewer-mode
 ;;   :ensure t

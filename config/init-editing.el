@@ -88,11 +88,19 @@
 (use-package highlight-indent-guides
   :ensure t
   :config
-  ;; Activate indent guides for all programming languages
-  (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
+  ;;
   (setq highlight-indent-guides-method 'character)
   (setq highlight-indent-guides-character ?\┆)
+  ;; Activate indent guides for all programming languages
+  (set-face-background 'highlight-indent-guides-odd-face
+                       (face-attribute 'font-lock-type-face :foreground))
+  (set-face-background 'highlight-indent-guides-even-face
+                       (face-attribute 'font-lock-type-face :foreground))
+  (set-face-foreground 'highlight-indent-guides-character-face
+                       (face-attribute 'font-lock-type-face :foreground))
+  (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
   )
+
 
 ;; -----------------------------------------------------------------------------
 ;; Search and replace
@@ -129,6 +137,9 @@
   :ensure t
   :config
   (global-move-dup-mode))
+
+(use-package string-inflection
+  :ensure t)
 
 (provide 'init-editing)
 ;;; init-editing.el ends here
