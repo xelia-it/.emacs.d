@@ -42,6 +42,10 @@
 ;; No more typing the whole yes or no. Just y or n will do.
 (fset 'yes-or-no-p 'y-or-n-p)
 
+;; Fix scroll
+(setq mouse-wheel-scroll-amount '(1 ((shift) . 1) ((control) . nil)))
+(setq mouse-wheel-progressive-speed nil)
+
 ;; -----------------------------------------------------------------------------
 
 ;; Auto-save before compiling
