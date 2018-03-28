@@ -63,8 +63,7 @@
 ;; if you use multiple-cursors, this is for you:
 ;;(define-key global-map (kbd "C-m") 'vr/mc-mark)
 
-;; Switch from .c/.h and vicevarsa
-;; (global-set-key (kbd "C-S-a") 'ff-find-other-file)
+(global-set-key (kbd "M-S-<mouse-1>") 'mc/add-cursor-on-click)
 
 ;; Move between buffers
 (global-set-key (kbd "M-<right>") 'next-buffer)
@@ -122,9 +121,10 @@
 (global-set-key (kbd "C-g") 'goto-line)
 
 ;; Bookmarks - using helm
-(global-set-key (kbd "C-*") 'bookmark-delete)
-(global-set-key (kbd "C-,") 'bookmark-set)
-(global-set-key (kbd "C-.") 'helm-filtered-bookmarks)
+(global-set-key (kbd "C-;") 'bm-toggle)
+(global-set-key (kbd "C-:") 'bm-toggle)
+(global-set-key (kbd "C-,") 'bm-previous)
+(global-set-key (kbd "C-.") 'bm-next)
 
 (provide 'init-keybinding)
 ;;; init-keybinding.el ends here

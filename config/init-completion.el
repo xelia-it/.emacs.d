@@ -204,5 +204,20 @@
 
 ;; -----------------------------------------------------------------------------
 
+(use-package yasnippet
+  :ensure t
+  :config
+  )
+
+(use-package yasnippet-snippets
+  :ensure t
+  :after (yasnippet)
+  :config
+  (yas-reload-all)
+  (add-hook 'prog-mode-hook #'yas-minor-mode)
+  )
+
+;; -----------------------------------------------------------------------------
+
 (provide 'init-completion)
 ;;; init-completion.el ends here

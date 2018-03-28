@@ -50,7 +50,7 @@
   (split-window-right)
   ;; Cursor settings
   (set-cursor-color "#fff")         ;; Set cursor color
-  (blink-cursor-mode t)             ;; Blink cursor
+  (blink-cursor-mode)               ;; Blink cursor
   (setq-default cursor-type 'bar)   ;; Cursor like a bar
   (global-hl-line-mode)             ;; Hightlight current line
   )

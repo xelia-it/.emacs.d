@@ -101,3 +101,17 @@
 
 (provide 'init)
 ;;; init.el ends here
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (magit yasnippet-snippets yasnippet all-the-icons mode-icons web-mode use-package string-inflection spaceline rainbow-mode multiple-cursors move-dup js2-mode impatient-mode highlight-indent-guides helm-swoop helm-projectile helm-gtags helm-emmet flycheck expand-region exec-path-from-shell company-web company-quickhelp company-irony-c-headers company-irony company-inf-ruby company-c-headers atom-one-dark-theme ac-html-csswatcher ac-html-bootstrap))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
