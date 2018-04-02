@@ -76,13 +76,12 @@
 (add-to-list 'load-path "~/.emacs.d/config")
 
 ;; Set the path variable
-;;(use-package exec-path-from-shell
-;;  :ensure t
-;;  :config
-;;  (when (memq window-system '(mac ns x))
-;;	(exec-path-from-shell-initialize))
-;;	)
-
+;; (Works only on Linux/Mac)
+(use-package exec-path-from-shell
+  :if (memq window-system '(mac ns))
+  :ensure t
+  :config
+  (exec-path-from-shell-initialize))
 
 ;; -----------------------------------------------------------------------------
 ;; Other config scripts
