@@ -35,6 +35,16 @@
 ;; -----------------------------------------------------------------------------
 ;; Theme
 
+;; Set the default font
+(cond
+ ((find-font (font-spec :name "Noto Mono"))
+  (set-frame-font "Noto Mono-11"))
+ ((find-font (font-spec :name "DejaVu Sans Mono"))
+  (set-frame-font "DejaVu Sans Mono-11"))
+ ((find-font (font-spec :name "Lucida Console"))
+  (set-frame-font "Lucida Console-11"))
+)
+
 ;; Setup color theme and window
 (use-package atom-one-dark-theme
   :ensure t
