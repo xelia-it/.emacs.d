@@ -78,7 +78,7 @@
 ;; Set the path variable
 ;; (Works only on Linux/Mac)
 (use-package exec-path-from-shell
-  :if (memq window-system '(mac ns))
+  :if (memq window-system '(mac ns x))
   :ensure t
   :config
   (exec-path-from-shell-initialize))
@@ -90,6 +90,7 @@
 (load "init-editing.el")
 (load "init-projects.el")
 (load "init-completion.el")
+(load "init-utils.el")
 (load "init-keybinding.el")
 
 ;; -----------------------------------------------------------------------------
@@ -109,12 +110,19 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(highlight-indent-guides-character 9478)
+ '(highlight-indent-guides-method (quote character))
  '(package-selected-packages
    (quote
-    (magit yasnippet-snippets yasnippet all-the-icons mode-icons web-mode use-package string-inflection spaceline rainbow-mode multiple-cursors move-dup js2-mode impatient-mode highlight-indent-guides helm-swoop helm-projectile helm-gtags helm-emmet flycheck expand-region exec-path-from-shell company-web company-quickhelp company-irony-c-headers company-irony company-inf-ruby company-c-headers atom-one-dark-theme ac-html-csswatcher ac-html-bootstrap))))
+    (magit yasnippet-snippets yasnippet all-the-icons mode-icons web-mode use-package string-inflection spaceline rainbow-mode multiple-cursors move-dup js2-mode impatient-mode highlight-indent-guides helm-swoop helm-projectile helm-gtags helm-emmet flycheck expand-region exec-path-from-shell company-web company-quickhelp company-irony-c-headers company-irony company-inf-ruby company-c-headers atom-one-dark-theme ac-html-csswatcher ac-html-bootstrap)))
+ '(web-mode-enable-current-column-highlight t)
+ '(web-mode-enable-current-element-highlight t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(helm-swoop-target-word-face ((t (:background "None" :foreground "#ffffff" :weight extra-bold))))
+ '(web-mode-current-column-highlight-face ((t (:foreground "#ffffff"))))
+ '(web-mode-current-element-highlight-face ((t (:foreground "#ffffff"))))
+ '(web-mode-inlay-face ((t nil))))

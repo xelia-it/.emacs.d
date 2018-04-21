@@ -69,8 +69,8 @@
 (global-set-key (kbd "M-<right>") 'next-buffer)
 (global-set-key (kbd "M-<left>") 'previous-buffer)
 (global-set-key (kbd "C-w") 'kill-this-buffer)
-(global-set-key (kbd "C-<tab>") 'other-window)
-(global-set-key (kbd "C-<iso-lefttab>") 'helm-buffers-list)
+;;(global-set-key (kbd "C-<tab>") 'other-window)
+(global-set-key (kbd "C-<tab>") 'helm-buffers-list)
 
 ;; Editing
 (global-unset-key (kbd "C-d"))

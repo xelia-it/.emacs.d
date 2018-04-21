@@ -37,12 +37,12 @@
 
 ;; Set the default font
 (cond
+ ((find-font (font-spec :name "Lucida Console"))
+  (set-frame-font "Lucida Console-11"))
  ((find-font (font-spec :name "Noto Mono"))
   (set-frame-font "Noto Mono-11"))
  ((find-font (font-spec :name "DejaVu Sans Mono"))
   (set-frame-font "DejaVu Sans Mono-11"))
- ((find-font (font-spec :name "Lucida Console"))
-  (set-frame-font "Lucida Console-11"))
 )
 
 ;; Setup color theme and window
@@ -63,35 +63,39 @@
   (blink-cursor-mode)               ;; Blink cursor
   (setq-default cursor-type 'bar)   ;; Cursor like a bar
   (global-hl-line-mode)             ;; Hightlight current line
-  )
+  ;; Show parenthesis
+  (require 'paren)
+  (set-face-background 'show-paren-match "#282C34")
+  (set-face-foreground 'show-paren-match "#fff")
+  (set-face-attribute 'show-paren-match nil :weight 'extra-bold)
+  (defvar match-paren--idle-timer nil)
+  (defvar match-paren--delay 0.5)
+  (setq match-paren--idle-timer
+        (run-with-idle-timer match-paren--delay t #'blink-matching-open))
+  (show-paren-mode 1)
 
-;; Show parenthesis
-(require 'paren)
-(set-face-background 'show-paren-match "#282C34")
-(set-face-foreground 'show-paren-match "#fff")
-(set-face-attribute 'show-paren-match nil :weight 'extra-bold)
-(defvar match-paren--idle-timer nil)
-(defvar match-paren--delay 0.5)
-(setq match-paren--idle-timer
-      (run-with-idle-timer match-paren--delay t #'blink-matching-open))
-(show-paren-mode 1)
+  ;; Show line numbers
+  (require 'linum)
+  (setq linum-format "%4d ")
+  (add-hook 'prog-mode-hook 'linum-mode)
+  )
 
 ;; -----------------------------------------------------------------------------
 ;; Powerline
 
-(use-package mode-icons
-  :ensure t
-  :config
-  (mode-icons-mode t)
-)
+;;(use-package mode-icons
+;;  :ensure t
+;;  :config
+;;  (mode-icons-mode t)
+;;)
 
-(use-package all-the-icons
-  :ensure t
-  )
+;;(use-package all-the-icons
+;;  :ensure t
+;;  )
 
 (use-package powerline
   :ensure t
-  :after (mode-icons all-the-icons)
+;;  :after (mode-icons all-the-icons)
   :config
   ;; TODO: experiments
   ;; Definitions
@@ -111,19 +115,14 @@
                      (let* ((active (powerline-selected-window-active))
                             (face0 (if active 'powerline-active0 'powerline-inactive0))
                             (lhs (list
-                                  (propertize " " 'display (if active mode-line-bar mode-line-inactive-bar))
+;;                                  (propertize " " 'display (if active mode-line-bar mode-line-inactive-bar))
 
                                   (powerline-raw "%*" face0 'l)
-                                  (powerline-major-mode face0 'l)
                                   (powerline-buffer-id `(mode-line-buffer-id ,face0) 'l)
+                                  (powerline-major-mode face0 'l)
                                   (powerline-process face0 'l)
                                   ))
                             (rhs (list
-                                  ;; (powerline-raw
-                                  ;;  (propertize (all-the-icons-faicon "code-fork")
-                                  ;;              'face `(:family ,(all-the-icons-octicon-family) :height 1.2)
-                                  ;;              'display '(raise -0.1))
-                                  ;;  face0 'l)
                                   (powerline-vc face0 'l)
                                   (powerline-raw "%4l" face0 'l)
                                   (powerline-raw ":" face0 'l)
@@ -137,9 +136,6 @@
 
   (my-powerline-default-theme)
   )
-
-
-;; -----------------------------------------------------------------------------
 
 ;; -----------------------------------------------------------------------------
 
