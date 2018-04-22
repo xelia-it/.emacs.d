@@ -20,6 +20,7 @@
 (global-set-key (kbd "C-j") 'helm-imenu)
 (global-set-key (kbd "S-C-j") 'helm-occur)
 
+(global-unset-key (kbd "<f2> <f2>"))
 ;; Compile Project
 (global-set-key (kbd "<f9>") 'projectile-compile-project)
 ;; Move to the previous error found during compiling
@@ -30,7 +31,8 @@
 (global-set-key (kbd "<f12>") 'flycheck-list-errors)
 
 ;; Ctrl-<space>: code completion (with company)
-(global-set-key (kbd "C-SPC") 'company-complete-common)
+;; (global-set-key (kbd "C-SPC") 'company-complete-common)
+(global-set-key (kbd "C-SPC") 'helm-company)
 
 ;; Set key bindings
 (define-key helm-gtags-mode-map (kbd "C-b") 'helm-gtags-find-tag)

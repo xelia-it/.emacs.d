@@ -115,7 +115,12 @@
 ;; A better search package that works with helm
 (use-package helm-swoop
   :ensure t
-  :after (helm))
+  :after (helm)
+  :config
+  (set-face-attribute 'helm-swoop-target-word-face nil
+                      :background "None"
+                      :foreground "#ffffff")
+  )
 
 
 ;; -----------------------------------------------------------------------------

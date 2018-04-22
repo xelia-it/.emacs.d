@@ -43,16 +43,16 @@
 (require 'package)
 (setq package-enable-at-startup nil)
 
-(defvar gnu '("gnu" . "https://elpa.gnu.org/packages/"))
-(defvar melpa '("melpa" . "https://melpa.org/packages/"))
-(defvar melpa-stable '("melpa-stable" . "https://stable.melpa.org/packages/"))
-(defvar org-elpa '("org" . "http://orgmode.org/elpa/"))
+(defvar repo-gnu '("gnu" . "https://elpa.gnu.org/packages/"))
+(defvar repo-melpa '("melpa" . "https://melpa.org/packages/"))
+(defvar repo-melpa-stable '("melpa-stable" . "https://stable.melpa.org/packages/"))
+(defvar repo-org-elpa '("org" . "http://orgmode.org/elpa/"))
 
 (setq package-archives nil)
-(add-to-list 'package-archives melpa-stable t)
-(add-to-list 'package-archives melpa t)
-(add-to-list 'package-archives gnu t)
-(add-to-list 'package-archives org-elpa t)
+(add-to-list 'package-archives repo-melpa-stable t)
+(add-to-list 'package-archives repo-melpa t)
+(add-to-list 'package-archives repo-gnu t)
+(add-to-list 'package-archives repo-org-elpa t)
 
 ;; Downloads new packages in case of a fresh install
 (package-initialize)
@@ -122,7 +122,6 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(helm-swoop-target-word-face ((t (:background "None" :foreground "#ffffff" :weight extra-bold))))
  '(web-mode-current-column-highlight-face ((t (:foreground "#ffffff"))))
  '(web-mode-current-element-highlight-face ((t (:foreground "#ffffff"))))
  '(web-mode-inlay-face ((t nil))))

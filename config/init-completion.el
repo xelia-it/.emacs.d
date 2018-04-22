@@ -24,9 +24,6 @@
 (use-package company
   :ensure t
   :config
-;;  (add-to-list 'company-backends 'company-clang)
-;;  (add-to-list 'company-backends 'company-gcc)
-;;  (add-to-list 'company-backends 'company-cppcheck)
   (global-company-mode))
 
 (use-package company-quickhelp
@@ -34,6 +31,14 @@
   :after (company)
   :config
   (company-quickhelp-mode))
+
+(setq company-idle-delay 0
+      company-echo-delay 0
+      company-dabbrev-downcase nil
+      company-minimum-prefix-length 2
+      company-selection-wrap-around t
+      company-transformers '(company-sort-by-occurrence
+                             company-sort-by-backend-importance))
 
 ;; -----------------------------------------------------------------------------
 ;; Code tagging and movement
@@ -152,9 +157,6 @@
   :ensure t)
 
 (use-package emmet-mode
-  :ensure t)
-
-(use-package helm-emmet
   :ensure t)
 
 (use-package web-mode
