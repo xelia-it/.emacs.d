@@ -71,7 +71,7 @@
   ;; make whitespace-mode use just basic coloring
   (setq whitespace-style (quote
                           (face spaces tabs newline
-                                ;;space-mark tab-mark newline-mark
+                                ;; space-mark tab-mark newline-mark
                                 empty tabs lines-tail trailing)))
   (set-face-attribute 'whitespace-space nil :background nil :foreground "gray30")
   (set-face-attribute 'whitespace-newline nil :background nil :foreground "gray30")
@@ -86,7 +86,7 @@
 ;;    (newline-mark 10 [182 10]) ; 10 LINE FEED
 ;;    (tab-mark 9 [9655 9] [92 9]) ; 9 TAB, 9655 WHITE RIGHT-POINTING TRIANGLE 「▷」
 ;;    ))
-;;
+
 
 ;; Show indent guides
 (use-package highlight-indent-guides
@@ -97,11 +97,11 @@
   (setq highlight-indent-guides-character ?\┆)
   ;; Activate indent guides for all programming languages
   (set-face-background 'highlight-indent-guides-odd-face
-                       (face-attribute 'font-lock-type-face :foreground))
+                       (face-attribute 'font-lock-comment-face :foreground))
   (set-face-background 'highlight-indent-guides-even-face
-                       (face-attribute 'font-lock-type-face :foreground))
+                       (face-attribute 'font-lock-comment-face :foreground))
   (set-face-foreground 'highlight-indent-guides-character-face
-                       (face-attribute 'font-lock-type-face :foreground))
+                       (face-attribute 'font-lock-comment-face :foreground))
   (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
   )
 
@@ -110,7 +110,12 @@
 ;; Search and replace
 
 (use-package helm
-  :ensure t)
+  :ensure t
+  :config
+  (setq
+   helm-always-two-windows t
+   helm-split-window-default-side 'right)
+  )
 
 ;; A better search package that works with helm
 (use-package helm-swoop
@@ -215,6 +220,13 @@
 
 (use-package string-inflection
   :ensure t)
+
+(use-package which-key
+  :ensure t
+  :config
+  (setq which-key-side-window-location 'bottom)
+  )
+
 
 (provide 'init-editing)
 ;;; init-editing.el ends here

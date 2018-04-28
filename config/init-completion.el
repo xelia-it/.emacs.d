@@ -112,6 +112,12 @@
   (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
   )
 
+(use-package cmake-ide
+  :ensure t
+  :config
+  (cmake-ide-setup)
+  )
+
 ;; Debugging
 (setq
  ;; use gdb-many-windows by default

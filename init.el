@@ -110,11 +110,14 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   (quote
+    ("4af6fad34321a1ce23d8ab3486c662de122e8c6c1de97baed3aa4c10fe55e060" default)))
  '(highlight-indent-guides-character 9478)
  '(highlight-indent-guides-method (quote character))
  '(package-selected-packages
    (quote
-    (magit yasnippet-snippets yasnippet all-the-icons mode-icons web-mode use-package string-inflection spaceline rainbow-mode multiple-cursors move-dup js2-mode impatient-mode highlight-indent-guides helm-swoop helm-projectile helm-gtags helm-emmet flycheck expand-region exec-path-from-shell company-web company-quickhelp company-irony-c-headers company-irony company-inf-ruby company-c-headers atom-one-dark-theme ac-html-csswatcher ac-html-bootstrap)))
+    (nlinum gandalf-theme arjen-grey-theme magit yasnippet-snippets yasnippet all-the-icons mode-icons web-mode use-package string-inflection spaceline rainbow-mode multiple-cursors move-dup js2-mode impatient-mode highlight-indent-guides helm-swoop helm-projectile helm-gtags helm-emmet flycheck expand-region exec-path-from-shell company-web company-quickhelp company-irony-c-headers company-irony company-inf-ruby company-c-headers atom-one-dark-theme ac-html-csswatcher ac-html-bootstrap)))
  '(web-mode-enable-current-column-highlight t)
  '(web-mode-enable-current-element-highlight t))
 (custom-set-faces

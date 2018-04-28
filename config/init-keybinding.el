@@ -31,8 +31,7 @@
 (global-set-key (kbd "<f12>") 'flycheck-list-errors)
 
 ;; Ctrl-<space>: code completion (with company)
-;; (global-set-key (kbd "C-SPC") 'company-complete-common)
-(global-set-key (kbd "C-SPC") 'helm-company)
+(global-set-key (kbd "C-SPC") 'company-complete-common)
 
 ;; Set key bindings
 (define-key helm-gtags-mode-map (kbd "C-b") 'helm-gtags-find-tag)
@@ -65,8 +64,6 @@
 ;; if you use multiple-cursors, this is for you:
 ;;(define-key global-map (kbd "C-m") 'vr/mc-mark)
 
-(global-set-key (kbd "M-S-<mouse-1>") 'mc/add-cursor-on-click)
-
 ;; Move between buffers
 (global-set-key (kbd "M-<right>") 'next-buffer)
 (global-set-key (kbd "M-<left>") 'previous-buffer)
@@ -80,6 +77,8 @@
 (global-set-key (kbd "M-S-<up>") 'mc/mark-previous-like-this)
 (global-set-key (kbd "C-d") 'mc/mark-all-symbols-like-this-in-defun)
 (global-set-key (kbd "S-C-d") 'mc/mark-next-like-this-word)
+(global-set-key (kbd "M-S-<mouse-1>") 'mc/add-cursor-on-click)
+(define-key mc/keymap (kbd "<escape>") 'mc/keyboard-quit)
 
 ;; In C++ mode some keystrokes overlaps: force unset.
 (defun my-disable-ctrl-d ()

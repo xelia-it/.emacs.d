@@ -37,12 +37,14 @@
 
 ;; Set the default font
 (cond
+ ((find-font (font-spec :name "Noto Mono"))
+  (set-frame-font (find-font (font-spec :name "Noto Mono")))
+  )
+ ((find-font (font-spec :name "DejaVu Sans Mono"))
+  (set-frame-font (find-font (font-spec :name "DejaVu Sans Mono")))
+  )
  ((find-font (font-spec :name "Lucida Console"))
   (set-frame-font "Lucida Console-11"))
- ((find-font (font-spec :name "Noto Mono"))
-  (set-frame-font "Noto Mono-11"))
- ((find-font (font-spec :name "DejaVu Sans Mono"))
-  (set-frame-font "DejaVu Sans Mono-11"))
 )
 
 ;; Setup color theme and window
@@ -57,10 +59,10 @@
   (scroll-bar-mode -1)              ;; No more scrollbars
   (load-theme 'atom-one-dark t)     ;; Load theme (t = force without warning)
   (toggle-frame-maximized)          ;; Start with maximized frame
-  (split-window-right)
+  ;;  (split-window-right)
   ;; Cursor settings
   (set-cursor-color "#fff")         ;; Set cursor color
-  (blink-cursor-mode)               ;; Blink cursor
+  ;;(blink-cursor-mode)               ;; Blink cursor
   (setq-default cursor-type 'bar)   ;; Cursor like a bar
   (global-hl-line-mode)             ;; Hightlight current line
   ;; Show parenthesis
@@ -76,22 +78,12 @@
 
   ;; Show line numbers
   (require 'linum)
-  (setq linum-format "%4d ")
+  (setq-default linum-format "%4d ")
   (add-hook 'prog-mode-hook 'linum-mode)
   )
 
 ;; -----------------------------------------------------------------------------
 ;; Powerline
-
-;;(use-package mode-icons
-;;  :ensure t
-;;  :config
-;;  (mode-icons-mode t)
-;;)
-
-;;(use-package all-the-icons
-;;  :ensure t
-;;  )
 
 (use-package powerline
   :ensure t
@@ -99,14 +91,7 @@
   :config
   ;; TODO: experiments
   ;; Definitions
-  (defvar mode-line-height
-    24 "A little bit taller, a little bit baller.")
-  (defvar mode-line-bar
-    (eval-when-compile (pl/percent-xpm mode-line-height 100 0 100 0 3 "#909fab" nil)))
-  (defvar mode-line-inactive-bar
-    (eval-when-compile (pl/percent-xpm mode-line-height 100 0 100 0 3 "#333333" nil)))
-
-  (defun my-powerline-default-theme()
+  (defun my-powerline-theme()
     "Setup a nano-like mode-line."
     (interactive)
     (setq-default mode-line-format
@@ -115,8 +100,6 @@
                      (let* ((active (powerline-selected-window-active))
                             (face0 (if active 'powerline-active0 'powerline-inactive0))
                             (lhs (list
-;;                                  (propertize " " 'display (if active mode-line-bar mode-line-inactive-bar))
-
                                   (powerline-raw "%*" face0 'l)
                                   (powerline-buffer-id `(mode-line-buffer-id ,face0) 'l)
                                   (powerline-major-mode face0 'l)
@@ -134,7 +117,8 @@
                                (powerline-fill face0 (powerline-width rhs))
                                (powerline-render rhs)))))))
 
-  (my-powerline-default-theme)
+  ;; Call my-powerline-theme (fboundp is used to avoid warning)
+  (when (fboundp 'my-powerline-theme) (my-powerline-theme))
   )
 
 ;; -----------------------------------------------------------------------------
