@@ -25,6 +25,7 @@
 
 ;; Magit
 (global-set-key (kbd "<f5>") 'magit-status)
+(define-key magit-mode-map (kbd "C-w") 'magit-mode-bury-buffer)
 
 ;; Compile Project
 (global-set-key (kbd "<f9>") 'projectile-compile-project)
