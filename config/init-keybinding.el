@@ -20,7 +20,12 @@
 (global-set-key (kbd "C-j") 'helm-imenu)
 (global-set-key (kbd "S-C-j") 'helm-occur)
 
+;; Annoying
 (global-unset-key (kbd "<f2> <f2>"))
+
+;; Magit
+(global-set-key (kbd "<f5>") 'magit-status)
+
 ;; Compile Project
 (global-set-key (kbd "<f9>") 'projectile-compile-project)
 ;; Move to the previous error found during compiling
@@ -40,15 +45,24 @@
 (define-key helm-gtags-mode-map (kbd "S-C-t") 'helm-gtags-find-symbol)
 
 ;; Ctrl-S: save current file
+(defun my-save ()
+  "Save buffer."
+  (interactive)
+  (save-buffer)
+  (magit-refresh-all)
+  )
 (global-unset-key (kbd "C-s"))
-(global-set-key (kbd "C-s") 'save-buffer)
+(global-set-key (kbd "C-s") 'my-save)
 
 ;; Shift-Ctrl-S: save all files without confirmation
-(defun save-all ()
-  "Save buffer without confirmation."
-  (interactive) (save-some-buffers t))
+(defun my-save-all ()
+  "Save all buffers without confirmation."
+  (interactive)
+  (save-some-buffers t)
+  (magit-refresh-all)
+  )
 (global-unset-key (kbd "S-C-s"))
-(global-set-key (kbd "S-C-s") 'save-all)
+(global-set-key (kbd "S-C-s") 'my-save-all)
 
 ;; Close all buffers
 (global-set-key (kbd "S-C-w") 'close-all-buffers)

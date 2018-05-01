@@ -24,5 +24,9 @@
   :config
   (helm-projectile-on))
 
+(use-package magit
+  :ensure t
+  )
+
 (provide 'init-projects)
 ;;; init-projects.el ends here

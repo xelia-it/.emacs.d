@@ -24,21 +24,21 @@
 (use-package company
   :ensure t
   :config
-  (global-company-mode))
+  (setq company-idle-delay 0
+        company-echo-delay 0
+        company-dabbrev-downcase nil
+        company-minimum-prefix-length 2
+        company-selection-wrap-around t
+        company-transformers '(company-sort-by-occurrence
+                               company-sort-by-backend-importance))
+  (global-company-mode)
+  )
 
 (use-package company-quickhelp
   :ensure t
   :after (company)
   :config
   (company-quickhelp-mode))
-
-(setq company-idle-delay 0
-      company-echo-delay 0
-      company-dabbrev-downcase nil
-      company-minimum-prefix-length 2
-      company-selection-wrap-around t
-      company-transformers '(company-sort-by-occurrence
-                             company-sort-by-backend-importance))
 
 ;; -----------------------------------------------------------------------------
 ;; Code tagging and movement
@@ -178,27 +178,28 @@
   (setq web-mode-enable-css-colorization t)
   (setq web-mode-enable-block-face t)
   (setq web-mode-enable-part-face t)
-  (setq web-mode-enable-comment-keywords t)
+  ;; (setq web-mode-enable-comment-keywords t)
   (setq web-mode-enable-heredoc-fontification t)
   ;;
   (setq web-mode-enable-current-element-highlight t)
   (setq web-mode-enable-current-column-highlight t)
+  ;;
+  ;;(setq web-mode-html-tag-unclosed-face t)
+  (set-face-attribute 'web-mode-block-face nil :background nil)
+  (set-face-attribute 'web-mode-inlay-face nil :background nil)
+  (set-face-attribute 'web-mode-current-column-highlight-face nil
+                      :foreground "#ffffff" :background nil)
+  (set-face-attribute 'web-mode-current-element-highlight-face nil
+                      :foreground "#ffffff" :background nil :weight 'extra-bold)
 
-  (setq web-mode-html-tag-unclosed-face t)
+  (add-hook 'web-mode-hook 'emmet-mode)
   )
 
 (use-package impatient-mode
   :ensure t
   :config
-  (add-hook 'c-mode-hook 'httpd-start))
-
-;; (use-package skewer-mode
-;;   :ensure t
-;;   :config
-;;   (add-hook 'js2-mode-hook 'skewer-mode)
-;;   (add-hook 'css-mode-hook 'skewer-css-mode)
-;;   (add-hook 'html-mode-hook 'skewer-html-mode)
-;;   )
+  (add-hook 'c-mode-hook 'httpd-start)
+  )
 
 ;; -----------------------------------------------------------------------------
 ;; Language: Ruby
