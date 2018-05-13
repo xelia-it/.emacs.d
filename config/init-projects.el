@@ -28,5 +28,11 @@
   :ensure t
   )
 
+(use-package projectile-rails
+  :ensure t
+  :after (helm projectile)
+  :config
+  (projectile-rails-global-mode))
+
 (provide 'init-projects)
 ;;; init-projects.el ends here

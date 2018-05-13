@@ -40,8 +40,8 @@
 (global-set-key (kbd "C-SPC") 'company-complete-common)
 
 ;; Set key bindings
-(define-key helm-gtags-mode-map (kbd "C-b") 'helm-gtags-find-tag)
-(define-key helm-gtags-mode-map (kbd "S-C-b") 'helm-gtags-pop-stack)
+(define-key helm-gtags-mode-map (kbd "S-C-<return>") 'helm-gtags-find-tag)
+;; (define-key helm-gtags-mode-map (kbd "S-C-<return>") 'helm-gtags-pop-stack)
 (define-key helm-gtags-mode-map (kbd "C-t") 'helm-gtags-find-rtag)
 (define-key helm-gtags-mode-map (kbd "S-C-t") 'helm-gtags-find-symbol)
 
@@ -80,13 +80,16 @@
 ;;(define-key global-map (kbd "C-m") 'vr/mc-mark)
 
 ;; Move between buffers
-(global-set-key (kbd "M-<right>") 'next-buffer)
-(global-set-key (kbd "M-<left>") 'previous-buffer)
+(global-unset-key (kbd "C-b"))
+(global-set-key (kbd "C-b") 'helm-buffers-list)
+(global-set-key (kbd "C-<tab>") 'next-buffer)
+(global-set-key (kbd "C-<iso-lefttab>") 'previous-buffer)
 (global-set-key (kbd "C-w") 'kill-this-buffer)
-;;(global-set-key (kbd "C-<tab>") 'other-window)
-(global-set-key (kbd "C-<tab>") 'helm-buffers-list)
 
 ;; Editing
+(global-set-key (kbd "S-C-v") 'helm-kill-ring)
+(global-set-key (kbd "M-<left>") 'move-beginning-of-line)
+(global-set-key (kbd "M-<right>") 'move-end-of-line)
 (global-unset-key (kbd "C-d"))
 (global-set-key (kbd "M-S-<down>") 'mc/mark-next-like-this)
 (global-set-key (kbd "M-S-<up>") 'mc/mark-previous-like-this)

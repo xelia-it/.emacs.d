@@ -105,6 +105,9 @@
 
 (put 'cmake-ide-flags-c 'safe-local-variable (lambda(xx) t))
 (put 'cmake-ide-flags-c++ 'safe-local-variable (lambda(xx) t))
+(put 'projectile-root-path 'safe-local-variable (lambda(xx) t))
+(put 'var 'safe-local-variable #'stringp)
+(put 'var 'safe-local-variable #'listp)
 
 ;; Use a separate custom file
 (setq custom-file "~/.emacs.d/custom.el")

@@ -10,8 +10,8 @@
 ;; Cleanup interface and buffers
 
 ;; Removes *messages* from the buffer list.
-(setq-default message-log-max nil)
-(kill-buffer "*Messages*")
+;;(setq-default message-log-max nil)
+;;(kill-buffer "*Messages*")
 
 ;; Removes *Completions* from buffer after you've opened a file.
 (add-hook 'minibuffer-exit-hook
@@ -37,14 +37,14 @@
 
 ;; Set the default font
 (cond
- ((find-font (font-spec :name "Noto Mono"))
-  (set-frame-font (find-font (font-spec :name "Noto Mono")))
-  )
  ((find-font (font-spec :name "DejaVu Sans Mono"))
-  (set-frame-font (find-font (font-spec :name "DejaVu Sans Mono")))
+  (set-frame-font (find-font (font-spec :name "DejaVu Sans Mono" :weight 'light)))
+  )
+ ((find-font (font-spec :name "Noto Mono"))
+  (set-frame-font (find-font (font-spec :name "Noto Mono" :weight 'light)))
   )
  ((find-font (font-spec :name "Lucida Console"))
-  (set-frame-font "Lucida Console-11"))
+  (set-frame-font "Lucida Console-11" :weight 'light))
 )
 
 ;; Setup color theme and window
@@ -59,10 +59,9 @@
   (scroll-bar-mode -1)              ;; No more scrollbars
   (load-theme 'atom-one-dark t)     ;; Load theme (t = force without warning)
   (toggle-frame-maximized)          ;; Start with maximized frame
-  ;;  (split-window-right)
   ;; Cursor settings
   (set-cursor-color "#fff")         ;; Set cursor color
-  ;;(blink-cursor-mode)               ;; Blink cursor
+  (blink-cursor-mode)               ;; Blink cursor
   (setq-default cursor-type 'bar)   ;; Cursor like a bar
   (global-hl-line-mode)             ;; Hightlight current line
   ;; Show parenthesis
