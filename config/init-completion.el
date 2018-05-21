@@ -9,12 +9,11 @@
 ;; -----------------------------------------------------------------------------
 ;; On the fly check
 
-
 (use-package flycheck
   :ensure t
   :config
   ;; Disable ruby-reek checker: it's too verbose
-  (setq-default flycheck-disabled-checkers '(ruby-reek))
+  (setq-default flycheck-disabled-checkers '(ruby-reek c/c++-clang))
   (global-flycheck-mode)
   )
 
@@ -112,25 +111,25 @@
   (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
   )
 
- (use-package cpputils-cmake
-    :ensure t
-    :config
+(use-package cpputils-cmake
+  :ensure t
+  :config
 
 
- (add-hook 'c-mode-common-hook
-           (lambda ()
-             (if (derived-mode-p 'c-mode 'c++-mode)
-                 (cppcm-reload-all)
-               )))
- ;; OPTIONAL, somebody reported that they can use this package with Fortran
- (add-hook 'c90-mode-hook (lambda () (cppcm-reload-all)))
- ;; OPTIONAL, avoid typing full path when starting gdb
- (global-set-key (kbd "C-c C-g")
-  '(lambda ()(interactive) (gud-gdb (concat "gdb --fullname " (cppcm-get-exe-path-current-buffer)))))
- ;; OPTIONAL, some users need specify extra flags forwarded to compiler
- (setq cppcm-extra-preprocss-flags-from-user '("-I/usr/src/linux/include" "-DNDEBUG"))
+  (add-hook 'c-mode-common-hook
+            (lambda ()
+              (if (derived-mode-p 'c-mode 'c++-mode)
+                  (cppcm-reload-all)
+                )))
+  ;; OPTIONAL, somebody reported that they can use this package with Fortran
+  ;;(add-hook 'c90-mode-hook (lambda () (cppcm-reload-all)))
+  ;; OPTIONAL, avoid typing full path when starting gdb
+  (global-set-key (kbd "C-c C-g")
+                  '(lambda ()(interactive) (gud-gdb (concat "gdb --fullname " (cppcm-get-exe-path-current-buffer)))))
+  ;; OPTIONAL, some users need specify extra flags forwarded to compiler
+;;  (setq cppcm-extra-preprocss-flags-from-user '("-I/usr/src/linux/include" "-DNDEBUG"))
 
-    )
+  )
 
 
 
@@ -231,6 +230,13 @@
   :after (company)
   :config
   (add-to-list 'company-backends 'company-inf-ruby)
+  )
+
+(use-package projectile-rails
+  :ensure t
+  :after (helm projectile)
+  :config
+  (projectile-rails-global-mode)
   )
 
 ;; -----------------------------------------------------------------------------

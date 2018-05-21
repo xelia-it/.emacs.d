@@ -87,7 +87,7 @@
 (global-set-key (kbd "C-w") 'kill-this-buffer)
 
 ;; Editing
-(global-set-key (kbd "S-C-v") 'helm-kill-ring)
+(global-set-key (kbd "S-C-v") 'helm-show-kill-ring)
 (global-set-key (kbd "M-<left>") 'move-beginning-of-line)
 (global-set-key (kbd "M-<right>") 'move-end-of-line)
 (global-unset-key (kbd "C-d"))

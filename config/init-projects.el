@@ -11,7 +11,21 @@
 (use-package helm
   :ensure t
   :config
-  (require 'helm-config))
+  (require 'helm-config)
+  (setq
+   helm-always-two-windows t
+   helm-split-window-default-side (quote right))
+  )
+
+;; A better search package that works with helm
+(use-package helm-swoop
+  :ensure t
+  :after (helm)
+  :config
+  (set-face-attribute 'helm-swoop-target-word-face nil
+                      :background nil
+                      :foreground "#ffffff")
+  )
 
 (use-package projectile
   :ensure t
@@ -27,12 +41,6 @@
 (use-package magit
   :ensure t
   )
-
-(use-package projectile-rails
-  :ensure t
-  :after (helm projectile)
-  :config
-  (projectile-rails-global-mode))
 
 (provide 'init-projects)
 ;;; init-projects.el ends here

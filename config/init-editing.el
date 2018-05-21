@@ -106,30 +106,6 @@
   (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
   )
 
-
-
-;; -----------------------------------------------------------------------------
-;; Search and replace
-
-(use-package helm
-  :ensure t
-  :config
-  (setq
-   helm-always-two-windows t
-   helm-split-window-default-side 'right)
-  )
-
-;; A better search package that works with helm
-(use-package helm-swoop
-  :ensure t
-  :after (helm)
-  :config
-  (set-face-attribute 'helm-swoop-target-word-face nil
-                      :background "None"
-                      :foreground "#ffffff")
-  )
-
-
 ;; -----------------------------------------------------------------------------
 ;; Bookmarks
 
