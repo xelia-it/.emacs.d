@@ -29,7 +29,9 @@
 
 (use-package projectile
   :ensure t
+  :after (helm)
   :config
+  (setq projectile-completion-system 'helm)
   (projectile-mode))
 
 (use-package helm-projectile

@@ -25,9 +25,11 @@
 
 ;; Magit
 (global-set-key (kbd "<f5>") 'magit-status)
+(global-set-key (kbd "<f6>") 'magit-log-all)
 (define-key magit-mode-map (kbd "C-w") 'magit-mode-bury-buffer)
 
 ;; Compile Project
+(global-set-key (kbd "S-<f9>") 'projectile-configure-project)
 (global-set-key (kbd "<f9>") 'projectile-compile-project)
 ;; Move to the previous error found during compiling
 (global-set-key (kbd "<f10>") 'previous-error)

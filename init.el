@@ -99,9 +99,11 @@
 ;; Some variables can be put into .dir-locals-el scripts
 (put 'company-clang-arguments 'safe-local-variable (lambda(xx) t))
 (put 'flycheck-clang-args 'safe-local-variable (lambda(xx) t))
+(put 'projectile-project-compilation-dir 'safe-local-variable (lambda(xx) t))
 (put 'projectile-project-compilation-cmd 'safe-local-variable (lambda(xx) t))
-(put 'projectile-project-test-cmd 'safe-local-variable (lambda(xx) t))
+(put 'projectile-project-configure-cmd 'safe-local-variable (lambda(xx) t))
 (put 'projectile-project-run-cmd 'safe-local-variable (lambda(xx) t))
+(put 'projectile-project-test-cmd 'safe-local-variable (lambda(xx) t))
 (put 'c-default-style 'safe-local-variable (lambda(xx) t))
 (put 'c-offsets-alist 'safe-local-variable (lambda(xx) t))
 (put 'projectile-root-path 'safe-local-variable (lambda(xx) t))
