@@ -92,16 +92,9 @@
 (use-package highlight-indent-guides
   :ensure t
   :config
-  ;;
-  (setq highlight-indent-guides-auto-enabled nil)
   (setq highlight-indent-guides-method 'character)
-  (setq highlight-indent-guides-character ?\┆)
-  ;; (set-face-background 'highlight-indent-guides-odd-face
-  ;;                      (face-attribute 'font-lock-comment-face :foreground))
-  ;; (set-face-background 'highlight-indent-guides-even-face
-  ;;                      (face-attribute 'font-lock-comment-face :foreground))
-  (set-face-attribute 'highlight-indent-guides-character-face nil
-                      :foreground "#ffffff")
+  (set-face-attribute 'highlight-indent-guides-character-face 
+                      (face-attribute 'font-lock-comment-face :foreground))
   ;; Activate indent guides for all programming languages
   (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
   )
@@ -195,7 +188,6 @@
   :config
   (global-move-dup-mode))
 
-
 (use-package string-inflection
   :ensure t)
 
@@ -204,7 +196,6 @@
   :config
   (setq which-key-side-window-location 'bottom)
   )
-
 
 (provide 'init-editing)
 ;;; init-editing.el ends here
