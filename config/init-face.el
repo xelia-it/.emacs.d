@@ -38,7 +38,7 @@
 ;; Set the default font
 (cond
  ((find-font (font-spec :name "DejaVu Sans Mono"))
-  (set-frame-font (find-font (font-spec :name "DejaVu Sans Mono" :weight 'light)))
+  (set-frame-font (find-font (font-spec :name "-outline-DejaVu Sans Mono-normal-normal-normal-mono-15-*-*-*-c-*-iso8859-1")))
   )
  ((find-font (font-spec :name "Noto Mono"))
   (set-frame-font (find-font (font-spec :name "Noto Mono" :weight 'light)))
@@ -62,7 +62,7 @@
   ;; Cursor settings
   (set-cursor-color "#fff")         ;; Set cursor color
   (blink-cursor-mode)               ;; Blink cursor
-  (setq-default cursor-type 'bar)   ;; Cursor like a bar
+;;  (setq-default cursor-type 'bar)   ;; Cursor like a bar
   (global-hl-line-mode)             ;; Hightlight current line
   ;; Show parenthesis
   (require 'paren)
