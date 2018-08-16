@@ -67,9 +67,6 @@
 (global-unset-key (kbd "S-C-s"))
 (global-set-key (kbd "S-C-s") 'my-save-all)
 
-;; Close all buffers
-(global-set-key (kbd "S-C-w") 'close-all-buffers)
-
 ;; Change Search and Replace keys
 (global-unset-key (kbd "C-f"))
 (global-set-key (kbd "C-f") 'helm-swoop)
@@ -87,6 +84,7 @@
 (global-set-key (kbd "C-<tab>") 'next-buffer)
 (global-set-key (kbd "C-<iso-lefttab>") 'previous-buffer)
 (global-set-key (kbd "C-w") 'kill-this-buffer)
+(global-set-key (kbd "S-C-w") 'kill-other-buffers)
 
 ;; Editing
 (global-set-key (kbd "S-C-v") 'helm-show-kill-ring)
