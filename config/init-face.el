@@ -62,8 +62,10 @@
   ;; Cursor settings
   (set-cursor-color "#fff")         ;; Set cursor color
   (blink-cursor-mode)               ;; Blink cursor
-;;  (setq-default cursor-type 'bar)   ;; Cursor like a bar
   (global-hl-line-mode)             ;; Hightlight current line
+  ;; Cursor like a bar (On Linux/Mac)
+  (if (memq window-system '(mac ns x))
+      (setq-default cursor-type 'bar))
   ;; Show parenthesis
   (require 'paren)
   (set-face-background 'show-paren-match "#282C34")
