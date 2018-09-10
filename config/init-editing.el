@@ -93,7 +93,7 @@
   :ensure t
   :config
   (setq highlight-indent-guides-method 'character)
-  (set-face-attribute 'highlight-indent-guides-character-face 
+  (set-face-attribute 'highlight-indent-guides-character-face
                       (face-attribute 'font-lock-comment-face :foreground))
   ;; Activate indent guides for all programming languages
   (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
@@ -194,7 +194,8 @@
 (use-package which-key
   :ensure t
   :config
-  (setq which-key-side-window-location 'bottom)
+  ;;(setq which-key-side-window-location 'bottom)
+  (which-key-setup-side-window-bottom)
   )
 
 (provide 'init-editing)
