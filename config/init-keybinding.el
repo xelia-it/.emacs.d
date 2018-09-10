@@ -31,6 +31,8 @@
 ;; Compile Project
 (global-set-key (kbd "S-<f9>") 'projectile-configure-project)
 (global-set-key (kbd "<f9>") 'projectile-compile-project)
+(global-set-key (kbd "C-<f9>") 'projectile-run-project)
+(global-set-key (kbd "M-<f9>") 'projectile-test-project)
 ;; Move to the previous error found during compiling
 (global-set-key (kbd "<f10>") 'previous-error)
 ;; Move to the next error found during compiling

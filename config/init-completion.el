@@ -212,6 +212,19 @@
   )
 
 ;; -----------------------------------------------------------------------------
+;; Language: Python
+
+(use-package company-jedi
+  :ensure t
+  :config
+
+  (defun my/python-mode-hook ()
+    (add-to-list 'company-backends 'company-jedi))
+
+  (add-hook 'python-mode-hook 'my/python-mode-hook)
+  )
+
+;; -----------------------------------------------------------------------------
 ;; Language: Angular
 
 ;; Setup tide mode
@@ -256,6 +269,12 @@
   :ensure t
   :after (tide)
   )
+
+;; -----------------------------------------------------------------------------
+;; Language: Kivy
+
+(use-package kivy-mode
+  :ensure t)
 
 ;; -----------------------------------------------------------------------------
 
