@@ -36,6 +36,8 @@
 ;; Do not indent using tab
 (setq-default indent-tabs-mode nil)
 
+(setq-default truncate-lines t)
+
 ;; Delete trailing whitespaces before saving
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
