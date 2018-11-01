@@ -186,6 +186,10 @@
                       :foreground "#ffffff" :background nil :weight 'extra-bold)
 
   (add-hook 'web-mode-hook 'emmet-mode)
+  ;; Use 2 spaces for indent markup
+  (add-hook 'web-mode-hook
+            (lambda () ""
+              (setq web-mode-markup-indent-offset 2)))
   )
 
 (use-package impatient-mode
@@ -197,12 +201,19 @@
 ;; -----------------------------------------------------------------------------
 ;; Language: Ruby
 
-(use-package company-inf-ruby
+(use-package robe
   :ensure t
   :after (company)
   :config
-  (add-to-list 'company-backends 'company-inf-ruby)
+  (add-to-list 'company-backends 'company-robe)
   )
+
+;;(use-package company-inf-ruby
+;;  :ensure t
+;;  :after (company)
+;;  :config
+;;  (add-to-list 'company-backends 'company-inf-ruby)
+;;  )
 
 (use-package projectile-rails
   :ensure t

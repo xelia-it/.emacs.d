@@ -12,9 +12,9 @@
   :ensure t
   :config
   (require 'helm-config)
-  (setq
-   helm-always-two-windows t
-   helm-split-window-default-side (quote right))
+  ;;(setq helm-use-undecorated-frame-option t)
+  (setq helm-always-two-windows t)
+  (setq helm-split-window-default-side 'bottom)
   )
 
 ;; A better search package that works with helm
@@ -51,7 +51,7 @@
   (global-git-gutter-mode t)
 
   ;; If you would like to use git-gutter.el and linum-mode
-  (git-gutter:linum-setup)
+  ;; (git-gutter:linum-setup)
 
   ;; If you enable git-gutter-mode for some modes
   (add-hook 'ruby-mode-hook 'git-gutter-mode)

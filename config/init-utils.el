@@ -23,5 +23,10 @@
     (message "Killed other buffers")
     )
 
+
+(use-package org-pomodoro
+  :ensure t
+  :defer t)
+
 (provide 'init-utils)
 ;;; init-utils.el ends here

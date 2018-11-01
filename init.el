@@ -86,7 +86,7 @@
 ;; -----------------------------------------------------------------------------
 ;; Other config scripts
 
-(load "init-face.el")
+(load "init-gui.el")
 (load "init-editing.el")
 (load "init-projects.el")
 (load "init-completion.el")

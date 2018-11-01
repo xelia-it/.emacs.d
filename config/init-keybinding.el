@@ -17,9 +17,6 @@
 
 (global-set-key (kbd "C-p") 'helm-projectile-find-file)
 
-(global-set-key (kbd "C-j") 'helm-imenu)
-(global-set-key (kbd "S-C-j") 'helm-occur)
-
 ;; Annoying
 (global-unset-key (kbd "<f2> <f2>"))
 
@@ -41,13 +38,20 @@
 (global-set-key (kbd "<f12>") 'flycheck-list-errors)
 
 ;; Ctrl-<space>: code completion (with company)
+(global-unset-key (kbd "C-SPC"))
 (global-set-key (kbd "C-SPC") 'company-complete-common)
 
 ;; Set key bindings
-(define-key helm-gtags-mode-map (kbd "S-C-<return>") 'helm-gtags-find-tag)
-;; (define-key helm-gtags-mode-map (kbd "S-C-<return>") 'helm-gtags-pop-stack)
+(global-unset-key (kbd "C-<return>"))
+(global-unset-key (kbd "M-j"))
+(global-unset-key (kbd "C-M-j"))
+(define-key c++-mode-map (kbd "M-j") 'helm-gtags-find-tag)
+(define-key c++-mode-map (kbd "C-M-j") 'helm-gtags-pop-stack)
+(define-key helm-gtags-mode-map (kbd "S-C-j") 'helm-gtags-find-tag)
+(define-key helm-gtags-mode-map (kbd "S-M-j") 'helm-gtags-pop-stack)
 (define-key helm-gtags-mode-map (kbd "C-t") 'helm-gtags-find-rtag)
 (define-key helm-gtags-mode-map (kbd "S-C-t") 'helm-gtags-find-symbol)
+(global-set-key (kbd "C-j") 'helm-imenu)
 
 ;; Ctrl-S: save current file
 (defun my-save ()
@@ -93,6 +97,7 @@
 (global-set-key (kbd "M-<left>") 'move-beginning-of-line)
 (global-set-key (kbd "M-<right>") 'move-end-of-line)
 (global-unset-key (kbd "C-d"))
+
 (global-set-key (kbd "M-S-<down>") 'mc/mark-next-like-this)
 (global-set-key (kbd "M-S-<up>") 'mc/mark-previous-like-this)
 (global-set-key (kbd "C-d") 'mc/mark-all-symbols-like-this-in-defun)
@@ -121,9 +126,6 @@
 ;; Expand region
 (global-set-key (kbd "C-l") 'er/expand-region)
 
-;; Activate whitespace-mode to view all whitespace characters
-;;(global-set-key (kbd "C-c w") 'whitespace-mode)
-
 ;; Use ESC to quit command. This free Ctrl-G for moving to a specific line.
 (global-unset-key (kbd "<escape>"))
 (global-unset-key (kbd "C-g"))
@@ -136,16 +138,16 @@
 ;; Use goto-line for Ctrl-G
 ;; The mapping do not work in c-mode and c++ mode
 ;; so we need to force the behaviour
-;;(define-key prog-mode-map (kbd "C-g") 'goto-line)
-;;(define-key c-mode-map (kbd "C-g") 'goto-line)
-;;(define-key c++-mode-map (kbd "C-g") 'goto-line)
+(define-key prog-mode-map (kbd "C-g") 'goto-line)
+(define-key c-mode-map (kbd "C-g") 'goto-line)
+(define-key c++-mode-map (kbd "C-g") 'goto-line)
 (global-set-key (kbd "C-g") 'goto-line)
 
 ;; Bookmarks - using helm
-(global-set-key (kbd "C-;") 'bm-toggle)
-(global-set-key (kbd "C-:") 'bm-toggle)
-(global-set-key (kbd "C-,") 'bm-previous)
-(global-set-key (kbd "C-.") 'bm-next)
+;;(global-set-key (kbd "C-;") 'bm-toggle)
+;;(global-set-key (kbd "C-:") 'bm-toggle)
+;;(global-set-key (kbd "C-,") 'bm-previous)
+;;(global-set-key (kbd "C-.") 'bm-next)
 
 (provide 'init-keybinding)
 ;;; init-keybinding.el ends here
