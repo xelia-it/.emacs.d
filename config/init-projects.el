@@ -53,20 +53,23 @@
   ;; If you would like to use git-gutter.el and linum-mode
   ;; (git-gutter:linum-setup)
 
+  (custom-set-variables
+   '(git-gutter:modified-sign "▐")
+   '(git-gutter:added-sign "▐")
+   '(git-gutter:deleted-sign "▐")
+   '(git-gutter:update-interval 2)
+   '(git-gutter:visual-line t)
+   )
+
   ;; If you enable git-gutter-mode for some modes
   (add-hook 'ruby-mode-hook 'git-gutter-mode)
 
-  (global-set-key (kbd "C-x C-g") 'git-gutter:toggle)
+  (global-set-key (kbd "C-x C-g") 'git-gutter)
   (global-set-key (kbd "C-x v =") 'git-gutter:popup-hunk)
 
   ;; Jump to next/previous hunk
   (global-set-key (kbd "C-x p") 'git-gutter:previous-hunk)
   (global-set-key (kbd "C-x n") 'git-gutter:next-hunk)
-
-  (custom-set-variables
-   '(git-gutter:modified-sign "▐")
-   '(git-gutter:added-sign "▐")
-   '(git-gutter:deleted-sign "▐"))
 
   (set-face-foreground 'git-gutter:modified "lightblue")
   (set-face-foreground 'git-gutter:added "green")

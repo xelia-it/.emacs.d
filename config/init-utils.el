@@ -23,6 +23,18 @@
     (message "Killed other buffers")
     )
 
+(defun my-save ()
+  "Save current buffer without confirmation."
+  (interactive)
+  (save-buffer t)
+  )
+
+(defun my-save-all ()
+  "Save all buffers without confirmation and refresh magit."
+  (interactive)
+  (save-some-buffers t)
+  (magit-refresh-all)
+  )
 
 (use-package org-pomodoro
   :ensure t

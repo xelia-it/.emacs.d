@@ -53,23 +53,10 @@
 (define-key helm-gtags-mode-map (kbd "S-C-t") 'helm-gtags-find-symbol)
 (global-set-key (kbd "C-j") 'helm-imenu)
 
-;; Ctrl-S: save current file
-(defun my-save ()
-  "Save buffer."
-  (interactive)
-  (save-buffer)
-  (magit-refresh-all)
-  )
+;; Save buffers
 (global-unset-key (kbd "C-s"))
 (global-set-key (kbd "C-s") 'my-save)
 
-;; Shift-Ctrl-S: save all files without confirmation
-(defun my-save-all ()
-  "Save all buffers without confirmation."
-  (interactive)
-  (save-some-buffers t)
-  (magit-refresh-all)
-  )
 (global-unset-key (kbd "S-C-s"))
 (global-set-key (kbd "S-C-s") 'my-save-all)
 
@@ -106,6 +93,8 @@
 (define-key mc/keymap (kbd "<escape>") 'mc/keyboard-quit)
 
 ;; In C++ mode some keystrokes overlaps: force unset.
+
+
 (defun my-disable-ctrl-d ()
   "Disable Ctrl-D."
   (local-unset-key (kbd "C-d"))
@@ -144,10 +133,9 @@
 (global-set-key (kbd "C-g") 'goto-line)
 
 ;; Bookmarks - using helm
-;;(global-set-key (kbd "C-;") 'bm-toggle)
-;;(global-set-key (kbd "C-:") 'bm-toggle)
-;;(global-set-key (kbd "C-,") 'bm-previous)
-;;(global-set-key (kbd "C-.") 'bm-next)
+(global-set-key (kbd "C-<f2>") 'bm-toggle)
+(global-set-key (kbd "S-<f2>") 'bm-previous)
+(global-set-key (kbd "<f2>") 'bm-next)
 
 (provide 'init-keybinding)
 ;;; init-keybinding.el ends here

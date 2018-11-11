@@ -67,6 +67,7 @@
   (show-paren-mode 1)
 
   ;; Show line numbers
+  (setq display-line-numbers "%4d \u2502 ")
   (add-hook 'prog-mode-hook 'display-line-numbers-mode)
 
   ;; Toggle full screen automatically

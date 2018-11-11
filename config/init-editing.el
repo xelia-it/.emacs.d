@@ -49,7 +49,7 @@
       )
 
 ;; Save without messages
-(setq save-silently t)
+(setq-default save-silently t)
 
 ;; Delete trailing whitespaces before saving
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
@@ -143,7 +143,10 @@
   ;; save bookmarks
   (setq-default bm-buffer-persistence t)
 
-  ;; Loading the repository from file when on start up.
+  ;; Change the look
+  (set-face-attribute 'bm-persistent-face nil :background "#202830" :foreground "#5ABAC6")
+
+;; Loading the repository from file when on start up.
   (add-hook' after-init-hook 'bm-repository-load)
 
   ;; Restoring bookmarks when on file find.
@@ -210,13 +213,6 @@
 
 (use-package string-inflection
   :ensure t)
-
-;;(use-package which-key
-;;  :ensure t
-;;  :config
-;;  ;;(setq which-key-side-window-location 'bottom)
-;;  (which-key-setup-side-window-bottom)
-;;  )
 
 (provide 'init-editing)
 ;;; init-editing.el ends here
