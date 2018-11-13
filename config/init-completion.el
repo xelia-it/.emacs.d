@@ -84,6 +84,7 @@
   (add-hook 'c++-mode-hook 'irony-mode)
   (add-hook 'c-mode-hook 'irony-mode)
   (add-hook 'objc-mode-hook 'irony-mode)
+  (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
   )
 
 (use-package company-irony
@@ -97,18 +98,9 @@
   :after (company-irony)
   :config
 
-  (add-to-list 'company-backends '(company-irony-c-headers company-irony))
-
   (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
-
-  (defun my-irony-mode-hook ()
-    (define-key irony-mode-map [remap completion-at-point]
-      'irony-completion-at-point-async)
-    (define-key irony-mode-map [remap complete-symbol]
-      'irony-completion-at-point-async))
-
-  (add-hook 'irony-mode-hook 'my-irony-mode-hook)
-  (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+  (setq company-backends (delete 'company-semantic company-backends))
+  (add-to-list 'company-backends '(company-irony-c-headers company-irony))
   )
 
 ;; Debugging
