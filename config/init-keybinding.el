@@ -42,15 +42,15 @@
 (global-set-key (kbd "C-SPC") 'company-complete-common)
 
 ;; Set key bindings
-(global-unset-key (kbd "C-<return>"))
-(global-unset-key (kbd "M-j"))
-(global-unset-key (kbd "C-M-j"))
-(define-key c++-mode-map (kbd "M-j") 'helm-gtags-find-tag)
-(define-key c++-mode-map (kbd "C-M-j") 'helm-gtags-pop-stack)
-(define-key helm-gtags-mode-map (kbd "S-C-j") 'helm-gtags-find-tag)
-(define-key helm-gtags-mode-map (kbd "S-M-j") 'helm-gtags-pop-stack)
-(define-key helm-gtags-mode-map (kbd "C-t") 'helm-gtags-find-rtag)
-(define-key helm-gtags-mode-map (kbd "S-C-t") 'helm-gtags-find-symbol)
+(define-key c++-mode-map (kbd "C-.") 'helm-gtags-find-tag)
+(define-key c++-mode-map (kbd "C-:") 'helm-gtags-pop-stack)
+(define-key web-mode-map (kbd "C-.") 'helm-gtags-find-tag)
+(define-key web-mode-map (kbd "C-:") 'helm-gtags-pop-stack)
+(define-key helm-gtags-mode-map (kbd "C-.") 'helm-gtags-find-tag)
+(define-key helm-gtags-mode-map (kbd "C-:") 'helm-gtags-pop-stack)
+(define-key helm-gtags-mode-map (kbd "M-.") 'helm-gtags-find-rtag)
+(define-key helm-gtags-mode-map (kbd "C-M-.") 'helm-gtags-find-symbol)
+(global-unset-key (kbd "C-j"))
 (global-set-key (kbd "C-j") 'helm-imenu)
 
 ;; Save buffers
