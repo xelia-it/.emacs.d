@@ -81,20 +81,20 @@
   :after (atom-one-dark-theme)
   :config
 
-  (setq telephone-line-primary-left-separator 'telephone-line-cubed-left
-        telephone-line-secondary-left-separator 'telephone-line-cubed-hollow-left
-        telephone-line-primary-right-separator 'telephone-line-cubed-right
-        telephone-line-secondary-right-separator 'telephone-line-cubed-hollow-right)
+;;  (setq telephone-line-primary-left-separator 'telephone-line-cubed-left
+;;        telephone-line-secondary-left-separator 'telephone-line-cubed-hollow-left
+;;        telephone-line-primary-right-separator 'telephone-line-cubed-right
+;;        telephone-line-secondary-right-separator 'telephone-line-cubed-hollow-right)
 
   (setq telephone-line-height 24
         telephone-line-evil-use-short-tag t)
 
   (setq telephone-line-lhs
-        '((accent . (telephone-line-vc-segment
-                     telephone-line-erc-modified-channels-segment
-                     telephone-line-process-segment))
-          (nil    . (telephone-line-buffer-segment))
-          (accent . (telephone-line-flycheck-segment))
+        '((evil . (telephone-line-vc-segment
+                  telephone-line-erc-modified-channels-segment
+                  telephone-line-process-segment))
+          (accent . (telephone-line-buffer-segment))
+          (nil . (telephone-line-flycheck-segment))
           ))
   (setq telephone-line-rhs
         '((nil    . (telephone-line-misc-info-segment))
