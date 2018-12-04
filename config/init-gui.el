@@ -90,11 +90,12 @@
         telephone-line-evil-use-short-tag t)
 
   (setq telephone-line-lhs
-        '((evil . (telephone-line-vc-segment
-                  telephone-line-erc-modified-channels-segment
-                  telephone-line-process-segment))
-          (accent . (telephone-line-buffer-segment))
-          (nil . (telephone-line-flycheck-segment))
+        '((accent . (telephone-line-vc-segment
+                     telephone-line-erc-modified-channels-segment
+                     telephone-line-process-segment))
+          (nil    . (telephone-line-buffer-name-segment))
+          (accent . (telephone-line-flycheck-segment))
+          (nil    . (telephone-line-buffer-modified-segment))
           ))
   (setq telephone-line-rhs
         '((nil    . (telephone-line-misc-info-segment))

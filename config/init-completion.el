@@ -81,16 +81,25 @@
 (use-package irony
   :ensure t
   :config
+
+  ;; If irony server was never installed, install it.
+  (unless (irony--find-server-executable)
+    (call-interactively #'irony-install-server))
+
   (add-hook 'c++-mode-hook 'irony-mode)
   (add-hook 'c-mode-hook 'irony-mode)
   (add-hook 'objc-mode-hook 'irony-mode)
+
+  ;; Use compilation database first, clang_complete as fallback.
+  (setq-default irony-cdb-compilation-databases '(irony-cdb-libclang
+                                                  irony-cdb-clang-complete))
+
   (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
   )
 
 (use-package company-irony
   :ensure t
   :after (company irony)
-  :config
   )
 
 (use-package company-irony-c-headers
@@ -98,9 +107,10 @@
   :after (company-irony)
   :config
 
+  ;; Configure company-irony and company-irony-c-headers
   (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
   (setq company-backends (delete 'company-semantic company-backends))
-  (add-to-list 'company-backends '(company-irony-c-headers company-irony))
+  (add-to-list 'company-backends '(company-irony-c-headers company-clang))
   )
 
 ;; Debugging
@@ -293,6 +303,13 @@
   (yas-reload-all)
   (add-hook 'prog-mode-hook #'yas-minor-mode)
   )
+
+;; -----------------------------------------------------------------------------
+
+(use-package company-restclient
+  :ensure t
+  :config
+  (add-to-list 'company-backends 'company-restclient))
 
 ;; -----------------------------------------------------------------------------
 
