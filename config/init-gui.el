@@ -51,6 +51,10 @@
   (blink-cursor-mode)               ;; Blink cursor
   (global-hl-line-mode)             ;; Hightlight current line
 
+  ;; Set default font
+  (add-to-list 'default-frame-alist
+               '(font . "DejaVu Sans Mono-12"))
+
   ;; Cursor like a bar (On Linux/Mac)
   (if (memq window-system '(mac ns x))
       (setq-default cursor-type 'bar))
@@ -81,14 +85,17 @@
   :after (atom-one-dark-theme)
   :config
 
-;;  (setq telephone-line-primary-left-separator 'telephone-line-cubed-left
-;;        telephone-line-secondary-left-separator 'telephone-line-cubed-hollow-left
-;;        telephone-line-primary-right-separator 'telephone-line-cubed-right
-;;        telephone-line-secondary-right-separator 'telephone-line-cubed-hollow-right)
+  ;; Set "curved" separator
+  (setq telephone-line-primary-left-separator 'telephone-line-cubed-left
+        telephone-line-secondary-left-separator 'telephone-line-cubed-hollow-left
+        telephone-line-primary-right-separator 'telephone-line-cubed-right
+        telephone-line-secondary-right-separator 'telephone-line-cubed-hollow-right)
 
+  ;; Setting
   (setq telephone-line-height 24
         telephone-line-evil-use-short-tag t)
 
+  ;; Elements in the modeline
   (setq telephone-line-lhs
         '((accent . (telephone-line-vc-segment
                      telephone-line-erc-modified-channels-segment
