@@ -108,8 +108,11 @@
           (accent . (telephone-line-major-mode-segment))
           (evil   . (telephone-line-airline-position-segment))))
 
-  (set-face-background 'telephone-line-accent-active "#E5C07B")
-  (set-face-foreground 'telephone-line-accent-active "#333333")
+  ;;(set-face-foreground 'telephone-line-accent-active "#E5C07B")
+  (set-face-foreground 'telephone-line-accent-active "#FFFFFF")
+  ;;(set-face-background 'telephone-line-accent-active (face-attribute 'mode-line :foreground))
+  (set-face-background 'telephone-line-accent-active "#31353B")
+;;  (set-face-background 'telephone-line-accent-active "#333333")
 
   (telephone-line-mode 1)
   )

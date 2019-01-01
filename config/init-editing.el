@@ -85,7 +85,7 @@
   :config
   ;; Set default values as above
   (setq whitespace-line-column 80)
-  (setq whitespace-tab-width 4)
+  (setq-default whitespace-tab-width 4)
   (add-hook 'prog-mode-hook 'whitespace-mode)
 
   ;; make whitespace-mode use just basic coloring

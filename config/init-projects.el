@@ -10,11 +10,6 @@
 
 (use-package helm
   :ensure t
-  :config
-  (require 'helm-config)
-  ;;(setq helm-use-undecorated-frame-option t)
-  (setq helm-always-two-windows t)
-  (setq helm-split-window-default-side 'bottom)
   )
 
 ;; A better search package that works with helm
@@ -39,6 +34,19 @@
   :after (helm projectile)
   :config
   (helm-projectile-on))
+
+(use-package shackle
+  :ensure t
+  :after (helm)
+  :config
+  (setq shackle-rules '(
+                        ("\\`\\*[hH]elm.*?\\*\\'" :regexp t :align 'below :size 0.4)
+                        ))
+  (shackle-mode 1)
+  )
+
+;; -----------------------------------------------------------------------------
+;; Git support
 
 (use-package magit
   :ensure t

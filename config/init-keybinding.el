@@ -62,7 +62,7 @@
 
 ;; Change Search and Replace keys
 (global-unset-key (kbd "C-f"))
-(global-set-key (kbd "C-f") 'helm-swoop)
+(global-set-key (kbd "C-f") 'helm-occur)
 (global-unset-key (kbd "C-S-f"))
 (global-set-key (kbd "C-S-f") 'helm-projectile-grep)
 
