@@ -41,6 +41,7 @@
   :config
   (setq shackle-rules '(
                         ("\\`\\*[hH]elm.*?\\*\\'" :regexp t :align 'below :size 0.4)
+                        ("\\`\\*Flycheck.*?\\*\\'" :regexp t :align 'below :size 0.2)
                         ))
   (shackle-mode 1)
   )
@@ -79,9 +80,9 @@
   (global-set-key (kbd "C-x p") 'git-gutter:previous-hunk)
   (global-set-key (kbd "C-x n") 'git-gutter:next-hunk)
 
-  (set-face-foreground 'git-gutter:modified "lightblue")
-  (set-face-foreground 'git-gutter:added "green")
-  (set-face-foreground 'git-gutter:deleted "red")
+  (set-face-foreground 'git-gutter:modified "#61AFEF")
+  (set-face-foreground 'git-gutter:added "#E5C07B")
+  (set-face-foreground 'git-gutter:deleted "#E06C75")
   )
 
 (provide 'init-projects)

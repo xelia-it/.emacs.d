@@ -85,11 +85,11 @@
   :after (atom-one-dark-theme)
   :config
 
-  ;; Set "curved" separator
-  (setq telephone-line-primary-left-separator 'telephone-line-cubed-left
-        telephone-line-secondary-left-separator 'telephone-line-cubed-hollow-left
-        telephone-line-primary-right-separator 'telephone-line-cubed-right
-        telephone-line-secondary-right-separator 'telephone-line-cubed-hollow-right)
+  ;; Set separator
+  (setq telephone-line-primary-left-separator 'telephone-line-abs-left
+        telephone-line-secondary-left-separator 'telephone-line-abs-hollow-left
+        telephone-line-primary-right-separator 'telephone-line-abs-right
+        telephone-line-secondary-right-separator 'telephone-line-abs-hollow-right)
 
   ;; Setting
   (setq telephone-line-height 24
