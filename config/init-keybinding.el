@@ -106,9 +106,6 @@
 ;; Switch cpp <--> hpp
 (global-set-key (kbd "S-C-a") 'ff-find-related-file)
 
-;; Expand region
-(global-set-key (kbd "C-l") 'er/expand-region)
-
 ;; Use ESC to quit command. This free Ctrl-G for moving to a specific line.
 (global-unset-key (kbd "<escape>"))
 (global-unset-key (kbd "C-g"))
