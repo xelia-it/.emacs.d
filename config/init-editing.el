@@ -82,6 +82,7 @@
 ;; Show trailing whitespaces, tabs, lines
 (use-package whitespace
   :ensure t
+  :defer t
   :config
   ;; Set default values as above
   (setq whitespace-line-column 80)
@@ -111,6 +112,7 @@
 ;; Show indent guides
 (use-package highlight-indent-guides
   :ensure t
+  :defer t
   :config
   (setq highlight-indent-guides-method 'character)
   (set-face-attribute 'highlight-indent-guides-character-face
@@ -126,6 +128,7 @@
 ;; https://github.com/joodland/bm
 (use-package bm
   :ensure t
+  :defer t
   :demand t
 
   :init
@@ -190,29 +193,46 @@
 ;; Ctrl-D is used by Emacs su we unset it before binding.
 (use-package multiple-cursors
   :ensure t
-  :config
+  :defer t
+  :bind (("M-S-<down>" . mc/mark-next-like-this)
+         ("M-S-<up>" . mc/mark-previous-like-this)
+         ("C-d" . mc/mark-all-symbols-like-this-in-defun)
+         ("S-C-d" . mc/mark-next-like-this-word)
+         ("M-S-<mouse-1>" . mc/add-cursor-on-click)
+         :map mc/keymap
+         ("<escape>" . mc/keyboard-quit)
+         ("<return>" . nil)
+         )
+
+  :init
   (setq mc/always-run-for-all t)
   ;; will make <return> insert a newline; multiple-cursors-mode can still
   ;; be disabled with C-g / ESC
+  ;;:config
+  :config
   (define-key mc/keymap (kbd "<return>") nil)
   )
 
 ;; Visual search and replace
 (use-package visual-regexp
-  :ensure t)
+  :ensure t
+  :defer t)
 
 ;; Package to easy select region
 (use-package expand-region
-  :ensure t)
+  :ensure t
+  :defer t)
 
 ;; Move and copy line like Eclipse and Netbeans
 (use-package move-dup
   :ensure t
+  :defer t
   :config
   (global-move-dup-mode))
 
 (use-package string-inflection
-  :ensure t)
+  :ensure t
+  :defer t)
 
 (provide 'init-editing)
 ;;; init-editing.el ends here

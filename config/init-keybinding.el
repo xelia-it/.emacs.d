@@ -85,12 +85,6 @@
 (global-set-key (kbd "M-<right>") 'move-end-of-line)
 (global-unset-key (kbd "C-d"))
 
-(global-set-key (kbd "M-S-<down>") 'mc/mark-next-like-this)
-(global-set-key (kbd "M-S-<up>") 'mc/mark-previous-like-this)
-(global-set-key (kbd "C-d") 'mc/mark-all-symbols-like-this-in-defun)
-(global-set-key (kbd "S-C-d") 'mc/mark-next-like-this-word)
-(global-set-key (kbd "M-S-<mouse-1>") 'mc/add-cursor-on-click)
-(define-key mc/keymap (kbd "<escape>") 'mc/keyboard-quit)
 
 ;; In C++ mode some keystrokes overlaps: force unset.
 
