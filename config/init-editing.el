@@ -193,24 +193,25 @@
 ;; Ctrl-D is used by Emacs su we unset it before binding.
 (use-package multiple-cursors
   :ensure t
-  :defer t
-  :bind (("M-S-<down>" . mc/mark-next-like-this)
-         ("M-S-<up>" . mc/mark-previous-like-this)
-         ("C-d" . mc/mark-all-symbols-like-this-in-defun)
-         ("S-C-d" . mc/mark-next-like-this-word)
-         ("M-S-<mouse-1>" . mc/add-cursor-on-click)
-         :map mc/keymap
-         ("<escape>" . mc/keyboard-quit)
-         ("<return>" . nil)
-         )
-
-  :init
+  :config
+  ;; Always run commands
   (setq mc/always-run-for-all t)
+  ;; Always run commands
+  (setq mc/always-repeat-command t)
+  ;; Safety ceil
+  (setq mc/max-cursors 30)
+
+  ;; The :bind key do not works well with multiple-cursors
+  (global-set-key (kbd "M-S-<down>") 'mc/mark-next-like-this)
+  (global-set-key (kbd "M-S-<up>") 'mc/mark-previous-like-this)
+  (global-set-key (kbd "C-d") 'mc/mark-all-symbols-like-this-in-defun)
+  (global-set-key (kbd "S-C-d") 'mc/mark-next-like-this-word)
+  (global-set-key (kbd "M-S-<mouse-1>") 'mc/add-cursor-on-click)
+  (define-key mc/keymap (kbd "<escape>") 'mc/keyboard-quit)
+
   ;; will make <return> insert a newline; multiple-cursors-mode can still
   ;; be disabled with C-g / ESC
-  ;;:config
-  ;;:config
-  ;;(define-key mc/keymap (kbd "<return>") nil)
+  (define-key mc/keymap (kbd "<return>") nil)
   )
 
 ;; Visual search and replace
