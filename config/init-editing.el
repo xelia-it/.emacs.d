@@ -204,6 +204,7 @@
   ;; The :bind key do not works well with multiple-cursors
   (global-set-key (kbd "M-S-<down>") 'mc/mark-next-like-this)
   (global-set-key (kbd "M-S-<up>") 'mc/mark-previous-like-this)
+  (global-unset-key (kbd "C-d"))
   (global-set-key (kbd "C-d") 'mc/mark-all-symbols-like-this-in-defun)
   (global-set-key (kbd "S-C-d") 'mc/mark-next-like-this-word)
   (global-set-key (kbd "M-S-<mouse-1>") 'mc/add-cursor-on-click)

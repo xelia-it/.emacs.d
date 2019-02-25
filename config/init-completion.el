@@ -266,7 +266,15 @@
 ;; Language: Kivy
 
 (use-package kivy-mode
-  :ensure t)
+  :ensure t
+  :defer t)
+
+;; -----------------------------------------------------------------------------
+;; Language: CMake
+
+(use-package cmake-mode
+  :ensure t
+  :defer t)
 
 ;; -----------------------------------------------------------------------------
 
