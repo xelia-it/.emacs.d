@@ -37,12 +37,16 @@
   (menu-bar-mode -1)                ;; Disable menu bar on top
   (scroll-bar-mode -1)              ;; No more scrollbars
 
-  ;; Cursor settings
-;;  (set-cursor-color "#fff")         ;; Set cursor color
-  ;;(blink-cursor-mode)             ;; Blink cursor
-  ;; Cursor like a bar (On Linux/Mac)
-  ;;(if (memq window-system '(mac ns x))
-  ;;    (setq-default cursor-type 'bar))
+  ;; A very light color compatible with atom-one-dark-theme
+  (defvar near-to-white-color "#86e6f2")
+
+  ;; Set cursor color ..
+  (set-cursor-color near-to-white-color)         
+  ;; Blink cursor
+  (blink-cursor-mode)             
+  ;; Cursor like a bar (works only on Linux/Mac)
+  (if (memq window-system '(mac ns x))
+      (setq-default cursor-type 'bar))
 
   (global-hl-line-mode)             ;; Hightlight current line
 
@@ -51,17 +55,20 @@
   ;;             '(font . "DejaVu Sans Mono-12"))
 
 
+  
+      
   ;; Show parenthesis
   (require 'paren)
   ;;(set-face-background 'show-paren-match "#282C34")
-  ;;(set-face-foreground 'show-paren-match "#fff")
+  (set-face-background 'show-paren-match (face-background 'font-lock-builtin-face))
+  (set-face-foreground 'show-paren-match near-to-white-color)
   (set-face-attribute 'show-paren-match nil :weight 'extra-bold)
   (defvar match-paren--idle-timer nil)
   (defvar match-paren--delay 0.5)
   (setq match-paren--idle-timer
         (run-with-idle-timer match-paren--delay t #'blink-matching-open))
   (show-paren-mode 1)
-  
+
   (let ((line (face-attribute 'mode-line :underline)))
     (set-face-attribute 'mode-line          nil :overline   line)
     (set-face-attribute 'mode-line-inactive nil :overline   line)
@@ -80,7 +87,6 @@
   
   )
 
-
 (use-package moody
   :ensure t
   :config
@@ -90,10 +96,6 @@
 
 (use-package minimap
   :ensure t
+  :defer t
   :after (atom-one-dark)
-  :config
-
-  ;; Set minimap
-  ;;(minimap-mode)
-
   )

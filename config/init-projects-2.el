@@ -8,6 +8,9 @@
 
 (use-package helm
   :ensure t
+  :bind (
+         ("M-x" . helm-M-x)
+         )
   )
 
 (use-package projectile
@@ -27,8 +30,18 @@
 (use-package helm-projectile
   :ensure t
   :after (helm projectile)
+  :bind (
+         ("C-S-f" . helm-projectile-grep)
+         )
   :config
   (helm-projectile-on)
+  )
+
+(use-package helm-swoop
+  :ensure t
+  :bind (
+         ("C-f" . helm-swoop)
+         )
   )
 
 (provide 'init-projects)
