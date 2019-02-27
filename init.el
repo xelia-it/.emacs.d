@@ -77,21 +77,26 @@
 
 ;; Set the path variable
 ;; (Works only on Linux/Mac)
-(use-package exec-path-from-shell
-  :if (memq window-system '(mac ns x))
-  :ensure t
-  :config
-  (exec-path-from-shell-initialize))
+;;(use-package exec-path-from-shell
+;;  :if (memq window-system '(mac ns x))
+;;  :ensure t
+;;  :config
+;;  (exec-path-from-shell-initialize))
 
 ;; -----------------------------------------------------------------------------
 ;; Other config scripts
 
-(load "init-gui.el")
-(load "init-editing.el")
-(load "init-projects.el")
-(load "init-completion.el")
-(load "init-utils.el")
-(load "init-keybinding.el")
+(load "init-ui.el")
+(load "init-editing-2.el")
+(load "init-projects-2.el")
+(load "init-languages.el")
+
+;;(load "init-gui.el")
+;;(load "init-editing.el")
+;;(load "init-projects.el")
+;;(load "init-completion.el")
+;;(load "init-utils.el")
+;;(load "init-keybinding.el")
 
 ;; -----------------------------------------------------------------------------
 ;; Custom set variable
