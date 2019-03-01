@@ -8,15 +8,6 @@
 ;;; ----------------------------------------------------------------------------
 ;;; Code:
 
-;; M-x is better managed by helm
-(global-set-key (kbd "M-x") 'helm-M-x)
-
-;; Project navigation
-(global-set-key (kbd "C-o") 'helm-find-files)
-(global-set-key (kbd "S-C-o") 'helm-projectile-switch-project)
-
-(global-set-key (kbd "C-p") 'helm-projectile-find-file)
-
 ;; Annoying
 (global-unset-key (kbd "<f2> <f2>"))
 
@@ -25,17 +16,6 @@
 (global-set-key (kbd "<f6>") 'magit-log-all)
 (define-key magit-mode-map (kbd "C-w") 'magit-mode-bury-buffer)
 
-;; Compile Project
-(global-set-key (kbd "S-<f9>") 'projectile-configure-project)
-(global-set-key (kbd "<f9>") 'projectile-compile-project)
-(global-set-key (kbd "C-<f9>") 'projectile-run-project)
-(global-set-key (kbd "M-<f9>") 'projectile-test-project)
-;; Move to the previous error found during compiling
-(global-set-key (kbd "<f10>") 'previous-error)
-;; Move to the next error found during compiling
-(global-set-key (kbd "<f11>") 'next-error)
-;; Show flycheck errors
-(global-set-key (kbd "<f12>") 'flycheck-list-errors)
 
 ;; Ctrl-<space>: code completion (with company)
 (global-unset-key (kbd "C-SPC"))
@@ -52,13 +32,6 @@
 (define-key helm-gtags-mode-map (kbd "C-M-.") 'helm-gtags-find-symbol)
 (global-unset-key (kbd "C-j"))
 (global-set-key (kbd "C-j") 'helm-imenu)
-
-;; Save buffers
-(global-unset-key (kbd "C-s"))
-(global-set-key (kbd "C-s") 'my-save)
-
-(global-unset-key (kbd "S-C-s"))
-(global-set-key (kbd "S-C-s") 'my-save-all)
 
 ;; Change Search and Replace keys
 (global-unset-key (kbd "C-f"))
@@ -106,14 +79,6 @@
 ;; Switch cpp <--> hpp
 (global-set-key (kbd "S-C-a") 'ff-find-related-file)
 
-;; Use ESC to quit command. This free Ctrl-G for moving to a specific line.
-(global-unset-key (kbd "<escape>"))
-(global-unset-key (kbd "C-g"))
-
-;; Use escape for "abort" operations
-;; (company needs a specific command)
-(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-(define-key company-mode-map (kbd "<escape>") 'company-abort)
 
 ;; Use goto-line for Ctrl-G
 ;; The mapping do not work in c-mode and c++ mode

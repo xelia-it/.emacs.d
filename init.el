@@ -44,15 +44,15 @@
 (setq package-enable-at-startup nil)
 
 (defvar repo-gnu '("gnu" . "https://elpa.gnu.org/packages/"))
-(defvar repo-melpa '("melpa" . "https://melpa.org/packages/"))
+;;(defvar repo-melpa '("melpa" . "https://melpa.org/packages/"))
 (defvar repo-melpa-stable '("melpa-stable" . "https://stable.melpa.org/packages/"))
-(defvar repo-org-elpa '("org" . "http://orgmode.org/elpa/"))
+;;(defvar repo-org-elpa '("org" . "http://orgmode.org/elpa/"))
 
 (setq package-archives nil)
 (add-to-list 'package-archives repo-melpa-stable t)
-(add-to-list 'package-archives repo-melpa t)
+;;(add-to-list 'package-archives repo-melpa t)
 (add-to-list 'package-archives repo-gnu t)
-(add-to-list 'package-archives repo-org-elpa t)
+;;(add-to-list 'package-archives repo-org-elpa t)
 
 ;; Downloads new packages in case of a fresh install
 (package-initialize)
@@ -77,15 +77,17 @@
 
 ;; Set the path variable
 ;; (Works only on Linux/Mac)
-;;(use-package exec-path-from-shell
-;;  :if (memq window-system '(mac ns x))
-;;  :ensure t
-;;  :config
-;;  (exec-path-from-shell-initialize))
+(use-package exec-path-from-shell
+  :if (memq window-system '(mac ns x))
+  :ensure t
+  :config
+  (exec-path-from-shell-initialize)
+  )
 
 ;; -----------------------------------------------------------------------------
 ;; Other config scripts
 
+(load "init-utils.el")
 (load "init-ui.el")
 (load "init-editing-2.el")
 (load "init-projects-2.el")
@@ -95,7 +97,7 @@
 ;;(load "init-editing.el")
 ;;(load "init-projects.el")
 ;;(load "init-completion.el")
-;;(load "init-utils.el")
+;;
 ;;(load "init-keybinding.el")
 
 ;; -----------------------------------------------------------------------------

@@ -1,3 +1,13 @@
+;;; .emacs.d --- Emacs configuration with batteries included
+
+;;; ----------------------------------------------------------------------------
+;;; Commentary:
+;;;
+;;; .
+
+;;; ----------------------------------------------------------------------------
+;;; Code:
+
 ;; -----------------------------------------------------------------------------
 ;; Language: HTML
 
@@ -49,3 +59,14 @@
   ;;(add-to-list 'company-backends 'company-robe)
   )
 
+(use-package projectile-rails
+  :ensure t
+  :defer t
+  :after (helm projectile)
+  ;;:config
+;;  (projectile-rails-global-mode)
+  :hook (prog-mode . projectile-rails-mode)
+  )
+
+(provide 'init-languages)
+;;; init-languages.el ends here

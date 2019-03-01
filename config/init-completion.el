@@ -1,4 +1,4 @@
-;;; package --- Emacs configuration with batteries included
+;;; .emacs.d --- Emacs configuration with batteries included
 
 ;;; ----------------------------------------------------------------------------
 ;;; Commentary:

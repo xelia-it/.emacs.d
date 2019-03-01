@@ -1,9 +1,15 @@
-;;
+;;; package --- Emacs configuration with batteries included
+
+;;; ----------------------------------------------------------------------------
+;;; Commentary:
+
+;;; ----------------------------------------------------------------------------
+;;; Code:
 
 (use-package atom-one-dark-theme
   :ensure t
+
   :init
-  
   ;; Removes *messages* from the buffer list.
   (setq-default message-log-max nil)
   (kill-buffer "*Messages*")
@@ -40,10 +46,10 @@
   ;; A very light color compatible with atom-one-dark-theme
   (defvar near-to-white-color "#86e6f2")
 
-  ;; Set cursor color ..
-  (set-cursor-color near-to-white-color)         
+  ;; Set cursor color
+  (set-cursor-color near-to-white-color)
   ;; Blink cursor
-  (blink-cursor-mode)             
+  (blink-cursor-mode)
   ;; Cursor like a bar (works only on Linux/Mac)
   (if (memq window-system '(mac ns x))
       (setq-default cursor-type 'bar))
@@ -53,9 +59,6 @@
   ;; Set default font
   ;;(add-to-list 'default-frame-alist
   ;;             '(font . "DejaVu Sans Mono-12"))
-
-
-  
       
   ;; Show parenthesis
   (require 'paren)
@@ -69,33 +72,53 @@
         (run-with-idle-timer match-paren--delay t #'blink-matching-open))
   (show-paren-mode 1)
 
-  (let ((line (face-attribute 'mode-line :underline)))
-    (set-face-attribute 'mode-line          nil :overline   line)
-    (set-face-attribute 'mode-line-inactive nil :overline   line)
-    (set-face-attribute 'mode-line-inactive nil :underline  line)
-    (set-face-attribute 'mode-line          nil :box        nil)
-    (set-face-attribute 'mode-line-inactive nil :box        nil)
-;;    (set-face-attribute 'mode-line-inactive nil :background "#f9f2d9")
-    )
-
   ;; Show line numbers
-  (setq display-line-numbers "%4d \u2502 ")
+  (setq display-line-numbers-width 5)
   (add-hook 'prog-mode-hook 'display-line-numbers-mode)
 
   ;; Toggle full screen automatically
   (run-with-idle-timer 0.1 nil 'toggle-frame-fullscreen)
-  
+
+  ;; Use ESC to quit command. This free Ctrl-G for moving to a specific line.
+  (global-unset-key (kbd "<escape>"))
+  (global-unset-key (kbd "C-g"))
+  ;; Use escape for "abort" operations
+  ;; (company needs a specific command)
+  (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+  ;; (define-key company-mode-map (kbd "<escape>") 'company-abort)
+
+  :bind (
+         ("C-s" . 'save-buffer)
+         ("S-C-s" . 'my-save-all)
+         ("C-w" . 'kill-buffer-and-window)
+         ("S-C-W" . 'my-kill-other-buffers)
+         )
   )
 
-(use-package moody
+(use-package doom-modeline
+  :ensure t
+  :init
+ 
+  ;; Don’t compact font caches during GC.
+  (setq inhibit-compacting-font-caches t)
+  ;; Avoid strange name when visiting
+  (setq find-file-visit-truename t)
+  ;; Check VC info
+  (setq auto-revert-check-vc-info t)
+
+  :hook (after-init . doom-modeline-mode)
+  )
+
+(use-package shackle
   :ensure t
   :config
-  (setq x-underline-at-descent-line t)
-  (moody-replace-mode-line-buffer-identification)
-  (moody-replace-vc-mode))
-
-(use-package minimap
-  :ensure t
-  :defer t
-  :after (atom-one-dark)
+  (setq shackle-rules '(
+                        ("\\`\\*[hH]elm.*?\\*\\'" :regexp t :align 'below :size 0.4)
+                        ("\\`\\*Helm Swoop.*?\\*\\'" :regexp t :align 'below :size 0.2)
+                        ("\\`\\*Flycheck.*?\\*\\'" :regexp t :align 'below :size 0.2)
+                        ))
+  (shackle-mode 1)
   )
+
+(provide 'init.ui)
+;; init-ui.el ends here

@@ -1,21 +1,23 @@
-;;; package --- Emacs configuration with batteries included
+;;; .emacs.d --- Emacs configuration with batteries included
 
 ;;; ----------------------------------------------------------------------------
 ;;; Commentary:
+;;;
+;;;
 
 ;;; ----------------------------------------------------------------------------
 ;;; Code:
 
-(use-package markdown-mode
-  :ensure t
-  :defer t
-  :commands (markdown-mode gfm-mode)
-  :mode (("README\\.md\\'" . gfm-mode)
-         ("\\.md\\'" . markdown-mode)
-         ("\\.markdown\\'" . markdown-mode))
-  :init (setq markdown-command "multimarkdown"))
+;;(use-package markdown-mode
+ ;; :ensure t
+ ;; :defer t
+ ;; :commands (markdown-mode gfm-mode)
+ ;; :mode (("README\\.md\\'" . gfm-mode)
+ ;;        ("\\.md\\'" . markdown-mode)
+ ;;        ("\\.markdown\\'" . markdown-mode))
+ ;; :init (setq markdown-command "multimarkdown"))
 
-(defun kill-other-buffers ()
+(defun my-kill-other-buffers ()
     "Kill all other buffers."
     (interactive)
     (mapc 'kill-buffer
@@ -37,9 +39,9 @@
   (magit-refresh-all)
   )
 
-(use-package org-pomodoro
-  :ensure t
-  :defer t)
+;;(use-package org-pomodoro
+;;  :ensure t
+;;  :defer t)
 
 (provide 'init-utils)
 ;;; init-utils.el ends here
