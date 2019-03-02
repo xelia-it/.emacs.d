@@ -87,7 +87,6 @@
 ;; -----------------------------------------------------------------------------
 ;; Other config scripts
 
-(load "init-utils.el")
 (load "init-ui.el")
 (load "init-editing-2.el")
 (load "init-projects-2.el")

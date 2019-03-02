@@ -6,6 +6,29 @@
 ;;; ----------------------------------------------------------------------------
 ;;; Code:
 
+(defun my-kill-other-buffers ()
+    "Kill all other buffers."
+    (interactive)
+    (mapc 'kill-buffer
+          (delq (current-buffer)
+                (remove-if-not 'buffer-file-name (buffer-list))))
+    (message "Killed other buffers")
+    )
+
+(defun my-save ()
+  "Save current buffer without confirmation."
+  (interactive)
+  (save-buffer t)
+  )
+
+(defun my-save-all ()
+  "Save all buffers without confirmation and refresh magit."
+  (interactive)
+  (save-some-buffers t)
+  (magit-refresh-all)
+  )
+
+;; The theme is very similar to Atom colors.
 (use-package atom-one-dark-theme
   :ensure t
 
@@ -32,7 +55,7 @@
   (defun display-startup-echo-area-message ()
     "Overwrite default startup message."
     (message ""))
-  
+
   :config
 
   ;; Load default theme
@@ -56,10 +79,17 @@
 
   (global-hl-line-mode)             ;; Hightlight current line
 
+  ;; Do not word-wrap lines
+  (setq-default truncate-lines t)
+
+  ;; Fix mouse scroll
+  (setq mouse-wheel-scroll-amount '(1 ((shift) . 1) ((control) . nil)))
+  (setq mouse-wheel-progressive-speed nil)
+
   ;; Set default font
   ;;(add-to-list 'default-frame-alist
   ;;             '(font . "DejaVu Sans Mono-12"))
-      
+
   ;; Show parenthesis
   (require 'paren)
   ;;(set-face-background 'show-paren-match "#282C34")
@@ -98,7 +128,7 @@
 (use-package doom-modeline
   :ensure t
   :init
- 
+
   ;; Don’t compact font caches during GC.
   (setq inhibit-compacting-font-caches t)
   ;; Avoid strange name when visiting
@@ -114,11 +144,10 @@
   :config
   (setq shackle-rules '(
                         ("\\`\\*[hH]elm.*?\\*\\'" :regexp t :align 'below :size 0.4)
-                        ("\\`\\*Helm Swoop.*?\\*\\'" :regexp t :align 'below :size 0.2)
                         ("\\`\\*Flycheck.*?\\*\\'" :regexp t :align 'below :size 0.2)
                         ))
   (shackle-mode 1)
   )
 
 (provide 'init.ui)
-;; init-ui.el ends here
+;;; init-ui.el ends here
