@@ -9,6 +9,9 @@
 ;;; ----------------------------------------------------------------------------
 ;;; Code:
 
+;; -----------------------------------------------------------------------------
+;; Code anvigation
+
 (use-package helm
   :ensure t
   :after (atom-one-dark-theme)
@@ -17,8 +20,9 @@
   :bind (
          ("M-x" . helm-M-x)
          ("C-o" . helm-find-files)
-         ("C-x b" . helm-buffers-list)
          ("C-r" . helm-imenu)
+         ("C-x b" . helm-buffers-list)
+         ("C-x C-b" . helm-buffers-list)
          ("S-C-r" . helm-imenu-in-all-buffers)
          ("S-C-V" . helm-kill-ring)
          )
@@ -37,10 +41,10 @@
          :map helm-multi-swoop-map
          ("C-f" . helm-next-line)
          )
-  :init
-
+  :config
   ;; Split direcion. 'split-window-vertically or 'split-window-horizontally
-;;  (setq helm-swoop-split-direction 'split-window-vertically)
+  (setq helm-swoop-split-direction 'split-window-vertically)
+  (set-face-attribute 'helm-swoop-target-word-face nil :foreground "#ffffff" :background nil :box t)
   )
 
 (use-package projectile
@@ -74,12 +78,9 @@
          ("S-C-o" . helm-projectile-switch-project)
          ("C-t" . helm-projectile-find-file)
          )
-  :init
+  :config
   (helm-projectile-on)
   )
-
-
-
 
 ;; On the fly check
 (use-package flycheck
@@ -136,6 +137,7 @@
   )
 
 ;; -----------------------------------------------------------------------------
+;; Autocomplete
 
 (use-package company
   :ensure t
@@ -153,9 +155,7 @@
         )
   :config
   (global-company-mode 1)
-  ;;:bind (
-  ;;       ("C-<space>" . company-complete)
-  ;;       )
+  ;; TODO: C-<space> don't work well
   (global-set-key (kbd "C-<space>") 'company-complete)
   )
 
@@ -193,25 +193,6 @@
   (setq git-gutter:added-sign "❙")
   (setq git-gutter:deleted-sign "❙")
   (setq git-gutter:update-interval 2)
-
-  ;; If you enable git-gutter-mode for some modes
-  ;;(add-hook 'ruby-mode-hook 'git-gutter-mode)
-
-
-  ;;:bind (
-     ;;    ("C-x C-g" . git-gutter)
-       ;;  ("C-x v =" . git-gutter:popup-hunk)
-         ;; Jump to next/previous hunk
-        ;; ("C-x p" . git-gutter:previous-hunk)
-;;         ("C-x n" . git-gutter:next-hunk)
-    ;;     )
-
-
-  ;;(global-set-key (kbd "C-x C-g") 'git-gutter)
-  ;;(global-set-key (kbd "C-x v =") 'git-gutter:popup-hunk)
-  ;; Jump to next/previous hunk
-  ;;(global-set-key (kbd "C-x p") 'git-gutter:previous-hunk)
-  ;;(global-set-key (kbd "C-x n") 'git-gutter:next-hunk)
 
   (set-face-foreground 'git-gutter:modified "#61AFEF")
   (set-face-foreground 'git-gutter:added "#E5C07B")

@@ -87,17 +87,10 @@
 ;; Other config scripts
 
 ;; Then load everything
-(load "init-ui.el" nil nil)
-(load "init-editing-2.el" nil nil)
-(load "init-projects-2.el" nil nil)
-(load "init-languages.el" nil nil)
-
-;;(load "init-gui.el")
-;;(load "init-editing.el")
-;;(load "init-projects.el")
-;;(load "init-completion.el")
-;;
-;;(load "init-keybinding.el")
+(load "init-ui.el" t t)
+(load "init-editing.el" t t)
+(load "init-projects.el" t t)
+(load "init-languages.el" t t)
 
 ;; -----------------------------------------------------------------------------
 ;; Custom set variable
