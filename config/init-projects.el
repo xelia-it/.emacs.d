@@ -55,9 +55,9 @@
   (projectile-mode)
   :bind (
          ;; Compile Project
-         ("S-<f9>" . projectile-configure-project)
          ("<f9>" . projectile-compile-project)
          ("C-<f9>" . projectile-run-project)
+         ("S-<f9>" . projectile-configure-project)
          ("M-<f9>" . projectile-test-project)
          ;; Move to the previous error found during compiling
          ("<f10>" . previous-error)
@@ -174,7 +174,7 @@
   :ensure t
   :bind (
          ("<f5>" . magit-status)
-         ("<f6>" . magit-log)
+         ("<f6>" . magit-log-all)
          :map magit-mode-map
          ("C-w" . magit-mode-bury-buffer)
 	     )
@@ -202,7 +202,9 @@
   ;;(global-git-gutter-mode t)
   :bind (
          ("<f7>" . git-gutter:previous-hunk)
+         ("S-<f7>" . git-gutter:popup-hunk)
          ("<f8>" . git-gutter:next-hunk)
+         ("S-<f8>" . git-gutter:popup-hunk)
 	     )
 
   :hook (prog-mode . git-gutter-mode)
