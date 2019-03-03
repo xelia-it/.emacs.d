@@ -135,8 +135,8 @@
   ;; restore on load (even before you require bm)
   (setq bm-restore-repository-on-load t)
 
-
   :config
+
   ;; Allow cross-buffer 'next'
   (setq bm-cycle-all-buffers t)
 

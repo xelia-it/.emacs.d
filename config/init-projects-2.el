@@ -11,6 +11,9 @@
 
 (use-package helm
   :ensure t
+  :after (atom-one-dark-theme)
+  :init
+  (setq helm-display-function 'pop-to-buffer)
   :bind (
          ("M-x" . helm-M-x)
          ("C-o" . helm-find-files)
@@ -19,8 +22,6 @@
          ("S-C-r" . helm-imenu-in-all-buffers)
          ("S-C-V" . helm-kill-ring)
          )
-  :init
-  (setq helm-display-function 'pop-to-buffer)
   )
 
 (use-package helm-swoop
@@ -106,7 +107,7 @@
             #b00000000
             #b00000000
             #b00000000))
-  ;; Apply "ball" icon to errors, warnings and info
+  ;; Apply "ball" icon to errors ..
   (flycheck-define-error-level 'error
     :severity 100
     :compilation-level 2
@@ -114,7 +115,7 @@
     :fringe-bitmap 'flycheck-fringe-bitmap-ball
     :fringe-face 'flycheck-fringe-error
     :error-list-face 'flycheck-error-list-error)
-
+  ;; .. warnings ..
   (flycheck-define-error-level 'warning
     :severity 200
     :compilation-level 1
@@ -122,7 +123,7 @@
     :fringe-bitmap 'flycheck-fringe-bitmap-ball
     :fringe-face 'flycheck-fringe-warning
     :error-list-face 'flycheck-error-list-warning)
-
+  ;; .. and infos
   (flycheck-define-error-level 'info
     :severity 300
     :compilation-level 0
@@ -138,22 +139,30 @@
 
 (use-package company
   :ensure t
-  :defer t
-  :config
-  (setq company-idle-delay 0
-        company-echo-delay 0
-        company-dabbrev-downcase nil
+  :diminish company-mode
+  :after (atom-one-dark-theme)
+  :init
+  (setq company-auto-complete nil
+        company-tooltip-flip-when-above t
         company-minimum-prefix-length 2
+        company-tooltip-limit 10
+        company-idle-delay 0.1
         company-selection-wrap-around t
         company-transformers '(company-sort-by-occurrence
-                               company-sort-by-backend-importance))
-  ;; (global-company-mode)
-  :hook (prog-mode . company-mode)
+                               company-sort-by-backend-importance)
+        )
+  :config
+  (global-company-mode 1)
+  ;;:bind (
+  ;;       ("C-<space>" . company-complete)
+  ;;       )
+  (global-set-key (kbd "C-<space>") 'company-complete)
   )
 
+;; Quick help during autocomplete
 (use-package company-quickhelp
   :ensure t
-  :defer t
+  ;;:defer t
   :after (company)
   :config
   (company-quickhelp-mode))
@@ -166,47 +175,56 @@
   :bind (
          ("<f5>" . magit-status)
          ("<f6>" . magit-log)
-	)
+         :map magit-mode-map
+         ("C-w" . magit-mode-bury-buffer)
+	     )
   )
 
 (use-package git-gutter
   :ensure t
+  :defer t
   :config
-  ;; If you enable global minor mode
-  ;;(global-git-gutter-mode t)
-
   ;; If you would like to use git-gutter.el and linum-mode
   ;; (git-gutter:linum-setup)
 
-  ;;
+  ;; Modifies gutters "icons".
   ;; Alternatives: ("▐")
   (setq git-gutter:modified-sign "❙")
   (setq git-gutter:added-sign "❙")
   (setq git-gutter:deleted-sign "❙")
   (setq git-gutter:update-interval 2)
- ;; (custom-set-variables
- ;;  '(git-gutter:modified-sign "❙")
- ;;  '(git-gutter:added-sign "❙")
- ;;  '(git-gutter:deleted-sign "❙")
- ;;  '(git-gutter:update-interval 2)
- ;;  '(git-gutter:visual-line t)
- ;;  )
 
   ;; If you enable git-gutter-mode for some modes
-  (add-hook 'ruby-mode-hook 'git-gutter-mode)
+  ;;(add-hook 'ruby-mode-hook 'git-gutter-mode)
 
-  (global-set-key (kbd "C-x C-g") 'git-gutter)
-  (global-set-key (kbd "C-x v =") 'git-gutter:popup-hunk)
 
+  ;;:bind (
+     ;;    ("C-x C-g" . git-gutter)
+       ;;  ("C-x v =" . git-gutter:popup-hunk)
+         ;; Jump to next/previous hunk
+        ;; ("C-x p" . git-gutter:previous-hunk)
+;;         ("C-x n" . git-gutter:next-hunk)
+    ;;     )
+
+
+  ;;(global-set-key (kbd "C-x C-g") 'git-gutter)
+  ;;(global-set-key (kbd "C-x v =") 'git-gutter:popup-hunk)
   ;; Jump to next/previous hunk
-  (global-set-key (kbd "C-x p") 'git-gutter:previous-hunk)
-  (global-set-key (kbd "C-x n") 'git-gutter:next-hunk)
+  ;;(global-set-key (kbd "C-x p") 'git-gutter:previous-hunk)
+  ;;(global-set-key (kbd "C-x n") 'git-gutter:next-hunk)
 
   (set-face-foreground 'git-gutter:modified "#61AFEF")
   (set-face-foreground 'git-gutter:added "#E5C07B")
   (set-face-foreground 'git-gutter:deleted "#E06C75")
 
-  (global-git-gutter-mode +1)
+  ;; If you enable global minor mode
+  ;;(global-git-gutter-mode t)
+  :bind (
+         ("<f7>" . git-gutter:previous-hunk)
+         ("<f8>" . git-gutter:next-hunk)
+	     )
+
+  :hook (prog-mode . git-gutter-mode)
   )
 
 (provide 'init-projects)

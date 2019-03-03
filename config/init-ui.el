@@ -6,6 +6,23 @@
 ;;; ----------------------------------------------------------------------------
 ;;; Code:
 
+
+(defun my-unbind-keys ()
+  "Unbind keys."
+  (dolist (key-to-unset '("C-a" "C-b" "C-d" "C-e" "C-f" "C-g"
+                          "C-h" "C-k" "C-l" "C-n" "C-o" "C-p"
+                          "C-t" "C-v" "C-z"
+                          "<escape>"
+                          "M-<up>" "M-<down>"
+                          "S-M-<up>" "S-M-<down>"
+                          "S-C-<up>" "S-C-<down>"
+                          "C-M-<up>" "C-M-<down>"
+                          "C-<space>"
+                          ))
+    (global-unset-key (kbd key-to-unset)))
+    (message "Key unbind successful")
+  )
+
 (defun my-kill-other-buffers ()
     "Kill all other buffers."
     (interactive)
@@ -31,11 +48,11 @@
 ;; The theme is very similar to Atom colors.
 (use-package atom-one-dark-theme
   :ensure t
-
   :init
+
   ;; Removes *messages* from the buffer list.
-  (setq-default message-log-max nil)
-  (kill-buffer "*Messages*")
+;;  (setq-default message-log-max nil)
+ ;; (kill-buffer "*Messages*")
 
   ;; Removes *Completions* from buffer after you've opened a file.
   (add-hook 'minibuffer-exit-hook
@@ -56,6 +73,14 @@
     "Overwrite default startup message."
     (message ""))
 
+  ;; A very light color compatible with atom-one-dark-theme
+  (defvar near-to-white-color "#86e6f2")
+
+  ;; Use ESC to quit command. This free Ctrl-G for moving to a specific line.
+  ;; Use escape for "abort" operations
+  ;; (company needs a specific command)
+  (my-unbind-keys)
+
   :config
 
   ;; Load default theme
@@ -66,16 +91,15 @@
   (menu-bar-mode -1)                ;; Disable menu bar on top
   (scroll-bar-mode -1)              ;; No more scrollbars
 
-  ;; A very light color compatible with atom-one-dark-theme
-  (defvar near-to-white-color "#86e6f2")
 
   ;; Set cursor color
   (set-cursor-color near-to-white-color)
   ;; Blink cursor
   (blink-cursor-mode)
+  ;; TODO: multiple-cursor do not work with bar cursor
   ;; Cursor like a bar (works only on Linux/Mac)
-  (if (memq window-system '(mac ns x))
-      (setq-default cursor-type 'bar))
+  ;;(if (memq window-system '(mac ns x))
+  ;;    (setq-default cursor-type 'bar))
 
   (global-hl-line-mode)             ;; Hightlight current line
 
@@ -109,11 +133,6 @@
   ;; Toggle full screen automatically
   (run-with-idle-timer 0.1 nil 'toggle-frame-fullscreen)
 
-  ;; Use ESC to quit command. This free Ctrl-G for moving to a specific line.
-  (global-unset-key (kbd "<escape>"))
-  (global-unset-key (kbd "C-g"))
-  ;; Use escape for "abort" operations
-  ;; (company needs a specific command)
   (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
   ;; (define-key company-mode-map (kbd "<escape>") 'company-abort)
 

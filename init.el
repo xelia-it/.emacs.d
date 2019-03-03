@@ -44,15 +44,15 @@
 (setq package-enable-at-startup nil)
 
 (defvar repo-gnu '("gnu" . "https://elpa.gnu.org/packages/"))
-;;(defvar repo-melpa '("melpa" . "https://melpa.org/packages/"))
+(defvar repo-melpa '("melpa" . "https://melpa.org/packages/"))
 (defvar repo-melpa-stable '("melpa-stable" . "https://stable.melpa.org/packages/"))
-;;(defvar repo-org-elpa '("org" . "http://orgmode.org/elpa/"))
+(defvar repo-org-elpa '("org" . "http://orgmode.org/elpa/"))
 
 (setq package-archives nil)
+(add-to-list 'package-archives repo-melpa t)
 (add-to-list 'package-archives repo-melpa-stable t)
-;;(add-to-list 'package-archives repo-melpa t)
 (add-to-list 'package-archives repo-gnu t)
-;;(add-to-list 'package-archives repo-org-elpa t)
+(add-to-list 'package-archives repo-org-elpa t)
 
 ;; Downloads new packages in case of a fresh install
 (package-initialize)
@@ -60,20 +60,16 @@
 ;; Install use-package package if not present
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
-  (package-install 'use-package))
+  (package-install 'use-package)
+  ;; Byte compile everything that need compile
+  (byte-recompile-directory (expand-file-name "~/.emacs.d") 0)
+  )
 
 (eval-when-compile
   (require 'use-package))
 
 ;; -----------------------------------------------------------------------------
 ;; Configuration path
-
-;; Write a separate custom.el
-;;(setq custom-file (concat init-dir "custom.el"))
-;;(load custom-file :noerror)
-
-;; Our scripts are into a subdirectory
-(add-to-list 'load-path "~/.emacs.d/config")
 
 ;; Set the path variable
 ;; (Works only on Linux/Mac)
@@ -84,13 +80,17 @@
   (exec-path-from-shell-initialize)
   )
 
+;; Our scripts are into a subdirectory
+(add-to-list 'load-path "~/.emacs.d/config")
+
 ;; -----------------------------------------------------------------------------
 ;; Other config scripts
 
-(load "init-ui.el")
-(load "init-editing-2.el")
-(load "init-projects-2.el")
-(load "init-languages.el")
+;; Then load everything
+(load "init-ui.el" nil nil)
+(load "init-editing-2.el" nil nil)
+(load "init-projects-2.el" nil nil)
+(load "init-languages.el" nil nil)
 
 ;;(load "init-gui.el")
 ;;(load "init-editing.el")

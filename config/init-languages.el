@@ -21,7 +21,7 @@
   (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
   (add-to-list 'auto-mode-alist '("\\.handlebars\\'" . web-mode))
   (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
-  
+
   ;; Configuration
   (setq web-mode-enable-auto-pairing t)
   (setq web-mode-enable-css-colorization t)
@@ -52,9 +52,11 @@
 (use-package robe
   :ensure t
   :defer t
-;;  :after (company)
+  :after (company)
   :config
-  ;;(add-to-list 'company-backends 'company-robe)
+  (add-to-list 'company-backends 'company-robe)
+  ;;(push 'company-robe company-backends)
+  :hook (ruby-mode . robe-mode)
   )
 
 (use-package projectile-rails

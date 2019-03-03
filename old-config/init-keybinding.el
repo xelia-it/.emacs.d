@@ -12,8 +12,7 @@
 (global-unset-key (kbd "<f2> <f2>"))
 
 ;; Magit
-(global-set-key (kbd "<f5>") 'magit-status)
-(global-set-key (kbd "<f6>") 'magit-log-all)
+
 (define-key magit-mode-map (kbd "C-w") 'magit-mode-bury-buffer)
 
 
@@ -49,11 +48,8 @@
 (global-set-key (kbd "C-b") 'helm-buffers-list)
 (global-set-key (kbd "C-<tab>") 'next-buffer)
 (global-set-key (kbd "C-<iso-lefttab>") 'previous-buffer)
-(global-set-key (kbd "C-w") 'kill-this-buffer)
-(global-set-key (kbd "S-C-w") 'kill-other-buffers)
 
 ;; Editing
-(global-set-key (kbd "S-C-v") 'helm-show-kill-ring)
 (global-set-key (kbd "M-<left>") 'move-beginning-of-line)
 (global-set-key (kbd "M-<right>") 'move-end-of-line)
 (global-unset-key (kbd "C-d"))
