@@ -125,6 +125,5 @@
          )
   )
 
-
 (provide 'init-editing)
 ;;; init-editing.el ends here

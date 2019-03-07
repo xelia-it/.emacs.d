@@ -159,6 +159,14 @@
   ;; TODO: C-<space> don't work well
   (global-unset-key (kbd "C-<space>"))
   (global-set-key (kbd "C-SPC") 'company-complete)
+
+  (with-eval-after-load 'company
+    (define-key company-active-map (kbd "M-n") nil)
+    (define-key company-active-map (kbd "M-p") nil)
+    (define-key company-active-map (kbd "C-n") #'company-select-next)
+    (define-key company-active-map (kbd "C-p") #'company-select-previous)
+    (define-key company-active-map (kbd "<escape>") #'company-abort)
+    )
   )
 
 ;; Quick help during autocomplete
