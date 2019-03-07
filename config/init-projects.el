@@ -22,9 +22,14 @@
          ("C-o" . helm-find-files)
          ("C-r" . helm-imenu)
          ("C-x b" . helm-buffers-list)
+         ("C-<tab>" . helm-buffers-list)
+         ("C-<iso-lefttab>" . helm-buffers-list)
          ("C-x C-b" . helm-buffers-list)
          ("S-C-r" . helm-imenu-in-all-buffers)
          ("S-C-V" . helm-kill-ring)
+         :map helm-map
+         ("C-<tab>" . helm-next-line)
+         ("C-<iso-lefttab>" . helm-previous-line)
          )
   )
 
@@ -161,10 +166,10 @@
   (global-set-key (kbd "C-SPC") 'company-complete)
 
   (with-eval-after-load 'company
-    (define-key company-active-map (kbd "M-n") nil)
-    (define-key company-active-map (kbd "M-p") nil)
-    (define-key company-active-map (kbd "C-n") #'company-select-next)
-    (define-key company-active-map (kbd "C-p") #'company-select-previous)
+;;    (define-key company-active-map (kbd "M-n") nil)
+;;    (define-key company-active-map (kbd "M-p") nil)
+;;    (define-key company-active-map (kbd "C-n") #'company-select-next)
+;;    (define-key company-active-map (kbd "C-p") #'company-select-previous)
     (define-key company-active-map (kbd "<escape>") #'company-abort)
     )
   )
