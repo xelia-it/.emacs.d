@@ -80,24 +80,14 @@
 ;; Move and copy line like Eclipse and Netbeans
 (use-package move-dup
   :ensure t
-  :init
-
+  :config
+  ;; Use this package to trigger my editing preference setup
   (my-editing-preferences)
   (my-backup-preferences)
-
-  :bind (
-         ("M-<up>" . md/move-lines-up)
-         ("M-<down>" . md/move-lines-down)
-         ("S-C-<up>" . md/duplicate-up)
-         ("S-C-<down>" . md/duplicate-down)
-         )
-  :config
-  (global-move-dup-mode)
-  (global-unset-key (kbd "S-M-<up>"))
-  (global-unset-key (kbd "S-M-<down>"))
+  ;; Activate move-up
+  (global-move-dup-mode )
   )
 
-;; Package multiple-cursors is the main editiging package.
 ;; With this package you can have multiple cursors
 ;; and type the same data into multiple positions at the same time
 ;; Ctrl-D is used by Emacs su we unset it before binding.
@@ -113,11 +103,12 @@
   (setq-default mc/max-cursors 30)
 
   ;; The :bind key do not works well with multiple-cursors
-  (global-set-key (kbd "S-M-<up>") 'mc/mark-previous-lines )
-  (global-set-key (kbd "S-M-<down>") 'mc/mark-next-lines )
-  (global-set-key (kbd "C-d") 'mc/mark-all-symbols-like-this-in-defun)
+  (global-set-key (kbd "S-M-<up>") 'mc/mark-previous-like-this)
+  (global-set-key (kbd "S-M-<down>") 'mc/mark-next-like-this)
   (global-set-key (kbd "S-C-d") 'mc/mark-next-like-this-word)
+  (global-set-key (kbd "C-d") 'mc/mark-all-symbols-like-this-in-defun)
   (global-set-key (kbd "M-S-<mouse-1>") 'mc/add-cursor-on-click)
+  ;; Exit using escape
   (define-key mc/keymap (kbd "<escape>") 'mc/keyboard-quit)
 
   ;; will make <return> insert a newline; multiple-cursors-mode can still

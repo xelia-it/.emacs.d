@@ -144,19 +144,21 @@
   :diminish company-mode
   :after (atom-one-dark-theme)
   :init
+  ;; company-auto-complete nil
+  ;; company-tooltip-flip-when-above t
+  ;;      company-transformers '(company-sort-by-occurrence
+  ;;                             company-sort-by-backend-importance)
   (setq company-auto-complete nil
-        company-tooltip-flip-when-above t
+        company-idle-delay 0.05
         company-minimum-prefix-length 2
         company-tooltip-limit 10
-        company-idle-delay 0.1
         company-selection-wrap-around t
-        company-transformers '(company-sort-by-occurrence
-                               company-sort-by-backend-importance)
         )
   :config
   (global-company-mode 1)
   ;; TODO: C-<space> don't work well
-  (global-set-key (kbd "C-<space>") 'company-complete)
+  (global-unset-key (kbd "C-<space>"))
+  (global-set-key (kbd "C-SPC") 'company-complete)
   )
 
 ;; Quick help during autocomplete

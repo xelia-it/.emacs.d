@@ -77,6 +77,8 @@
   :if (memq window-system '(mac ns x))
   :ensure t
   :config
+  ;; Disable "-i" to let path to be loaded from .bashrc
+  (setq exec-path-from-shell-arguments '("-l"))
   (exec-path-from-shell-initialize)
   )
 
@@ -102,7 +104,7 @@
 ;; Use a separate custom file
 (setq custom-file "~/.emacs.d/custom.el")
 (cond
- ((file-exists-p custom-file) (load custom-file))
+ ((file-exists-p custom-file) (load custom-file t t))
  )
 
 (provide 'init)

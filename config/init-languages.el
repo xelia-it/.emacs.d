@@ -68,6 +68,38 @@
   :hook (prog-mode . projectile-rails-mode)
   )
 
+;; ------------------------------------------------------------------------------
+;; Language: C++
+
+(use-package irony
+  :ensure t
+  :init
+  (message "company init start")
+  :config
+  (message "company config start")
+
+  ;; Windows performance tweaks
+  ;;
+  (when (boundp 'w32-pipe-read-delay)
+    (setq w32-pipe-read-delay 0))
+  ;; Set the buffer size to 64K on Windows (from the original 4K)
+  (when (boundp 'w32-pipe-buffer-size)
+    (setq irony-server-w32-pipe-buffer-size (* 64 1024)))
+  :hook ((c++-mode-hook . irony-mode)
+         (c-mode-hook . irony-mode)
+         (objc-mode-hook . irony-mode)
+         (irony-mode-hook . irony-cdb-autosetup-compile-options)
+         )
+  )
+
+(use-package flycheck-irony
+  :ensure t
+  :hook (flycheck-mode . flycheck-irony-setup)
+
+  ;;(eval-after-load 'flycheck
+  ;;  '(add-hook 'flycheck-mode-hook #'flycheck-irony-setup))
+  )
+
 ;; -----------------------------------------------------------------------------
 ;; Language: YAML
 
