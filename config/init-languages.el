@@ -73,10 +73,9 @@
 
 (use-package irony
   :ensure t
+  :defer t
   :init
-  (message "company init start")
   :config
-  (message "company config start")
 
   ;; Windows performance tweaks
   ;;
@@ -101,6 +100,46 @@
   )
 
 ;; -----------------------------------------------------------------------------
+;; Language: Python
+
+;; Auto complete with Python
+;; (use-package anaconda-mode
+;;   :ensure t
+;;   :defer t
+;;   :mode ("\\.py\\'" . python-mode)
+;;   :interpreter "anaconda-mode"
+;;   :hook (python-mode-hook . anaconda-mode)
+;;   )
+;;
+;; (use-package company-anaconda
+;;   :ensure t
+;;   :init
+;;   (eval-after-load "company"
+;;     '(add-to-list 'company-backends 'company-anaconda))
+;;   )
+
+;; -----------------------------------------------------------------------------
+;; Language: Python
+
+(use-package jedi
+  :ensure t
+  :init
+  ;; TODO: Set on Windows
+  (setq-default py-python-command "/usr/bin/python3")
+  (add-hook 'python-mode-hook 'jedi:setup)
+  )
+
+(use-package company-jedi
+  :ensure t
+  :config
+
+  (defun my/python-mode-hook ()
+    (add-to-list 'company-backends 'company-jedi))
+
+  (add-hook 'python-mode-hook 'my/python-mode-hook)
+  )
+
+;; -----------------------------------------------------------------------------
 ;; Language: YAML
 
 (use-package yaml-mode
@@ -116,9 +155,18 @@
    ;;    (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
   )
 
-(use-package yaml-imenu
+;; -----------------------------------------------------------------------------
+;; Language: Markdown
+
+(use-package markdown-mode
   :ensure t
   :defer t
+  :commands (markdown-mode gfm-mode)
+  :mode (("README\\.md\\'" . gfm-mode)
+         ("\\.md\\'" . markdown-mode)
+         ("\\.markdown\\'" . markdown-mode))
+  :init (setq markdown-command "multimarkdown")
   )
+
 (provide 'init-languages)
 ;;; init-languages.el ends here

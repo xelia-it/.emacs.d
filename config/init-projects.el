@@ -26,7 +26,7 @@
          ("C-<iso-lefttab>" . helm-buffers-list)
          ("C-x C-b" . helm-buffers-list)
          ("S-C-r" . helm-imenu-in-all-buffers)
-         ("S-C-V" . helm-kill-ring)
+         ("S-C-v" . helm-kill-ring)
          :map helm-map
          ("C-<tab>" . helm-next-line)
          ("C-<iso-lefttab>" . helm-previous-line)
