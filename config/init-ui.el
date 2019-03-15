@@ -128,6 +128,10 @@
 
   ;; Show line numbers
   (setq display-line-numbers-width 5)
+  (set-face-foreground 'line-number (face-foreground 'font-lock-comment-face))
+  (set-face-foreground 'line-number-current-line (face-foreground 'font-lock-builtin-face))
+  (set-face-background 'line-number-current-line (face-background 'highlight))
+  ;; (set-face-background 'line-number-current-line (face-background 'hl-line))
   (add-hook 'prog-mode-hook 'display-line-numbers-mode)
 
   ;; Toggle full screen automatically
@@ -156,6 +160,8 @@
   ;; Check VC info
   (setq-default auto-revert-check-vc-info t)
 
+  (add-hook 'doom-modeline-mode-hook 'column-number-mode)
+
   :hook (after-init . doom-modeline-mode)
   )
 
@@ -163,8 +169,8 @@
   :ensure t
   :config
   (setq shackle-rules '(
-                        ("\\`\\*[hH]elm.*?\\*\\'" :regexp t :align 'below :size 0.4)
                         ("\\`\\*Flycheck.*?\\*\\'" :regexp t :align 'below :size 0.2)
+                        ("\\`\\*[hH]elm.*?\\*\\'" :regexp t :align 'below :size 0.3)
                         ))
   (shackle-mode 1)
   )

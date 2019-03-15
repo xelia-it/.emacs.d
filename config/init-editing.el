@@ -77,6 +77,18 @@
   (setq-default compilation-scroll-output t)
   )
 
+(defun kill-start-of-line ()
+  "Kill from point to start of line."
+  (interactive)
+  (kill-line 0)
+)
+
+(defun kill-end-of-line ()
+  "Kill from point to end of line."
+  (interactive)
+  (kill-line nil)
+)
+
 ;; Move and copy line like Eclipse and Netbeans
 (use-package move-dup
   :ensure t
@@ -85,7 +97,7 @@
   (my-editing-preferences)
   (my-backup-preferences)
   ;; Activate move-up
-  (global-move-dup-mode )
+  (global-move-dup-mode)
   )
 
 ;; With this package you can have multiple cursors
@@ -114,6 +126,18 @@
   ;; will make <return> insert a newline; multiple-cursors-mode can still
   ;; be disabled with C-g / ESC
   (define-key mc/keymap (kbd "<return>") nil)
+
+  ;; Define other keybindingd
+  (global-set-key (kbd "M-<left>") 'beginning-of-line)
+  (global-set-key (kbd "M-<right>") 'end-of-line)
+
+  ;; Delete chars
+  (global-set-key (kbd "C-<backspace>") 'backward-kill-word)
+  (global-set-key (kbd "S-C-<backspace>") 'kill-start-of-line)
+  (global-set-key (kbd "C-<delete>") 'kill-word)
+  (global-set-key (kbd "S-C-<delete>") 'kill-end-of-line)
+  (global-set-key (kbd "M-<backspace>") 'kill-whole-line)
+  (global-set-key (kbd "M-<delete>") 'kill-whole-line)
   )
 
 ;; Package to easy select region

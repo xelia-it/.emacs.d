@@ -20,13 +20,13 @@
   :bind (
          ("M-x" . helm-M-x)
          ("C-o" . helm-find-files)
-         ("C-r" . helm-imenu)
+         ("C-j" . helm-imenu)
+         ("S-C-j" . helm-imenu-in-all-buffers)
          ("C-x b" . helm-buffers-list)
          ("C-<tab>" . helm-buffers-list)
          ("C-<iso-lefttab>" . helm-buffers-list)
          ("C-x C-b" . helm-buffers-list)
-         ("S-C-r" . helm-imenu-in-all-buffers)
-         ("S-C-v" . helm-kill-ring)
+         ("S-C-v" . helm-show-kill-ring)
          :map helm-map
          ("C-<tab>" . helm-next-line)
          ("C-<iso-lefttab>" . helm-previous-line)
@@ -49,7 +49,14 @@
   :config
   ;; Split direcion. 'split-window-vertically or 'split-window-horizontally
   (setq helm-swoop-split-direction 'split-window-vertically)
-  (set-face-attribute 'helm-swoop-target-word-face nil :foreground "#ffffff" :background nil :box t)
+  (set-face-attribute 'helm-swoop-target-word-face nil
+                      :foreground "#ffffff" :background (face-background 'highlight))
+  (set-face-attribute 'helm-swoop-target-line-block-face nil
+                      :foreground (face-foreground 'font-lock-builtin-face)
+                      :background (face-background 'highlight))
+  (set-face-attribute 'helm-swoop-target-line-face nil
+                      :foreground (face-foreground 'font-lock-builtin-face)
+                      :background (face-background 'highlight))
   )
 
 (use-package projectile
@@ -208,10 +215,13 @@
   (setq git-gutter:added-sign "❙")
   (setq git-gutter:deleted-sign "❙")
   (setq git-gutter:update-interval 2)
+  (setq git-gutter:always-show-separator t)
+  (setq git-gutter:unchanged-sign " ")
 
   (set-face-foreground 'git-gutter:modified "#61AFEF")
   (set-face-foreground 'git-gutter:added "#E5C07B")
   (set-face-foreground 'git-gutter:deleted "#E06C75")
+  (set-face-background 'git-gutter:unchanged nil)
 
   ;; If you enable global minor mode
   ;;(global-git-gutter-mode t)
