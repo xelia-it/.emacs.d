@@ -41,6 +41,17 @@
                       :foreground "#ffffff" :background nil :weight 'extra-bold)
   )
 
+(use-package j2-mode
+  :ensure t
+  :defer t
+  :mode (
+         ("\\.js?\\'" . js2-mode)
+         )
+  :config
+
+  (setq js2
+  )
+
 ;; -----------------------------------------------------------------------------
 ;; Language: Ruby
 
@@ -96,6 +107,12 @@
 (use-package flycheck-irony
   :ensure t
   :hook (flycheck-mode . flycheck-irony-setup)
+  )
+
+(use-package cmake-mode
+  :ensure t
+  :defer t
+  :mode (("CMakeLists\\.txt\\'" . cmake-mode))
   )
 
 ;; -----------------------------------------------------------------------------
