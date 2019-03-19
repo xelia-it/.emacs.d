@@ -41,15 +41,29 @@
                       :foreground "#ffffff" :background nil :weight 'extra-bold)
   )
 
-(use-package j2-mode
+(use-package js3-mode
   :ensure t
   :defer t
   :mode (
-         ("\\.js?\\'" . js2-mode)
+         ("\\.js?\\'" . js3-mode)
          )
   :config
+  )
 
-  (setq js2
+(use-package impatient-mode
+  :ensure t
+  :defer t
+  :init
+
+  (defun my-open-mpatient-modes()
+    "Open Impatient Mode Window."
+    (call-process "firefox" nil 0 nil "-new-tab"  "http://localhost:8080/imp/")
+   )
+
+
+  :bind (
+         ("C-S-i" . my-open-mpatient-mode)
+         )
   )
 
 ;; -----------------------------------------------------------------------------
