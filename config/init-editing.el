@@ -149,5 +149,22 @@
          )
   )
 
+;; Package to easy select region
+(use-package visual-regexp
+  :ensure t
+  :defer t
+  :init
+  (setq vr/auto-show-help nil)
+  :bind (
+         ("S-C-r" . vr/mc-mark)
+         ("C-r" . vr/replace)
+         )
+  ;; :config
+  ;; (define-key global-map (kbd "C-c r") 'vr/replace)
+  ;; (define-key global-map (kbd "C-c q") 'vr/query-replace)
+  ;; ;; if you use multiple-cursors, this is for you:
+  ;; (define-key global-map (kbd "C-c m") 'vr/mc-mark)
+  )
+
 (provide 'init-editing)
 ;;; init-editing.el ends here
