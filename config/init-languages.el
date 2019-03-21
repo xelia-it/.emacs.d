@@ -47,23 +47,23 @@
   :mode (
          ("\\.js?\\'" . js3-mode)
          )
-  :config
   )
 
 (use-package impatient-mode
   :ensure t
   :defer t
-  :init
 
-  (defun my-open-mpatient-modes()
+  :bind (
+         ("C-S-i" . impatient-mode)
+         )
+
+  :config
+
+  (defun my-open-impatient-modes()
     "Open Impatient Mode Window."
     (call-process "firefox" nil 0 nil "-new-tab"  "http://localhost:8080/imp/")
    )
 
-
-  :bind (
-         ("C-S-i" . my-open-mpatient-mode)
-         )
   )
 
 ;; -----------------------------------------------------------------------------
@@ -120,6 +120,7 @@
 
 (use-package flycheck-irony
   :ensure t
+  :defer t
   :hook (flycheck-mode . flycheck-irony-setup)
   )
 
@@ -153,6 +154,7 @@
 
 (use-package jedi
   :ensure t
+  :defer t
   :init
   ;; TODO: Set on Windows
   (setq-default py-python-command "/usr/bin/python3")
@@ -161,6 +163,7 @@
 
 (use-package company-jedi
   :ensure t
+  :defer t
   :config
 
   (defun my/python-mode-hook ()

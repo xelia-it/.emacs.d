@@ -155,30 +155,19 @@
   :ensure t
   :diminish company-mode
   :after (atom-one-dark-theme)
-  :init
-  ;; company-auto-complete nil
-  ;; company-tooltip-flip-when-above t
-  ;;      company-transformers '(company-sort-by-occurrence
-  ;;                             company-sort-by-backend-importance)
+  :bind (
+         ("C-SPC" . company-complete)
+         :map company-active-map
+         ("<escape>" . company-abort)
+         )
+  :config
   (setq company-auto-complete nil
         company-idle-delay 0.05
         company-minimum-prefix-length 2
         company-tooltip-limit 10
         company-selection-wrap-around t
         )
-  :config
   (global-company-mode 1)
-  ;; TODO: C-<space> don't work well
-  (global-unset-key (kbd "C-<space>"))
-  (global-set-key (kbd "C-SPC") 'company-complete)
-
-  (with-eval-after-load 'company
-;;    (define-key company-active-map (kbd "M-n") nil)
-;;    (define-key company-active-map (kbd "M-p") nil)
-;;    (define-key company-active-map (kbd "C-n") #'company-select-next)
-;;    (define-key company-active-map (kbd "C-p") #'company-select-previous)
-    (define-key company-active-map (kbd "<escape>") #'company-abort)
-    )
   )
 
 ;; Quick help during autocomplete
