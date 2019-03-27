@@ -138,6 +138,8 @@
   (global-set-key (kbd "S-C-<delete>") 'kill-end-of-line)
   (global-set-key (kbd "M-<backspace>") 'kill-whole-line)
   (global-set-key (kbd "M-<delete>") 'kill-whole-line)
+
+  (global-set-key (kbd "C-g") 'goto-line)
   )
 
 ;; Package to easy select region
@@ -159,11 +161,6 @@
          ("S-C-r" . vr/mc-mark)
          ("C-r" . vr/replace)
          )
-  ;; :config
-  ;; (define-key global-map (kbd "C-c r") 'vr/replace)
-  ;; (define-key global-map (kbd "C-c q") 'vr/query-replace)
-  ;; ;; if you use multiple-cursors, this is for you:
-  ;; (define-key global-map (kbd "C-c m") 'vr/mc-mark)
   )
 
 (provide 'init-editing)
