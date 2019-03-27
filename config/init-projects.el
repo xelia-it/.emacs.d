@@ -10,7 +10,7 @@
 ;;; Code:
 
 ;; -----------------------------------------------------------------------------
-;; Code anvigation
+;; Code navigation
 
 (use-package helm
   :ensure t
@@ -183,7 +183,25 @@
 
 (use-package magit
   :ensure t
+  :config
+
+  (defun my-save ()
+    "Save current buffer without confirmation."
+    (interactive)
+    (save-buffer t)
+    (magit-refresh-all)
+    )
+
+  (defun my-save-all ()
+    "Save all buffers without confirmation and refresh magit."
+    (interactive)
+    (save-some-buffers t)
+    (magit-refresh-all)
+    )
+
   :bind (
+         ("C-s" . my-save-buffer)
+         ("S-C-s" . my-save-all)
          ("<f5>" . magit-status)
          ("<f6>" . magit-log-all)
          :map magit-mode-map
@@ -194,6 +212,7 @@
 (use-package git-gutter
   :ensure t
   :defer t
+
   :config
   ;; If you would like to use git-gutter.el and linum-mode
   ;; (git-gutter:linum-setup)

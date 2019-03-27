@@ -6,7 +6,6 @@
 ;;; ----------------------------------------------------------------------------
 ;;; Code:
 
-
 (defun my-unbind-keys ()
   "Unbind keys."
   (dolist (key-to-unset '("C-a" "C-b" "C-d" "C-e" "C-f" "C-g"
@@ -30,19 +29,6 @@
                 (remove-if-not 'buffer-file-name (buffer-list))))
     (message "Killed other buffers")
     )
-
-(defun my-save ()
-  "Save current buffer without confirmation."
-  (interactive)
-  (save-buffer t)
-  )
-
-(defun my-save-all ()
-  "Save all buffers without confirmation and refresh magit."
-  (interactive)
-  (save-some-buffers t)
-  (magit-refresh-all)
-  )
 
 ;; The theme is very similar to Atom colors.
 (use-package atom-one-dark-theme
@@ -141,8 +127,6 @@
   ;; (define-key company-mode-map (kbd "<escape>") 'company-abort)
 
   :bind (
-         ("C-s" . 'save-buffer)
-         ("S-C-s" . 'my-save-all)
          ("C-w" . 'kill-buffer-and-window)
          ("S-C-W" . 'my-kill-other-buffers)
          ("<escape>" . 'keyboard-escape-quit)
