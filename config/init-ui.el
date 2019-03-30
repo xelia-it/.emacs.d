@@ -30,6 +30,8 @@
     (message "Killed other buffers")
     )
 
+;; -----------------------------------------------------------------------------
+
 ;; The theme is very similar to Atom colors.
 (use-package atom-one-dark-theme
   :ensure t
@@ -116,15 +118,11 @@
   (setq display-line-numbers-width 5)
   (set-face-foreground 'line-number (face-foreground 'font-lock-comment-face))
   (set-face-foreground 'line-number-current-line (face-foreground 'font-lock-builtin-face))
-  (set-face-background 'line-number-current-line (face-background 'highlight))
-  ;; (set-face-background 'line-number-current-line (face-background 'hl-line))
+  (set-face-background 'line-number-current-line (face-background 'hl-line))
   (add-hook 'prog-mode-hook 'display-line-numbers-mode)
 
   ;; Toggle full screen automatically
   (run-with-idle-timer 0.1 nil 'toggle-frame-fullscreen)
-
-  ;;(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-  ;; (define-key company-mode-map (kbd "<escape>") 'company-abort)
 
   :bind (
          ("C-w" . 'kill-buffer-and-window)

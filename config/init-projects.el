@@ -15,8 +15,12 @@
 (use-package helm
   :ensure t
   :after (atom-one-dark-theme)
-  :init
+  :config
   (setq helm-display-function 'pop-to-buffer)
+  (set-face-attribute 'isearch nil
+                      :foreground "#ffffff" :background nil :weight 'bold)
+  (set-face-attribute 'helm-match nil
+                      :foreground "#ffffff" :background nil :weight 'bold)
   :bind (
          ("M-x" . helm-M-x)
          ("C-o" . helm-find-files)
@@ -30,7 +34,11 @@
          :map helm-map
          ("C-<tab>" . helm-next-line)
          ("C-<iso-lefttab>" . helm-previous-line)
+         ("C-f" . helm-next-source)
          )
+
+
+
   )
 
 (use-package helm-swoop
@@ -38,7 +46,7 @@
   :defer t
   :after (helm)
   :bind (
-         ("C-f" . helm-swoop)
+         ("C-f" . helm-occur)
          :map isearch-mode-map
          ("C-f" . helm-swoop-from-isearch)
          :map helm-swoop-map
@@ -201,7 +209,7 @@
 
   :bind (
          ("C-s" . my-save-buffer)
-         ("S-C-s" . my-save-all)
+         ("C-s" . my-save-all)
          ("<f5>" . magit-status)
          ("<f6>" . magit-log-all)
          :map magit-mode-map
@@ -226,10 +234,13 @@
   (setq git-gutter:always-show-separator t)
   (setq git-gutter:unchanged-sign " ")
 
-  (set-face-foreground 'git-gutter:modified "#61AFEF")
-  (set-face-foreground 'git-gutter:added "#E5C07B")
-  (set-face-foreground 'git-gutter:deleted "#E06C75")
-  (set-face-background 'git-gutter:unchanged nil)
+  (set-face-attribute 'git-gutter:modified nil
+                      :foreground "#61AFEF" :background (face-background 'font-lock-builtin-face))
+  (set-face-attribute 'git-gutter:added nil
+                      :foreground "#E5C07B" :background (face-background 'font-lock-builtin-face))
+  (set-face-attribute 'git-gutter:deleted nil
+                      :foreground "#E06C75" :background (face-background 'font-lock-builtin-face))
+  (set-face-background 'git-gutter:unchanged (face-background 'font-lock-builtin-face))
 
   ;; If you enable global minor mode
   ;;(global-git-gutter-mode t)

@@ -3,14 +3,12 @@
 ;;; ----------------------------------------------------------------------------
 ;;; Commentary:
 ;;;
-;;; .
 
 ;;; ----------------------------------------------------------------------------
 ;;; Code:
 
-
 ;; -----------------------------------------------------------------------------
-;; Language: HTML
+;; Language: HTML/CSS/Javascript
 
 (use-package web-mode
   :ensure t
@@ -41,11 +39,11 @@
                       :foreground "#ffffff" :background nil :weight 'extra-bold)
   )
 
-(use-package js3-mode
+(use-package js2-mode
   :ensure t
   :defer t
   :mode (
-         ("\\.js?\\'" . js3-mode)
+         ("\\.js?\\'" . js2-mode)
          )
   )
 
@@ -63,7 +61,6 @@
     "Open Impatient Mode Window."
     (call-process "firefox" nil 0 nil "-new-tab"  "http://localhost:8080/imp/")
    )
-
   )
 
 ;; -----------------------------------------------------------------------------
@@ -73,19 +70,16 @@
   :ensure t
   :defer t
   :after (company)
-  :init
+  :hook (
+         (ruby-mode . robe-mode)
+         )
 
+  :config
+  (message "Config robe module")
   ;; Setting rbenv path
   (setenv "PATH" (concat (getenv "HOME") "/.rbenv/shims:" (getenv "HOME") "/.rbenv/bin:" (getenv "PATH")))
   (setq exec-path (cons (concat (getenv "HOME") "/.rbenv/shims") (cons (concat (getenv "HOME") "/.rbenv/bin") exec-path)))
-
-  :config
   (push 'company-robe company-backends)
-
-  :hook (
-         (ruby-mode . robe-mode)
-         (ruby-mode . robe-start)
-         )
   )
 
 (use-package projectile-rails
@@ -199,6 +193,15 @@
          ("\\.md\\'" . markdown-mode)
          ("\\.markdown\\'" . markdown-mode))
   :init (setq markdown-command "multimarkdown")
+  )
+
+;; -----------------------------------------------------------------------------
+;; Language: Nginx config files
+
+(use-package nginx-mode
+  :ensure t
+  :defer t
+  :mode ("\\.nginx\\'" . nginx-mode)
   )
 
 (provide 'init-languages)

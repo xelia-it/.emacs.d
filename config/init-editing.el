@@ -89,6 +89,9 @@
   (kill-line nil)
 )
 
+;; ------------------------------------------------------------------------------
+;; Packages
+
 ;; Move and copy line like Eclipse and Netbeans
 (use-package move-dup
   :ensure t
@@ -113,6 +116,11 @@
   (setq-default mc/always-repeat-command t)
   ;; Safety ceil
   (setq-default mc/max-cursors 30)
+
+  ;; Disable annoying minor modes when editing with multiple cursor
+  (add-to-list 'mc/unsupported-minor-modes 'company-mode)
+  (add-to-list 'mc/unsupported-minor-modes 'flycheck-mode)
+  (add-to-list 'mc/unsupported-minor-modes 'git-gutter-mode)
 
   ;; The :bind key do not works well with multiple-cursors
   (global-set-key (kbd "S-M-<up>") 'mc/mark-previous-like-this)
@@ -161,6 +169,15 @@
          ("S-C-r" . vr/mc-mark)
          ("C-r" . vr/replace)
          )
+  )
+
+(use-package indent-guide
+  :ensure t
+  :defer t
+  :hook (prog-mode . indent-guide-mode)
+  :config
+  (setq indent-guide-char "⋮")
+  (set-face-attribute 'indent-guide-face nil :foreground (face-foreground 'font-lock-comment-face))
   )
 
 (provide 'init-editing)
