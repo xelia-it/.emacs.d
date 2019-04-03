@@ -68,11 +68,8 @@
 
 (use-package robe
   :ensure t
-  :defer t
   :after (company)
-  :hook (
-         (ruby-mode . robe-mode)
-         )
+  :hook (ruby-mode . robe-mode)
 
   :config
   (message "Config robe module")
@@ -84,7 +81,7 @@
 
 (use-package projectile-rails
   :ensure t
-  :defer t
+  ;;:defer t
   :after (helm projectile)
   :hook (prog-mode . projectile-rails-mode)
   )
@@ -127,25 +124,6 @@
 ;; -----------------------------------------------------------------------------
 ;; Language: Python
 
-;; Auto complete with Python
-;; (use-package anaconda-mode
-;;   :ensure t
-;;   :defer t
-;;   :mode ("\\.py\\'" . python-mode)
-;;   :interpreter "anaconda-mode"
-;;   :hook (python-mode-hook . anaconda-mode)
-;;   )
-;;
-;; (use-package company-anaconda
-;;   :ensure t
-;;   :init
-;;   (eval-after-load "company"
-;;     '(add-to-list 'company-backends 'company-anaconda))
-;;   )
-
-;; -----------------------------------------------------------------------------
-;; Language: Python
-
 (use-package jedi
   :ensure t
   :defer t
@@ -167,6 +145,50 @@
   )
 
 ;; -----------------------------------------------------------------------------
+;; Language: Angular
+
+(use-package tide
+  :ensure t
+;;  :defer t
+  :after (company)
+  :config
+
+  (defun setup-tide-mode ()
+    "Main configuraton for using tide for Typescrypt autocomplete."
+    (interactive)
+    (tide-setup)
+    (flycheck-mode +1)
+    (setq flycheck-check-syntax-automatically '(save mode-enabled))
+    (eldoc-mode +1)
+    (tide-hl-identifier-mode +1)
+    ;; company is an optional dependency. You have to
+    ;; install it separately via package-install
+    ;; `M-x package-install [ret] company`
+    (company-mode +1)
+    (message "Tide setup complete")
+    )
+
+  ;; aligns annotation to the right hand side
+  (setq company-tooltip-align-annotations t)
+
+  ;; formats the buffer before saving
+  (add-hook 'before-save-hook 'tide-format-before-save)
+
+  (add-hook 'typescript-mode-hook #'setup-tide-mode)
+
+  ;; Web mode with Angular
+  ;; (require 'web-mode)
+  ;; (add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
+  ;; (add-hook 'web-mode-hook
+  ;;           (lambda ()
+  ;;             (when (string-equal "tsx" (file-name-extension buffer-file-name))
+  ;;               (setup-tide-mode))))
+  ;; ;; enable typescript-tslint checker
+  ;; (flycheck-add-mode 'typescript-tslint 'web-mode)
+  (message "Config tide completed")
+  )
+
+;; -----------------------------------------------------------------------------
 ;; Language: YAML
 
 (use-package yaml-mode
@@ -180,6 +202,15 @@
    ;;(add-hook 'yaml-mode-hook
    ;; '(lambda ()
    ;;    (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
+  )
+
+;; -----------------------------------------------------------------------------
+;; Language: JSON
+
+(use-package json-mode
+  :ensure t
+  :defer t
+  :mode ("\\.json\\'" . json-mode)
   )
 
 ;; -----------------------------------------------------------------------------

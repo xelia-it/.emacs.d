@@ -31,40 +31,12 @@
          ("C-<iso-lefttab>" . helm-buffers-list)
          ("C-x C-b" . helm-buffers-list)
          ("S-C-v" . helm-show-kill-ring)
+         ("C-f" . helm-occur)
          :map helm-map
          ("C-<tab>" . helm-next-line)
          ("C-<iso-lefttab>" . helm-previous-line)
          ("C-f" . helm-next-source)
          )
-
-
-
-  )
-
-(use-package helm-swoop
-  :ensure t
-  :defer t
-  :after (helm)
-  :bind (
-         ("C-f" . helm-occur)
-         :map isearch-mode-map
-         ("C-f" . helm-swoop-from-isearch)
-         :map helm-swoop-map
-         ("C-f" . helm-next-line)
-         :map helm-multi-swoop-map
-         ("C-f" . helm-next-line)
-         )
-  :config
-  ;; Split direcion. 'split-window-vertically or 'split-window-horizontally
-  (setq helm-swoop-split-direction 'split-window-vertically)
-  (set-face-attribute 'helm-swoop-target-word-face nil
-                      :foreground "#ffffff" :background (face-background 'highlight))
-  (set-face-attribute 'helm-swoop-target-line-block-face nil
-                      :foreground (face-foreground 'font-lock-builtin-face)
-                      :background (face-background 'highlight))
-  (set-face-attribute 'helm-swoop-target-line-face nil
-                      :foreground (face-foreground 'font-lock-builtin-face)
-                      :background (face-background 'highlight))
   )
 
 (use-package projectile
@@ -90,7 +62,7 @@
 
 (use-package helm-projectile
   :ensure t
-  :defer t
+;;  :defer t
   ;; TODO: this do not work
   ;; :after (helm projectile)
   :bind (
@@ -105,7 +77,7 @@
 ;; On the fly check
 (use-package flycheck
   :ensure t
-  :defer t
+;;  :defer t
   :config
   ;; Disable ruby-reek checker: it's too verbose
   (setq-default flycheck-disabled-checkers '(ruby-reek))
@@ -163,19 +135,21 @@
   :ensure t
   :diminish company-mode
   :after (atom-one-dark-theme)
-  :bind (
-         ("C-SPC" . company-complete)
-         :map company-active-map
-         ("<escape>" . company-abort)
-         )
   :config
+  (message "Config company")
   (setq company-auto-complete nil
         company-idle-delay 0.05
         company-minimum-prefix-length 2
         company-tooltip-limit 10
         company-selection-wrap-around t
         )
-  (global-company-mode 1)
+  :bind (
+         ("C-SPC" . company-complete)
+         :map company-active-map
+         ("<escape>" . company-abort)
+         )
+  :hook (prog-mode . company-mode)
+  ;; (global-company-mode 1)
   )
 
 ;; Quick help during autocomplete
@@ -219,7 +193,7 @@
 
 (use-package git-gutter
   :ensure t
-  :defer t
+;;  :defer t
 
   :config
   ;; If you would like to use git-gutter.el and linum-mode

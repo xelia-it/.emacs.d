@@ -120,7 +120,6 @@
   ;; Disable annoying minor modes when editing with multiple cursor
   (add-to-list 'mc/unsupported-minor-modes 'company-mode)
   (add-to-list 'mc/unsupported-minor-modes 'flycheck-mode)
-  (add-to-list 'mc/unsupported-minor-modes 'git-gutter-mode)
 
   ;; The :bind key do not works well with multiple-cursors
   (global-set-key (kbd "S-M-<up>") 'mc/mark-previous-like-this)
@@ -164,7 +163,7 @@
   :ensure t
   :defer t
   :init
-  (setq vr/auto-show-help nil)
+  (setq vr/auto-show-help t)
   :bind (
          ("S-C-r" . vr/mc-mark)
          ("C-r" . vr/replace)

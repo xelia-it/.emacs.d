@@ -42,6 +42,7 @@
 
   ;; Empty scratch buffer
   (setq initial-scratch-message nil)
+  (setq initial-major-mode 'text-mode)
 
   ;; Empty minibuffer message
   (defun display-startup-echo-area-message ()
@@ -68,7 +69,6 @@
                (let ((buffer "*Completions*"))
                  (and (get-buffer buffer)
                       (kill-buffer buffer)))))
-
 
   ;; A very light color compatible with atom-one-dark-theme
   (defvar near-to-white-color "#86e6f2")
