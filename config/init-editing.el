@@ -229,10 +229,34 @@
   ;; Make sure bookmarks is saved before check-in (and revert-buffer)
   (add-hook 'vc-before-checkin-hook #'bm-buffer-save)
 
+  (setq bm-cycle-all-buffers t)
+  (setq bm-highlight-style (quote bm-highlight-only-fringe))
+
+  (define-fringe-bitmap 'bm-marker-left
+    (vector #b00000000
+            #b00000000
+            #b00000000
+            #b00000000
+            #b01111100
+            #b11111110
+            #b11111110
+            #b11111110
+            #b11111110
+            #b11111110
+            #b11111110
+            #b11111110
+            #b11101110
+            #b11000110
+            #b10000010
+            #b00000000
+            #b00000000))
+  (set-face-attribute 'bm-fringe-face nil :foreground (face-foreground 'font-lock-function-name-face) :background nil)
+  (set-face-attribute 'bm-fringe-persistent-face nil :foreground (face-foreground 'font-lock-function-name-face) :background nil)
+
   :bind (("<f2>" . bm-next)
          ("S-<f2>" . bm-previous)
          ("C-<f2>" . bm-toggle))
   )
 
 (provide 'init-editing)
-;;; init-editing.el ends here
+;; init-editing.el ends here
