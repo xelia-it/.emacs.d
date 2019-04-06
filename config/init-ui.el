@@ -99,12 +99,13 @@
   (setq mouse-wheel-progressive-speed nil)
 
   ;; Set default font
-  ;;(add-to-list 'default-frame-alist
-  ;;             '(font . "DejaVu Sans Mono-12"))
+  ;; (add-to-list 'default-frame-alist
+  ;;              '(font . "DejaVu Sans Mono-14"))
+  ;; (add-to-list 'default-frame-alist
+  ;;              '(font . "Monospace Regular-12"))
 
   ;; Show parenthesis
   (require 'paren)
-  ;;(set-face-background 'show-paren-match "#282C34")
   (set-face-background 'show-paren-match (face-background 'font-lock-builtin-face))
   (set-face-foreground 'show-paren-match near-to-white-color)
   (set-face-attribute 'show-paren-match nil :weight 'extra-bold)

@@ -35,7 +35,6 @@
          :map helm-map
          ("C-<tab>" . helm-next-line)
          ("C-<iso-lefttab>" . helm-previous-line)
-         ("C-f" . helm-next-source)
          )
   )
 
@@ -74,7 +73,9 @@
   (helm-projectile-on)
   )
 
+;; -----------------------------------------------------------------------------
 ;; On the fly check
+
 (use-package flycheck
   :ensure t
 ;;  :defer t
@@ -226,6 +227,26 @@
 	     )
 
   :hook (prog-mode . git-gutter-mode)
+  )
+
+(use-package git-timemachine
+  :ensure t
+  )
+
+;; -----------------------------------------------------------------------------
+;; Yasnippet
+
+(use-package yasnippet
+  :ensure t
+  :config
+  ;; Add a list of folders for personal snippets
+  (setq yas-snippet-dirs '("~/.emacs.d/snippets"))
+  (yas-reload-all)
+  :hook (prog-mode . #'yas-minor-mode)
+  )
+
+(use-package yasnippet-snippets
+  :ensure t
   )
 
 (provide 'init-projects)
