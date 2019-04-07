@@ -154,6 +154,7 @@
   (setq shackle-rules '(
                         ("\\`\\*Flycheck.*?\\*\\'" :regexp t :align 'below :size 0.2)
                         ("\\`\\*[hH]elm.*?\\*\\'" :regexp t :align 'below :size 0.3)
+                        ("\\`\\*bm-bookmarks.*?\\*\\'" :regexp t :align 'below :size 0.2)
                         ))
   (shackle-mode 1)
   )

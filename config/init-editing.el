@@ -237,17 +237,17 @@
             #b00000000
             #b00000000
             #b00000000
-            #b01111100
-            #b11111110
-            #b11111110
-            #b11111110
-            #b11111110
-            #b11111110
-            #b11111110
-            #b11111110
-            #b11101110
-            #b11000110
-            #b10000010
+            #b01111000
+            #b11111100
+            #b11111100
+            #b11111100
+            #b11111100
+            #b11111100
+            #b11111100
+            #b11111100
+            #b11111100
+            #b11001100
+            #b10000100
             #b00000000
             #b00000000))
   (set-face-attribute 'bm-fringe-face nil :foreground (face-foreground 'font-lock-function-name-face) :background nil)
@@ -255,7 +255,8 @@
 
   :bind (("<f2>" . bm-next)
          ("S-<f2>" . bm-previous)
-         ("C-<f2>" . bm-toggle))
+         ("C-<f2>" . bm-toggle)
+         ("M-<f2>" . bm-show-all))
   )
 
 (provide 'init-editing)
