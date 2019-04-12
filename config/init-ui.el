@@ -99,8 +99,8 @@
   (setq mouse-wheel-progressive-speed nil)
 
   ;; Set default font
-  ;; (add-to-list 'default-frame-alist
-  ;;              '(font . "DejaVu Sans Mono-14"))
+  (add-to-list 'default-frame-alist
+               '(font . "DejaVu Sans Mono-12"))
   ;; (add-to-list 'default-frame-alist
   ;;              '(font . "Monospace Regular-12"))
 
