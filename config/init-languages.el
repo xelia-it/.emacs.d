@@ -227,5 +227,14 @@
   :mode ("\\.nginx\\'" . nginx-mode)
   )
 
+;; -----------------------------------------------------------------------------
+;; Language: Kivy files
+
+(use-package nginx-mode
+  :ensure t
+  :defer t
+  :mode ("\\.kv\\'" . kivy-mode)
+  )
+
 (provide 'init-languages)
 ;;; init-languages.el ends here
