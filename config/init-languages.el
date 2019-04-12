@@ -230,7 +230,7 @@
 ;; -----------------------------------------------------------------------------
 ;; Language: Kivy files
 
-(use-package nginx-mode
+(use-package kivy-mode
   :ensure t
   :defer t
   :mode ("\\.kv\\'" . kivy-mode)
