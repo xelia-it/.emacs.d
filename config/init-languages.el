@@ -125,15 +125,6 @@
 ;; -----------------------------------------------------------------------------
 ;; Language: Python
 
-(use-package jedi
-  :ensure t
-  :defer t
-  :init
-  ;; TODO: Set on Windows
-  (setq-default py-python-command "/usr/bin/python3")
-  (add-hook 'python-mode-hook 'jedi:setup)
-  )
-
 (use-package company-jedi
   :ensure t
   :defer t
