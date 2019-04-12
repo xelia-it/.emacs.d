@@ -29,6 +29,7 @@
          ("C-x b" . helm-buffers-list)
          ("C-<tab>" . helm-buffers-list)
          ("C-<iso-lefttab>" . helm-buffers-list)
+         ("C-b" . helm-buffers-list)
          ("C-x C-b" . helm-buffers-list)
          ("S-C-v" . helm-show-kill-ring)
          ("C-f" . helm-occur)
@@ -232,22 +233,6 @@
 (use-package git-timemachine
   :ensure t
   )
-
-;; -----------------------------------------------------------------------------
-;; Yasnippet
-
-;; (use-package yasnippet
-;;   :ensure t
-;;   :config
-;;   ;; Add a list of folders for personal snippets
-;;   (setq yas-snippet-dirs '("~/.emacs.d/snippets"))
-;;   (yas-reload-all)
-;;   :hook (prog-mode . #'yas-minor-mode)
-;;   )
-;;
-;; (use-package yasnippet-snippets
-;;   :ensure t
-;;   )
 
 (provide 'init-projects)
 ;;; init-projects.el ends here

@@ -170,15 +170,6 @@
          )
   )
 
-(use-package indent-guide
-  :ensure t
-  :defer t
-  :hook (prog-mode . indent-guide-mode)
-  :config
-  (setq indent-guide-char "⋮")
-  (set-face-attribute 'indent-guide-face nil :foreground (face-foreground 'font-lock-comment-face))
-  )
-
 (use-package bm
   :ensure t
   :demand t
