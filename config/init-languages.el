@@ -66,19 +66,19 @@
 ;; -----------------------------------------------------------------------------
 ;; Language: Ruby
 
-(use-package robe
-  :ensure t
-  :after (company)
-  :hook (ruby-mode . robe-mode)
-
-  :config
-  (message "Config robe module")
-  ;; Setting rbenv path
-  (setenv "PATH" (concat (getenv "HOME") "/.rbenv/shims:" (getenv "HOME") "/.rbenv/bin:" (getenv "PATH")))
-  (setq exec-path (cons (concat (getenv "HOME") "/.rbenv/shims") (cons (concat (getenv "HOME") "/.rbenv/bin") exec-path)))
-  (push 'company-robe company-backends)
-  (message "Config robe module OK")
-  )
+;; (use-package robe
+;;   :ensure t
+;;   :after (company)
+;;   :hook (ruby-mode . robe-mode)
+;;
+;;   :config
+;;   (message "Config robe module")
+;;   ;; Setting rbenv path
+;;   (setenv "PATH" (concat (getenv "HOME") "/.rbenv/shims:" (getenv "HOME") "/.rbenv/bin:" (getenv "PATH")))
+;;   (setq exec-path (cons (concat (getenv "HOME") "/.rbenv/shims") (cons (concat (getenv "HOME") "/.rbenv/bin") exec-path)))
+;;   (push 'company-robe company-backends)
+;;   (message "Config robe module OK")
+;;   )
 
 (use-package projectile-rails
   :ensure t

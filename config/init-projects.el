@@ -165,6 +165,28 @@
 ;; -----------------------------------------------------------------------------
 ;; Git support
 
+(use-package lsp-mode
+  :ensure t
+  :commands lsp
+  :config
+
+  (lsp-register-client
+   (make-lsp-client :new-connection (lsp-stdio-connection '("solargraph" "stdio"))
+                    :major-modes '(ruby-mode)
+                    :server-id 'solargraph))
+  )
+
+(use-package lsp-ui
+  :ensure t
+  :commands lsp-ui-mode)
+
+(use-package company-lsp
+  :ensure t
+  :commands company-lsp)
+
+;; -----------------------------------------------------------------------------
+;; Git support
+
 (use-package magit
   :ensure t
   :config
