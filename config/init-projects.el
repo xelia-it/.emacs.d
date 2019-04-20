@@ -174,6 +174,18 @@
    (make-lsp-client :new-connection (lsp-stdio-connection '("solargraph" "stdio"))
                     :major-modes '(ruby-mode)
                     :server-id 'solargraph))
+
+  (lsp-register-client
+   (make-lsp-client :new-connection (lsp-stdio-connection '("pyls"))
+                    :major-modes '(python-mode)
+                    :server-id 'pyls))
+
+  :hook (
+         (ruby-mode . lsp)
+         (python-mode . lsp)
+         (c-mode . lsp)
+         (c++-mode . lsp)
+         )
   )
 
 (use-package lsp-ui

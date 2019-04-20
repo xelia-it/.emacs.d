@@ -54,3 +54,4 @@ projectile.cache
 /bm-repository
 /transient
 /.python-environments/
+/.lsp-session*

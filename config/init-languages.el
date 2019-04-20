@@ -89,32 +89,32 @@
 
 ;; ------------------------------------------------------------------------------
 ;; Language: C++
+;;
+;;(use-package irony
+;;  :ensure t
+;;  :defer t
+;;  :init
+;;  :config
+;;
+;;  ;; Windows performance tweaks
+;;  ;;
+;;  (when (boundp 'w32-pipe-read-delay)
+;;    (setq w32-pipe-read-delay 0))
+;;  ;; Set the buffer size to 64K on Windows (from the original 4K)
+;;  (when (boundp 'w32-pipe-buffer-size)
+;;    (setq irony-server-w32-pipe-buffer-size (* 64 1024)))
+;;  :hook ((c++-mode-hook . irony-mode)
+;;         (c-mode-hook . irony-mode)
+;;         (objc-mode-hook . irony-mode)
+;;         (irony-mode-hook . irony-cdb-autosetup-compile-options)
+;;         )
+;;  )
 
-(use-package irony
-  :ensure t
-  :defer t
-  :init
-  :config
-
-  ;; Windows performance tweaks
-  ;;
-  (when (boundp 'w32-pipe-read-delay)
-    (setq w32-pipe-read-delay 0))
-  ;; Set the buffer size to 64K on Windows (from the original 4K)
-  (when (boundp 'w32-pipe-buffer-size)
-    (setq irony-server-w32-pipe-buffer-size (* 64 1024)))
-  :hook ((c++-mode-hook . irony-mode)
-         (c-mode-hook . irony-mode)
-         (objc-mode-hook . irony-mode)
-         (irony-mode-hook . irony-cdb-autosetup-compile-options)
-         )
-  )
-
-(use-package flycheck-irony
-  :ensure t
-  :defer t
-  :hook (flycheck-mode . flycheck-irony-setup)
-  )
+;;(use-package flycheck-irony
+;;  :ensure t
+;;  :defer t
+;;  :hook (flycheck-mode . flycheck-irony-setup)
+;;  )
 
 (use-package cmake-mode
   :ensure t
@@ -125,16 +125,16 @@
 ;; -----------------------------------------------------------------------------
 ;; Language: Python
 
-(use-package company-jedi
-  :ensure t
-  :defer t
-  :config
-
-  (defun my/python-mode-hook ()
-    (add-to-list 'company-backends 'company-jedi))
-
-  (add-hook 'python-mode-hook 'my/python-mode-hook)
-  )
+;;(use-package company-jedi
+;;  :ensure t
+;;  :defer t
+;;  :config
+;;
+;;  (defun my/python-mode-hook ()
+;;    (add-to-list 'company-backends 'company-jedi))
+;;
+;;  (add-hook 'python-mode-hook 'my/python-mode-hook)
+;;  )
 
 ;; -----------------------------------------------------------------------------
 ;; Language: Angular
