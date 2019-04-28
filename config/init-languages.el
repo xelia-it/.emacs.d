@@ -30,7 +30,7 @@
   (setq web-mode-enable-current-column-highlight t)
   (setq web-mode-markup-indent-offset 2)
 
-  ;;(setq web-mode-html-tag-unclosed-face t)
+  ;; Configure face
   (set-face-attribute 'web-mode-block-face nil :background nil)
   (set-face-attribute 'web-mode-inlay-face nil :background nil)
   (set-face-attribute 'web-mode-current-column-highlight-face nil
@@ -50,17 +50,25 @@
 (use-package impatient-mode
   :ensure t
   :defer t
-
   :bind (
          ("C-S-i" . impatient-mode)
          )
-
   :config
 
   (defun my-open-impatient-modes()
     "Open Impatient Mode Window."
     (call-process "firefox" nil 0 nil "-new-tab"  "http://localhost:8080/imp/")
    )
+  )
+
+(use-package emmet-mode
+  :ensure t
+  :defer t
+  :hook (
+         (web-mode . emmet-mode)
+         (sgml-mode . emmet-mode)
+         (css-mode . emmet-mode)
+         )
   )
 
 ;; -----------------------------------------------------------------------------
@@ -215,7 +223,8 @@
   :mode (("README\\.md\\'" . gfm-mode)
          ("\\.md\\'" . markdown-mode)
          ("\\.markdown\\'" . markdown-mode))
-  :init (setq markdown-command "multimarkdown")
+  :init
+  (setq markdown-command "multimarkdown")
   )
 
 ;; -----------------------------------------------------------------------------
