@@ -59,10 +59,6 @@
   (menu-bar-mode -1)                ;; Disable menu bar on top
   (scroll-bar-mode -1)              ;; No more scrollbars
 
-  ;; Removes *messages* from the buffer list.
-;;  (setq-default message-log-max nil)
- ;; (kill-buffer "*Messages*")
-
   ;; Removes *Completions* from buffer after you've opened a file.
   (add-hook 'minibuffer-exit-hook
             '(lambda ()
@@ -101,8 +97,6 @@
   ;; Set default font
   (add-to-list 'default-frame-alist
                '(font . "DejaVu Sans Mono-12"))
-  ;; (add-to-list 'default-frame-alist
-  ;;              '(font . "Monospace Regular-12"))
 
   ;; Show parenthesis
   (require 'paren)
@@ -152,7 +146,7 @@
   :ensure t
   :config
   (setq shackle-rules '(
-                        ("\\`\\*Flycheck.*?\\*\\'" :regexp t :align 'below :size 0.2)
+                        ("\\`\\*Flycheck.*?\\*\\'" :regexp t :align 'below :size 0.15)
                         ("\\`\\*[hH]elm.*?\\*\\'" :regexp t :align 'below :size 0.3)
                         ("\\`\\*bm-bookmarks.*?\\*\\'" :regexp t :align 'below :size 0.2)
                         ))

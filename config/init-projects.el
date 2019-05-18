@@ -167,33 +167,61 @@
 
 (use-package lsp-mode
   :ensure t
+  :defer t
   :commands lsp
   :config
 
   (lsp-register-client
    (make-lsp-client :new-connection (lsp-stdio-connection '("solargraph" "stdio"))
                     :major-modes '(ruby-mode)
-                    :server-id 'solargraph))
+                    :server-id 'ruby-lsp))
 
   (lsp-register-client
    (make-lsp-client :new-connection (lsp-stdio-connection '("pyls"))
                     :major-modes '(python-mode)
-                    :server-id 'pyls))
+                    :server-id 'python-lsp))
 
+  (lsp-register-client
+   (make-lsp-client :new-connection (lsp-stdio-connection '("typescript-language-server" "--stdio"))
+                    :major-modes '(typescript-mode)
+                    :server-id 'typescript-lsp))
+
+  (set-face-attribute 'lsp-face-highlight-read nil
+                      :inherit nil
+                      :background nil :underline nil
+                      :box '(:line-width -1 :color "#fff" :style nil))
+  (set-face-attribute 'lsp-face-highlight-write nil
+                      :inherit nil
+                      :slant 'normal
+                      :foreground "#fff" :background nil :underline nil
+                      :box '(:line-width -1 :color "#fff" :style nil))
+  (set-face-attribute 'lsp-face-highlight-textual nil
+                      :inherit nil
+                      :background nil :underline nil
+                      :box '(:line-width -1 :color "white" :style nil))
+
+  :bind (
+         ("C-," . lsp-find-references)
+         ("C-." . lsp-find-definition)
+         ("C-S-." . lsp-find-declaration)
+         )
   :hook (
          (ruby-mode . lsp)
          (python-mode . lsp)
          (c-mode . lsp)
          (c++-mode . lsp)
+         (typescript-mode . lsp)
          )
   )
 
 (use-package lsp-ui
   :ensure t
+  :after (lsp-mode)
   :commands lsp-ui-mode)
 
 (use-package company-lsp
   :ensure t
+  :after (lsp-mode)
   :commands company-lsp)
 
 ;; -----------------------------------------------------------------------------
@@ -201,6 +229,7 @@
 
 (use-package magit
   :ensure t
+  :defer t
   :config
 
   (defun my-save ()
@@ -225,6 +254,7 @@
          :map magit-mode-map
          ("C-w" . magit-mode-bury-buffer)
 	     )
+  :hook (prog . magit-mode)
   )
 
 (use-package git-gutter
@@ -267,6 +297,86 @@
 (use-package git-timemachine
   :ensure t
   )
+
+;; -----------------------------------------------------------------------------
+;; Treeview
+
+(use-package treemacs
+  :ensure t
+  :defer t
+  :init
+  (with-eval-after-load 'winum
+    (define-key winum-keymap (kbd "C-\\") #'treemacs-select-window))
+  :config
+  (progn
+    (setq treemacs-collapse-dirs                 (if (executable-find "python3") 3 0)
+          treemacs-deferred-git-apply-delay      0.5
+          treemacs-display-in-side-window        t
+          treemacs-eldoc-display                 t
+          treemacs-file-event-delay              5000
+          treemacs-file-follow-delay             0.2
+          treemacs-follow-after-init             t
+          treemacs-git-command-pipe              ""
+          treemacs-goto-tag-strategy             'refetch-index
+          treemacs-indentation                   2
+          treemacs-indentation-string            " "
+          treemacs-is-never-other-window         nil
+          treemacs-max-git-entries               5000
+          treemacs-missing-project-action        'ask
+          treemacs-no-png-images                 nil
+          treemacs-no-delete-other-windows       t
+          treemacs-project-follow-cleanup        nil
+          treemacs-persist-file                  (expand-file-name ".cache/treemacs-persist" user-emacs-directory)
+          treemacs-recenter-distance             0.1
+          treemacs-recenter-after-file-follow    nil
+          treemacs-recenter-after-tag-follow     nil
+          treemacs-recenter-after-project-jump   'always
+          treemacs-recenter-after-project-expand 'on-distance
+          treemacs-show-cursor                   nil
+          treemacs-show-hidden-files             t
+          treemacs-silent-filewatch              nil
+          treemacs-silent-refresh                nil
+          treemacs-sorting                       'alphabetic-desc
+          treemacs-space-between-root-nodes      t
+          treemacs-tag-follow-cleanup            t
+          treemacs-tag-follow-delay              1.5
+          treemacs-width                         35)
+
+    ;; The default width and height of the icons is 22 pixels. If you are
+    ;; using a Hi-DPI display, uncomment this to double the icon size.
+    ;;(treemacs-resize-icons 44)
+
+    (treemacs-follow-mode t)
+    (treemacs-filewatch-mode t)
+    (treemacs-fringe-indicator-mode t)
+    (pcase (cons (not (null (executable-find "git")))
+                 (not (null (executable-find "python3"))))
+      (`(t . t)
+       (treemacs-git-mode 'deferred))
+      (`(t . _)
+       (treemacs-git-mode 'simple))))
+  :bind
+  (:map global-map
+        ("C-\\"       . treemacs-select-window)
+        ("C-x t 1"   . treemacs-delete-other-windows)
+        ("C-x t t"   . treemacs)
+        ("C-x t B"   . treemacs-bookmark)
+        ("C-x t C-t" . treemacs-find-file)
+        ("C-x t M-t" . treemacs-find-tag))
+  )
+
+(use-package treemacs-projectile
+  :after treemacs projectile
+  :ensure t)
+
+(use-package treemacs-icons-dired
+  :after treemacs dired
+  :ensure t
+  :config (treemacs-icons-dired-mode))
+
+(use-package treemacs-magit
+  :after treemacs magit
+  :ensure t)
 
 (provide 'init-projects)
 ;;; init-projects.el ends here
