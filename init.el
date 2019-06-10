@@ -44,14 +44,14 @@
 (setq package-enable-at-startup nil)
 
 (defvar repo-gnu '("gnu" . "https://elpa.gnu.org/packages/"))
-;;(defvar repo-melpa '("melpa" . "https://melpa.org/packages/"))
-(defvar repo-melpa-stable '("melpa-stable" . "https://stable.melpa.org/packages/"))
+(defvar repo-melpa '("melpa" . "https://melpa.org/packages/"))
+;; (defvar repo-melpa-stable '("melpa-stable" . "https://stable.melpa.org/packages/"))
 (defvar repo-org-elpa '("org" . "http://orgmode.org/elpa/"))
 
 (setq package-archives nil)
-(add-to-list 'package-archives repo-melpa-stable t)
-;;(add-to-list 'package-archives repo-melpa t)
 (add-to-list 'package-archives repo-gnu t)
+(add-to-list 'package-archives repo-melpa t)
+;; (add-to-list 'package-archives repo-melpa-stable t)
 (add-to-list 'package-archives repo-org-elpa t)
 
 ;; Downloads new packages in case of a fresh install
