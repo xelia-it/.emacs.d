@@ -135,10 +135,10 @@
 
 (use-package company
   :ensure t
+  :defer t
   :diminish company-mode
   :after (atom-one-dark-theme)
   :config
-  (message "Config company")
   (setq company-auto-complete nil
         company-idle-delay 0.05
         company-minimum-prefix-length 2
@@ -188,17 +188,17 @@
 
   (set-face-attribute 'lsp-face-highlight-read nil
                       :inherit nil
-                      :background nil :underline nil
-                      :box '(:line-width -1 :color "#fff" :style nil))
+                      :foreground "#fff" :background nil :underline nil
+                      :box nil)
   (set-face-attribute 'lsp-face-highlight-write nil
                       :inherit nil
                       :slant 'normal
                       :foreground "#fff" :background nil :underline nil
-                      :box '(:line-width -1 :color "#fff" :style nil))
+                      :box nil)
   (set-face-attribute 'lsp-face-highlight-textual nil
                       :inherit nil
-                      :background nil :underline nil
-                      :box '(:line-width -1 :color "white" :style nil))
+                      :foreground "#fff" :background nil :underline nil
+                      :box nil)
 
   :bind (
          ("C-," . lsp-find-references)
@@ -223,6 +223,23 @@
   :ensure t
   :after (lsp-mode)
   :commands company-lsp)
+
+(use-package lsp-treemacs
+  :ensure t
+  :after (lsp-mode)
+  )
+
+;; -----------------------------------------------------------------------------
+;; Snippets
+
+(use-package yasnippet
+  :ensure t
+  :config
+
+  (yas-reload-all)
+  :hook (prog-mode . yas-minor-mode)
+  )
+
 
 ;; -----------------------------------------------------------------------------
 ;; Git support
