@@ -1,6 +1,6 @@
 ;;; package --- Emacs configuration with batteries included
 
-;;; ---------------------------------------------------------------------------------
+;;; ----------------------------------------------------------------------------
 ;;; Commentary:
 
 ;;; ----------------------------------------------------------------------------
@@ -249,6 +249,50 @@
          ("C-<f2>" . bm-toggle)
          ("M-<f2>" . bm-show-all))
   )
+;; Show trailing whitespaces, tabs, lines
+(use-package whitespace
+  :ensure t
+  :defer t
+  :config
+  ;; Set default values as above
+  (setq whitespace-line-column 80)
+  (setq-default whitespace-tab-width 4)
+
+  ;; make whitespace-mode use just basic coloring
+  (setq whitespace-style (quote
+                          (face spaces tabs newline
+                                ;; space-mark
+                                tab-mark newline-mark
+                                empty tabs lines-tail trailing)))
+  (set-face-attribute 'whitespace-space nil :background nil :foreground "#3C4350")
+  (set-face-attribute 'whitespace-newline nil :background nil :foreground "#3C4350")
+  (set-face-attribute 'whitespace-tab nil :background nil :foreground "#3C4350")
+  (set-face-attribute 'whitespace-line nil :background "#2C323C" :foreground nil)
+  (set-face-attribute 'whitespace-trailing nil :background nil :foreground "#3C4350")
+
+  (setq whitespace-display-mappings
+  '(
+    (space-mark 32 [183] [46]) ; 32 SPACE 「 」, 183 MIDDLE DOT 「·」, 46 FULL STOP 「.」
+    (newline-mark 10 [182 10]) ; 10 LINE FEED
+    (tab-mark 9 [9655 9] [92 9]) ; 9 TAB, 9655 WHITE RIGHT-POINTING TRIANGLE 「▷」
+    ))
+
+  :hook (prog-mode . whitespace-mode)
+  )
+
+;; Show indent guides
+(use-package highlight-indent-guides
+  :ensure t
+  :defer t
+  :config
+  (setq-default highlight-indent-guides-method 'character)
+  (setq-default highlight-indent-guides-character ?\|)
+  (set-face-attribute 'highlight-indent-guides-character-face
+                      (face-attribute 'font-lock-comment-face :foreground))
+
+  ;; Activate indent guides for all programming languages
+  :hook (prog-mode . highlight-indent-guides-mode)
+  )
 
 (provide 'init-editing)
-;; init-editing.el ends here
+;;; init-editing.el ends here
