@@ -103,6 +103,7 @@
   (set-face-background 'show-paren-match (face-background 'font-lock-builtin-face))
   (set-face-foreground 'show-paren-match near-to-white-color)
   (set-face-attribute 'show-paren-match nil :weight 'extra-bold)
+  (set-face-underline 'show-paren-match nil)
   (defvar match-paren--idle-timer nil)
   (defvar match-paren--delay 0.5)
   (setq match-paren--idle-timer

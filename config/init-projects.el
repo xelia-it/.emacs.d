@@ -44,6 +44,7 @@
   :after (helm)
   :init
   (setq projectile-completion-system 'helm)
+  (setq projectile-indexing-method 'hybrid)
   (projectile-mode)
   :bind (
          ;; Compile Project
@@ -79,7 +80,7 @@
 
 (use-package flycheck
   :ensure t
-;;  :defer t
+  :defer t
   :config
   ;; Disable ruby-reek checker: it's too verbose
   (setq-default flycheck-disabled-checkers '(ruby-reek))
@@ -186,6 +187,12 @@
                     :major-modes '(typescript-mode)
                     :server-id 'typescript-lsp))
 
+;;  (lsp-register-client
+ ;;  (make-lsp-client :new-connection (lsp-stdio-connection '("cquery" "--init={\"cacheDirectory\": \"/tmp/cquery-cache\"}"))
+ ;;                   :major-modes '(c++-mode)
+ ;;                   :server-id 'cquery-lsp))
+
+
   (set-face-attribute 'lsp-face-highlight-read nil
                       :inherit nil
                       :foreground "#fff" :background nil :underline nil
@@ -217,12 +224,18 @@
 (use-package lsp-ui
   :ensure t
   :after (lsp-mode)
-  :commands lsp-ui-mode)
+  :commands lsp-ui-mode
+  :init
+
+  ;; Use flycheck to signal errors and warnings
+  (setq lsp-prefer-flymake nil)
+  )
 
 (use-package company-lsp
   :ensure t
   :after (lsp-mode)
-  :commands company-lsp)
+  :commands company-lsp
+  )
 
 (use-package lsp-treemacs
   :ensure t
@@ -239,7 +252,6 @@
   (yas-reload-all)
   :hook (prog-mode . yas-minor-mode)
   )
-
 
 ;; -----------------------------------------------------------------------------
 ;; Git support

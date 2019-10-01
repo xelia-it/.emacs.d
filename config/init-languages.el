@@ -87,17 +87,6 @@
 ;; -----------------------------------------------------------------------------
 ;; Language: Python
 
-;;(use-package company-jedi
-;;  :ensure t
-;;  :defer t
-;;  :config
-;;
-;;  (defun my/python-mode-hook ()
-;;    (add-to-list 'company-backends 'company-jedi))
-;;
-;;  (add-hook 'python-mode-hook 'my/python-mode-hook)
-;;  )
-
 ;; -----------------------------------------------------------------------------
 ;; Language: Angular
 
@@ -198,6 +187,16 @@
   :defer t
   :mode ("\\.kv\\'" . kivy-mode)
   )
+
+;; -----------------------------------------------------------------------------
+;; Language: Bazel files
+
+(use-package bazel-mode
+  :ensure t
+  :defer t
+  :mode ("BUILD" . bazel-mode)
+  )
+
 
 (provide 'init-languages)
 ;;; init-languages.el ends here
