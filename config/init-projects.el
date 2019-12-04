@@ -187,11 +187,15 @@
                     :major-modes '(typescript-mode)
                     :server-id 'typescript-lsp))
 
-;;  (lsp-register-client
- ;;  (make-lsp-client :new-connection (lsp-stdio-connection '("cquery" "--init={\"cacheDirectory\": \"/tmp/cquery-cache\"}"))
- ;;                   :major-modes '(c++-mode)
- ;;                   :server-id 'cquery-lsp))
+  (lsp-register-client
+   (make-lsp-client :new-connection (lsp-stdio-connection '("cquery" "--init={\"cacheDirectory\": \"/tmp/cquery-cache\"}"))
+                    :major-modes '(c++-mode)
+                    :server-id 'cquery-lsp))
 
+  (lsp-register-client
+   (make-lsp-client :new-connection (lsp-stdio-connection '("rls" "--cli"))
+                    :major-modes '(rust-mode)
+                    :server-id 'rust-lsp))
 
   (set-face-attribute 'lsp-face-highlight-read nil
                       :inherit nil
@@ -218,6 +222,7 @@
          (c-mode . lsp)
          (c++-mode . lsp)
          (typescript-mode . lsp)
+         (rust-mode . lsp)
          )
   )
 

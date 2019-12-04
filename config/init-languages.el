@@ -132,6 +132,14 @@
 ;;  )
 
 ;; -----------------------------------------------------------------------------
+;; Language: Rust
+
+(use-package rust-mode
+  :ensure t
+  :defer t
+  )
+
+;; -----------------------------------------------------------------------------
 ;; Language: YAML
 
 (use-package yaml-mode
@@ -197,6 +205,13 @@
   :mode ("BUILD" . bazel-mode)
   )
 
+;; -----------------------------------------------------------------------------
+;; Language: CMake files
+
+(use-package cmake-mode
+  :ensure t
+  :defer t
+  )
 
 (provide 'init-languages)
 ;;; init-languages.el ends here
