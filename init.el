@@ -45,13 +45,13 @@
 
 (defvar repo-gnu '("gnu" . "https://elpa.gnu.org/packages/"))
 (defvar repo-melpa '("melpa" . "https://melpa.org/packages/"))
-(defvar repo-melpa-stable '("melpa-stable" . "https://stable.melpa.org/packages/"))
+;; (defvar repo-melpa-stable '("melpa-stable" . "https://stable.melpa.org/packages/"))
 (defvar repo-org-elpa '("org" . "http://orgmode.org/elpa/"))
 
 (setq package-archives nil)
-(add-to-list 'package-archives repo-melpa-stable t)
-(add-to-list 'package-archives repo-melpa t)
 (add-to-list 'package-archives repo-gnu t)
+(add-to-list 'package-archives repo-melpa t)
+;; (add-to-list 'package-archives repo-melpa-stable t)
 (add-to-list 'package-archives repo-org-elpa t)
 
 ;; Downloads new packages in case of a fresh install
@@ -86,12 +86,10 @@
 ;; -----------------------------------------------------------------------------
 ;; Other config scripts
 
-(load "init-gui.el")
-(load "init-editing.el")
-(load "init-projects.el")
-(load "init-completion.el")
-(load "init-utils.el")
-(load "init-keybinding.el")
+(load "init-ui.el" t t)
+(load "init-editing.el" t t)
+(load "init-projects.el" t t)
+(load "init-languages.el" t t)
 
 ;; -----------------------------------------------------------------------------
 ;; Custom set variable
@@ -103,7 +101,7 @@
 ;; Use a separate custom file
 (setq custom-file "~/.emacs.d/custom.el")
 (cond
- ((file-exists-p custom-file) (load custom-file))
+ ((file-exists-p custom-file) (load custom-file t t))
  )
 
 (provide 'init)

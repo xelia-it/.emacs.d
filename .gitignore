@@ -52,3 +52,7 @@ site-lisp/package/
 projectile.cache
 /irony
 /bm-repository
+/transient
+/.python-environments/
+/.lsp-session*
+/.cache
