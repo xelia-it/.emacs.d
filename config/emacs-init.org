@@ -1,0 +1,296 @@
+#+AUTHOR: Alessandro Passerini
+#+TITLE: Emacs Configuration
+
+* Package Management
+** Setup repositories and use-package
+
+Setup repository.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+;; Setup repository
+;;(require 'package)
+;;(setq package-enable-at-startup nil)
+
+(defvar repo-gnu '("gnu" . "https://elpa.gnu.org/packages/"))
+(defvar repo-melpa '("melpa" . "https://melpa.org/packages/"))
+(defvar repo-melpa-stable '("melpa-stable" . "https://stable.melpa.org/packages/"))
+(defvar repo-org-elpa '("org" . "http://orgmode.org/elpa/"))
+
+(setq package-archives nil)
+(add-to-list 'package-archives repo-gnu t)
+(add-to-list 'package-archives repo-melpa t)
+;; (add-to-list 'package-archives repo-melpa-stable t)
+(add-to-list 'package-archives repo-org-elpa t)
+#+END_SRC
+
+Now we can force Emacs to install use-package if it's not present.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+;; Downloads new packages in case of a fresh install
+(package-initialize)
+
+;; Install use-package package if not present
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+
+(eval-when-compile
+  (require 'use-package))
+#+END_SRC
+
+** Configuration
+
+The environment variables in Emacs looks the same as in user's shell.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+;; Set the path variable
+;; (Works only on Linux/Mac)
+(use-package exec-path-from-shell
+  :if (memq window-system '(mac ns x))
+  :ensure t
+  :config
+    (exec-path-from-shell-initialize)
+  )
+#+END_SRC
+
+** Separate customization file
+
+The customize command let's Emacs to configure each aspects of the editor.
+In order to keep clean configuration all customizations are written 
+in a separate file.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+;; Use a separate custom file
+(setq custom-file "~/.emacs.d/custom.el")
+(cond
+ ((file-exists-p custom-file) (load custom-file t t))
+ )
+#+END_SRC
+
+* User Interface
+** Disable annoying
+
+Disable many annoying things like scollbars, menu bars, splash screen.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+;; No more default Emacs splash screen
+(setq inhibit-splash-screen t)
+
+;; Empty scratch buffer
+(setq initial-scratch-message nil)
+(setq initial-major-mode 'text-mode)
+
+;; Empty minibuffer message
+(defun display-startup-echo-area-message()
+  "Overwrite default startup message."
+  (message ""))
+
+;; Disable toolbar on top
+(tool-bar-mode -1)
+;; Disable menu bar on top
+(menu-bar-mode -1)
+;; No more scrollbars
+(scroll-bar-mode -1)
+
+;; Removes *Completions* from buffer after you've opened a file.
+(add-hook 'minibuffer-exit-hook
+  '(lambda ()
+     (let ((buffer "*Completions*"))
+       (and (get-buffer buffer)
+         (kill-buffer buffer)))))
+#+END_SRC
+
+** Theme
+
+The main theme is inspired to Atom One theme.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+;; Setup the main theme
+(use-package atom-one-dark-theme
+;;(use-package doom-themes
+  :ensure t
+  :config
+  ;; Global settings (defaults)
+  ;;(setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+  ;;      doom-themes-enable-italic t) ; if nil, italics is universally disabled
+
+  ;; Load default theme
+  ;;(load-theme 'doom-one t)
+  (load-theme 'atom-one-dark t)
+
+  ;; Show current line
+  (global-hl-line-mode)
+  ;; Enable flashing mode-line on errors
+  ;; (doom-themes-visual-bell-config)
+
+  ;; Enable custom neotree theme
+  ;; (doom-themes-neotree-config)  ; all-the-icons fonts must be installed!
+
+
+  ;; Load default theme
+
+  ;; Show line numbers
+  (setq display-line-numbers-width 5)
+  (set-face-foreground 'line-number (face-foreground 'font-lock-comment-face))
+  (set-face-foreground 'line-number-current-line (face-foreground 'font-lock-builtin-face))
+;;  (set-face-background 'line-number-current-line (face-background 'hl-line))
+  (add-hook 'prog-mode-hook 'display-line-numbers-mode)
+
+  ;; Toggle full screen automatically
+  (run-with-idle-timer 0.1 nil 'toggle-frame-fullscreen)
+
+  :bind (
+         ("C-<f4>" . 'kill-buffer-and-window)
+         ("S-C-<f4>" . 'my-kill-other-buffers)
+         ("<escape>" . 'keyboard-escape-quit)
+         )
+  )
+#+END_SRC
+
+** Modeline
+
+The modeline should be more visible. The doom-modeline package provides a good alternative to the original one.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package doom-modeline
+  :ensure t
+  :init
+
+  ;; Don’t compact font caches during GC.
+  (setq inhibit-compacting-font-caches t)
+  ;; Avoid strange name when visiting
+  (setq find-file-visit-truename t)
+  ;; Check VC info
+  (setq-default auto-revert-check-vc-info t)
+
+  (add-hook 'doom-modeline-mode-hook 'column-number-mode)
+
+  :hook (after-init . doom-modeline-mode)
+  )
+#+END_SRC
+
+* Editing
+** CUA Mode
+
+Setup Copy-Paste like most Windows and MAC editors.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(cua-mode)
+#+END_SRC
+
+** Editor Config
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package editorconfig
+  :ensure t
+  :config
+  (editorconfig-mode 1)
+  )
+#+END_SRC
+
+* Completion System
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package ivy
+  :ensure t
+  :defer t
+  :config
+  (setq ivy-use-virtual-buffers t)
+  (setq ivy-count-format "(%d/%d) ")
+  (ivy-mode 1)
+  :bind (
+    ("C-b" . ivy-switch-buffer)
+  )
+  )
+
+(use-package swiper
+  :ensure t
+  :defer t
+  :bind (
+    ("C-f" . swiper-isearch)  
+    ("C-f" . swiper-isearch-backward)
+  )
+  )
+
+(use-package counsel
+  :ensure t
+  :defer t
+  :bind (
+    ("C-j" . counsel-imenu)
+    ("C-o" . counsel-find-file)
+  )
+  )
+#+END_SRC
+
+* Project
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package projectile
+  :ensure t
+  :defer t
+  :init
+  (setq projectile-completion-system 'ivy)
+  (setq projectile-indexing-method 'hybrid)
+  (projectile-mode)
+  :bind (
+         ;; Compile Project
+         ("<f9>" . projectile-compile-project)
+         ("C-<f9>" . projectile-run-project)
+         ("S-<f9>" . projectile-configure-project)
+         ("M-<f9>" . projectile-test-project)
+         ;; Move to the previous error found during compiling
+         ("<f10>" . flymake-goto-prev-error)
+         ;; Move to the next error found during compiling
+         ("<f11>" . flymake-goto-next-error)
+         ;; Show flycheck errors
+         ("<f12>" . flymake-show-diagnostics-buffer)
+	 ("C-t" . projectile-find-file)
+         )
+  )
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package counsel-projectile
+  :ensure t 
+  :defer t
+  :config
+
+  ;; Not stricly necessary
+  (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+
+  :bind (
+        ("C-S-o" . counsel-projectile-switch-project)
+        ("M-f" . counsel-projectile-grep)
+        )
+  )
+#+END_SRC
+
+* Language Support
+** LSP
+
+Language Service Protocol allows any editor to work 
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package lsp-mode
+  :ensure t
+  :defer t
+  :commands lsp
+  :hook (
+    (c++-mode . lsp)
+    (ruby-mode . lsp)
+    (python-mode . lsp)
+  )
+  :init
+  )
+
+(use-package lsp-ui
+  :ensure t
+  :after (lsp-mode)
+  :hook (lsp-mode . lsp-ui-mode)
+
+;;  (add-hook 'lsp-mode-hook 'lsp-ui-mode)
+  :bind (
+  )
+  )
+#+END_SRC
+
