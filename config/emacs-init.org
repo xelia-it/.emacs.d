@@ -37,7 +37,6 @@ Now we can force Emacs to install use-package if it's not present.
 (eval-when-compile
   (require 'use-package))
 #+END_SRC
-
 ** Configuration
 
 The environment variables in Emacs looks the same as in user's shell.
@@ -49,6 +48,7 @@ The environment variables in Emacs looks the same as in user's shell.
   :if (memq window-system '(mac ns x))
   :ensure t
   :config
+  (setq exec-path-from-shell-check-startup-files nil)
     (exec-path-from-shell-initialize)
   )
 #+END_SRC
@@ -56,7 +56,7 @@ The environment variables in Emacs looks the same as in user's shell.
 ** Separate customization file
 
 The customize command let's Emacs to configure each aspects of the editor.
-In order to keep clean configuration all customizations are written 
+In order to keep clean configuration all customizations are written
 in a separate file.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
@@ -68,36 +68,109 @@ in a separate file.
 #+END_SRC
 
 * User Interface
-** Disable annoying
+** Colors
 
-Disable many annoying things like scollbars, menu bars, splash screen.
+Define here all colors to be applyed to the user interface.
+Currently only defines a very light color compatible with atom-one-dark-theme.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-;; No more default Emacs splash screen
-(setq inhibit-splash-screen t)
+(defvar near-to-white-color "#86e6f2")
+#+END_SRC
+** Disable unwanted UI stuffs
 
-;; Empty scratch buffer
-(setq initial-scratch-message nil)
-(setq initial-major-mode 'text-mode)
+Scollbars, menu bars, splash screen are distracting and occupies space.
+Remove all unwanted features.
+Please note that we only define a function.
+It'll be called later when the theme is loaded.
 
-;; Empty minibuffer message
-(defun display-startup-echo-area-message()
-  "Overwrite default startup message."
-  (message ""))
+#+BEGIN_SRC emacs-lisp :tangle yes
+(defun my-remove-annoying-ui-features()
+  "Remove unwanted UI stuffs."
+  (interactive)
 
-;; Disable toolbar on top
-(tool-bar-mode -1)
-;; Disable menu bar on top
-(menu-bar-mode -1)
-;; No more scrollbars
-(scroll-bar-mode -1)
+  ;; No more default Emacs splash screen
+  (setq inhibit-splash-screen t)
 
-;; Removes *Completions* from buffer after you've opened a file.
-(add-hook 'minibuffer-exit-hook
-  '(lambda ()
-     (let ((buffer "*Completions*"))
-       (and (get-buffer buffer)
-         (kill-buffer buffer)))))
+  ;; Empty scratch buffer
+  (setq initial-scratch-message nil)
+  (setq initial-major-mode 'text-mode)
+
+  ;; Empty minibuffer message
+  (defun display-startup-echo-area-message()
+    "Overwrite default startup message."
+    (message ""))
+
+  ;; Disable toolbar on top
+  (tool-bar-mode -1)
+  ;; Disable menu bar on top
+  (menu-bar-mode -1)
+  ;; No more scrollbars
+  (scroll-bar-mode -1)
+
+  ;; Removes *Completions* from buffer after you've opened a file.
+  (add-hook 'minibuffer-exit-hook
+    '(lambda ()
+       (let ((buffer "*Completions*"))
+         (and (get-buffer buffer)
+             (kill-buffer buffer)))))
+  )
+#+END_SRC
+
+** Cursor style
+
+It'll be called later when the theme is loaded.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(defun my-setup-cursor()
+  "My setup cursor."
+  (interactive)
+
+  ;; Set cursor color
+  (set-cursor-color near-to-white-color)
+
+  ;; Blink cursor
+  (blink-cursor-mode)
+
+  ;; Cursor like a bar (works only on Linux/Mac)
+  (if (memq window-system '(mac ns x))
+      (setq-default cursor-type 'bar))
+  )
+#+END_SRC
+
+** Line numbers
+
+Line numbers are useful in programming mode.
+Define the function now. Loading theme triggers this function.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(defun my-show-line-numbers()
+  "Setup line numbers."
+  (interactive)
+
+  (setq display-line-numbers-width 5)
+  (add-hook 'prog-mode-hook 'display-line-numbers-mode)
+  (set-face-foreground 'line-number (face-foreground 'font-lock-comment-face))
+  (set-face-foreground 'line-number-current-line (face-foreground 'font-lock-builtin-face))
+  )
+#+END_SRC
+
+** Show parentesis match
+#+BEGIN_SRC emacs-lisp :tangle yes
+(defun my-show-parens()
+  "Show parenthesis."
+  (interactive)
+
+  (require 'paren)
+  (set-face-background 'show-paren-match (face-background 'font-lock-builtin-face))
+  (set-face-foreground 'show-paren-match near-to-white-color)
+  (set-face-attribute 'show-paren-match nil :weight 'extra-bold)
+  (set-face-underline 'show-paren-match nil)
+  (defvar match-paren--idle-timer nil)
+  (defvar match-paren--delay 0.5)
+  (setq match-paren--idle-timer
+        (run-with-idle-timer match-paren--delay t #'blink-matching-open))
+  (show-paren-mode 1)
+  )
 #+END_SRC
 
 ** Theme
@@ -105,36 +178,32 @@ Disable many annoying things like scollbars, menu bars, splash screen.
 The main theme is inspired to Atom One theme.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-;; Setup the main theme
 (use-package atom-one-dark-theme
-;;(use-package doom-themes
   :ensure t
+  :init
+
+  (my-remove-annoying-ui-features)
+
   :config
-  ;; Global settings (defaults)
-  ;;(setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-  ;;      doom-themes-enable-italic t) ; if nil, italics is universally disabled
 
   ;; Load default theme
-  ;;(load-theme 'doom-one t)
   (load-theme 'atom-one-dark t)
+
+  (my-setup-cursor)
 
   ;; Show current line
   (global-hl-line-mode)
   ;; Enable flashing mode-line on errors
-  ;; (doom-themes-visual-bell-config)
+  ;;(doom-themes-visual-bell-config)
 
   ;; Enable custom neotree theme
   ;; (doom-themes-neotree-config)  ; all-the-icons fonts must be installed!
 
-
   ;; Load default theme
 
   ;; Show line numbers
-  (setq display-line-numbers-width 5)
-  (set-face-foreground 'line-number (face-foreground 'font-lock-comment-face))
-  (set-face-foreground 'line-number-current-line (face-foreground 'font-lock-builtin-face))
-;;  (set-face-background 'line-number-current-line (face-background 'hl-line))
-  (add-hook 'prog-mode-hook 'display-line-numbers-mode)
+  (my-show-line-numbers)
+  (my-show-parens)
 
   ;; Toggle full screen automatically
   (run-with-idle-timer 0.1 nil 'toggle-frame-fullscreen)
@@ -169,68 +238,310 @@ The modeline should be more visible. The doom-modeline package provides a good a
   )
 #+END_SRC
 
-* Editing
-** CUA Mode
-
-Setup Copy-Paste like most Windows and MAC editors.
+** Windows position
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(cua-mode)
+;;                         ("\\`\\*Flycheck.*?\\*\\'" :regexp t :align 'below :size 0.15)
+(use-package shackle
+  :ensure t
+  :config
+  (setq shackle-rules '(
+
+                        ("\\`\\*[hH]elm.*?\\*\\'" :regexp t :align 'below :size 0.3)
+                        ("\\`\\*bm-bookmarks.*?\\*\\'" :regexp t :align 'below :size 0.2)
+                        ("\\`\\*lsp-diagnostics.*?\\*\\'" :regexp t :align 'below :size 0.3)
+                        ))
+  (shackle-mode 1)
+  )
 #+END_SRC
 
-** Editor Config
+* Editing
+** Indent preferences (generic)
+
+First we define a set of default values to be used in every buffer.
+I prefert o avoid tabs for indentation.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(defun my-indent-preferences ()
+  "Setup default indentations."
+  (interactive)
+
+  ;; Do not use tabs by default
+  (setq-default indent-tabs-mode nil)
+
+  ;; Use 4 spaces by default
+  (setq-default tab-width 4)
+  (setq-default ruby-indent-level 2)
+  (setq-default css-indent-offset 4)
+  )
+#+END_SRC
+
+** Indent preferences (per-project)
+
+EditorConfig is a standard way to configure basic preferences for all editors.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
 (use-package editorconfig
   :ensure t
   :config
+  (my-indent-preferences)
   (editorconfig-mode 1)
+  )
+#+END_SRC
+** Cut-Paste like Windows
+
+Setup Cut-Paste like most Windows and MAC editors.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(defun my-cut-paste-preferences()
+  "Setup cut/paste preferences."
+  (interactive)
+
+  ;; Cut-Paste like Windows
+  (cua-mode t)
+
+  ;; Standard Windows behaviour
+  (setq-default cua-keep-region-after-copy t)
+
+  ;; Typed text deletes selected text
+  (delete-selection-mode t)
+
+  ;; No region when it is not highlighted
+  (transient-mark-mode 1)
+  )
+#+END_SRC
+
+** Backup Preferences (TO BE FINISHED)
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(defun my-backup-preferences ()
+  "Apply my backup preference."
+
+  ;; Backup files copying them into a subdirectory
+  (setq backup-directory-alist `(("." . "~/.saves")))
+
+  (setq make-backup-files t               ; backup of a file the first time it is saved.
+        backup-by-copying t               ; don't clobber symlinks
+        version-control t                 ; version numbers for backup files
+        delete-old-versions t             ; delete excess backup files silently
+        delete-by-moving-to-trash t
+        kept-old-versions 6               ; oldest versions to keep when a new numbered backup is made (default: 2)
+        kept-new-versions 9               ; newest versions to keep when a new numbered backup is made (default: 2)
+        auto-save-default t               ; auto-save every buffer that visits a file
+        auto-save-timeout 20              ; number of seconds idle time before auto-save (default: 30)
+        auto-save-interval 200            ; number of keystrokes between auto-saves (default: 300)
+        )
+
+  ;; Save without messages
+  (setq-default save-silently t)
+
+  ;; Delete trailing whitespaces before saving
+  (add-hook 'before-save-hook 'delete-trailing-whitespace)
+
+  ;; No more typing the whole yes or no. Just y or n will do.
+  (fset 'yes-or-no-p 'y-or-n-p)
+  )
+#+END_SRC
+
+** Compile Preferences (TO BE FINISHED)
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(defun my-compiling-preferences()
+  "Configure compiler."
+
+  ;; Auto-save before compiling
+  (setq compilation-ask-about-save nil)
+
+  ;; Never prompt to kill a compilation session.
+  (setq-default compilation-always-kill t)
+
+  ;; Always scroll to the bottom.
+  (setq-default compilation-scroll-output t)
+  )
+#+END_SRC
+
+** Kill lines
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(defun my-kill-start-of-line()
+  "Kill from point to start of line."
+  (interactive)
+  (kill-line 0)
+)
+
+(defun my-kill-end-of-line()
+  "Kill from point to end of line."
+  (interactive)
+  (kill-line nil)
+)
+#+END_SRC
+
+** Moving lines
+
+Almost all IDE has keystrokes to move and duplicate lines.
+The package move-dup implements the same feature in Emacs.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package move-dup
+  :ensure t
+  :defer t
+  ;; move-dup is not activated in all modes: it interferes with org-mode
+  ;; Do not activate for text-mode
+  :hook (
+        (prog-mode . move-dup-mode)
+        (yaml-mode . move-dup-mode)
+        )
+  )
+#+END_SRC
+
+
+Save buffers needs to be performed without confirmation.
+Also we want to refresh magin buffers automatically.
+
+** Save buffers
+ #+BEGIN_SRC emacs-lisp :tangle yes
+ (defun my-save ()
+   "Save current buffer without confirmation."
+   (interactive)
+
+   (save-buffer t)
+   (if (fboundp 'magit-refresh-all)
+     (magit-refresh-all))
+   )
+ #+END_SRC
+
+ Also we want a keystroke to save all buffers.
+ Both these setup will be performed later.
+
+ #+BEGIN_SRC emacs-lisp :tangle yes
+ (defun my-save-all ()
+   "Save all buffers without confirmation and refresh magit."
+   (interactive)
+
+   (save-some-buffers t)
+   (if (fboundp 'magit-refresh-all)
+     (magit-refresh-all))
+   )
+ #+END_SRC
+
+** Multiple Cursors (and activate all)
+
+Multiple cursors let Emacs use more cursors like modern editors (Atom, VS Code, and so on).
+This package also triggers all previous functions.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package multiple-cursors
+  :ensure t
+
+  :init
+  ;; use this package to trigger preferences
+  (my-cut-paste-preferences)
+  (my-backup-preferences)
+  (my-indent-preferences)
+  (my-compiling-preferences)
+
+  :config
+  ;; Always run commands
+  (setq-default mc/always-run-for-all t)
+  ;; Always run commands
+  (setq-default mc/always-repeat-command t)
+  ;; Safety ceil
+  (setq-default mc/max-cursors 30)
+
+  ;; Disable annoying minor modes when editing with multiple cursor
+  (add-to-list 'mc/unsupported-minor-modes 'company-mode)
+  (add-to-list 'mc/unsupported-minor-modes 'flycheck-mode)
+
+  :bind (
+        ("M-<backspace>" . my-kill-start-of-line)
+        ("M-<delete>" . my-kill-end-of-line)
+        ("M-<left>" . beginning-of-line)
+        ("M-<right>" . end-of-line)
+        ("S-M-<up>" . mc/mark-previous-word-like-this)
+        ("S-M-<down>" . mc/mark-next-word-like-this)
+        ;; Extra keybindings
+        ("C-s" . save-buffer)
+        ("S-C-s" . save-buffer)
+        :map mc/keymap
+        ("<escape>" . mc/keyboard-quit)
+        )
   )
 #+END_SRC
 
 * Completion System
+** Search
+
+Search is based on Helm package. Put everything in a function.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(use-package ivy
-  :ensure t
-  :defer t
-  :config
-  (setq ivy-use-virtual-buffers t)
-  (setq ivy-count-format "(%d/%d) ")
-  (ivy-mode 1)
-  :bind (
-    ("C-b" . ivy-switch-buffer)
-  )
-  )
+(defun my-search-preferences()
+  "Configure search & replace."
+  (interactive)
 
-(use-package swiper
-  :ensure t
-  :defer t
-  :bind (
-    ("C-f" . swiper-isearch)  
-    ("C-f" . swiper-isearch-backward)
-  )
-  )
-
-(use-package counsel
-  :ensure t
-  :defer t
-  :bind (
-    ("C-j" . counsel-imenu)
-    ("C-o" . counsel-find-file)
-  )
+  (set-face-background 'isearch nil)
+  (set-face-foreground 'isearch near-to-white-color)
+  (set-face-attribute 'isearch nil :weight 'extra-bold)
   )
 #+END_SRC
 
-* Project
+** Install Helm (and activate all)
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package helm
+  :ensure t
+  ;;:defer t
+  :config
+
+  (my-search-preferences)
+  (setq helm-display-function 'pop-to-buffer)
+  (setq helm-display-header-line nil)
+  (set-face-attribute 'isearch nil
+                      :foreground near-to-white-color :background nil :weight 'extra-bold)
+  (set-face-attribute 'helm-match nil
+                      :foreground near-to-white-color :background nil :weight 'extra-bold)
+
+  :bind (
+         ("M-x" . helm-M-x)
+         ("C-o" . helm-find-files)
+         ("C-j" . helm-imenu)
+	     ;; Various common ways to switch buffers
+         ("C-x b" . helm-buffers-list)
+         ("C-<tab>" . helm-buffers-list)
+         ("C-<iso-lefttab>" . helm-buffers-list)
+         ("C-b" . helm-buffers-list)
+         ("C-x C-b" . helm-buffers-list)
+	     ;; The kill ring is handy
+         ("S-C-v" . helm-show-kill-ring)
+         ("C-f" . helm-occur)
+         :map helm-map
+	     ;; Use tab to narrow selection
+         ("<tab>" . helm-execute-persistent-action)
+         ("C-<tab>" . helm-next-line)
+         ("C-<iso-lefttab>" . helm-previous-line)
+         ("C-f" . helm-next-line)
+         ("S-C-f" . helm-next-line)
+         )
+  )
+#+END_SRC
+
+* Projects Management
+** Project list
+
+Projectile package helps discover and remember projects.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
 (use-package projectile
   :ensure t
   :defer t
   :init
-  (setq projectile-completion-system 'ivy)
+  (setq projectile-completion-system 'helm)
   (setq projectile-indexing-method 'hybrid)
+
+  (put 'projectile-project-configure-cmd 'safe-local-variable #'stringp)
+  (put 'projectile-project-compilation-cmd 'safe-local-variable #'stringp)
+  (put 'projectile-project-run-cmd 'safe-local-variable #'stringp)
+  (put 'projectile-project-test-cmd 'safe-local-variable #'stringp)
+
   (projectile-mode)
   :bind (
          ;; Compile Project
@@ -244,53 +555,146 @@ Setup Copy-Paste like most Windows and MAC editors.
          ("<f11>" . flymake-goto-next-error)
          ;; Show flycheck errors
          ("<f12>" . flymake-show-diagnostics-buffer)
-	 ("C-t" . projectile-find-file)
+         ("C-t" . projectile-find-file)
          )
+	 )
+#+END_SRC
+
+We want to use helm for selecting and narrowing projects.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package helm-projectile
+  :ensure t
+  :defer t
+  :bind (
+         ("M-f" . helm-projectile-grep)
+         ("S-C-o" . helm-projectile-switch-project)
+         ("C-t" . helm-projectile-find-file)
+         )
+  :config
+  (helm-projectile-on)
   )
 #+END_SRC
 
+** Git support
+
 #+BEGIN_SRC emacs-lisp :tangle yes
-(use-package counsel-projectile
-  :ensure t 
+(use-package magit
+  :ensure t
   :defer t
-  :config
-
-  ;; Not stricly necessary
-  (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
-
   :bind (
-        ("C-S-o" . counsel-projectile-switch-project)
-        ("M-f" . counsel-projectile-grep)
-        )
+         ("<f5>" . magit-status)
+         ("<f6>" . magit-log-all)
+         :map magit-mode-map
+         ("<escape>" . magit-mode-bury-buffer)
+	     )
+  :hook (prog . magit-mode)
   )
 #+END_SRC
 
 * Language Support
+** Code completion
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package company
+  :ensure t
+  :defer t
+  :diminish company-mode
+;;  :after (atom-one-dark-theme)
+  :config
+  (setq company-auto-complete nil
+        company-idle-delay 0.05
+        company-minimum-prefix-length 2
+        company-tooltip-limit 10
+        company-selection-wrap-around t
+        )
+  :bind (
+         ("C-SPC" . company-complete)
+         :map company-active-map
+         ("<escape>" . company-abort)
+         )
+  :hook (prog-mode . company-mode)
+  ;; (global-company-mode 1)
+  )
+#+END_SRC
+
 ** LSP
 
-Language Service Protocol allows any editor to work 
+Language Service Protocol allows any editor to acquire IDE-like features
+like code completion, find implementation, find references, and so on.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
 (use-package lsp-mode
   :ensure t
   :defer t
   :commands lsp
+  :config
+  (lsp-register-client
+   (make-lsp-client :new-connection (lsp-stdio-connection '("cquery" "--init={\"cacheDirectory\": \"/tmp/cquery-cache\"}"))
+                    :major-modes '(c++-mode)
+                    :server-id 'cquery-lsp))
+
   :hook (
     (c++-mode . lsp)
     (ruby-mode . lsp)
     (python-mode . lsp)
+    (web-mode . lsp)
   )
-  :init
   )
 
 (use-package lsp-ui
   :ensure t
+  :defer t
   :after (lsp-mode)
   :hook (lsp-mode . lsp-ui-mode)
-
-;;  (add-hook 'lsp-mode-hook 'lsp-ui-mode)
   :bind (
-  )
+        ("C-." . lsp-find-definition)
+        ("C-," . lsp-find-references)
+        )
   )
 #+END_SRC
 
+** Language: HTML/CSS/Javascript
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package web-mode
+  :ensure t
+  :defer t
+  :mode (
+         ("\\.html?\\'" . web-mode)
+         ("\\.erb\\'" . web-mode)
+         ("\\.handlebars\\'" . web-mode)
+         ("\\.mustache\\'" . web-mode)
+         )
+  :config
+  ;; Configuration
+  (setq web-mode-enable-auto-pairing t)
+  (setq web-mode-enable-css-colorization t)
+  (setq web-mode-enable-block-face t)
+  (setq web-mode-enable-part-face t)
+  (setq web-mode-enable-heredoc-fontification t)
+  (setq web-mode-enable-current-element-highlight t)
+  (setq web-mode-enable-current-column-highlight t)
+  (setq web-mode-markup-indent-offset 2)
+
+  ;; Configure face
+  (set-face-attribute 'web-mode-block-face nil :background nil)
+  (set-face-attribute 'web-mode-inlay-face nil :background nil)
+  (set-face-attribute 'web-mode-current-column-highlight-face nil
+                      :foreground near-to-white-color :background nil)
+  (set-face-attribute 'web-mode-current-column-highlight-face nil
+                      :foreground nil :background (face-background 'hl-line))
+  (set-face-attribute 'web-mode-current-element-highlight-face nil
+                      :foreground near-to-white-color
+                      :background (face-background 'hl-line)
+                      :weight 'extra-bold
+		      :underline nil)
+  )
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package js2-mode
+  :ensure t
+  :defer t
+  :mode (
+         ("\\.js?\\'" . js2-mode)
