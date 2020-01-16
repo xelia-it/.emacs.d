@@ -63,9 +63,7 @@
 
 (use-package helm-projectile
   :ensure t
-;;  :defer t
-  ;; TODO: this do not work
-  ;; :after (helm projectile)
+  :defer t
   :bind (
          ("C-S-f" . helm-projectile-grep)
          ("S-C-o" . helm-projectile-switch-project)

@@ -5,7 +5,7 @@
 (defvar my-config-dir (expand-file-name "config/" user-emacs-directory)
   "This directory houses packages that are not yet available in ELPA (or MELPA).")
 
-(defvar my-init-file (expand-file-name "emacs-init.el" user-emacs-directory)
+(defvar my-init-file (expand-file-name "emacs-init.el" my-config-dir)
   "All configurations stored in this file.")
 
 (defvar my-org-file (expand-file-name "emacs-init.org" my-config-dir)

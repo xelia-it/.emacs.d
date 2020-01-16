@@ -478,18 +478,55 @@ Search is based on Helm package. Put everything in a function.
   "Configure search & replace."
   (interactive)
 
-  (set-face-background 'isearch nil)
-  (set-face-foreground 'isearch near-to-white-color)
-  (set-face-attribute 'isearch nil :weight 'extra-bold)
+  ;;(set-face-foreground 'isearch near-to-white-color)
+  ;;(set-face-background 'isearch nil)
+  (set-face-attribute 'isearch nil
+    :foreground near-to-white-color
+    :background nil
+    :weight 'extra-bold
+    :box '(:line-width -1
+           :color "near-to-white-color"
+           :style nil)
+    )
   )
 #+END_SRC
+** Replace
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package visual-regexp
+  :ensure t
+  :defer t
+  :init
+  (setq vr/auto-show-help t)
 
+  :config
+  (set-face-attribute 'vr/match-0 nil
+     :foreground near-to-white-color
+     :background nil
+     :weight 'extra-bold
+     :box '(:line-width -1
+            :color "near-to-white-color"
+            :style nil)
+    )
+  (set-face-attribute 'vr/match-1 nil
+    :foreground near-to-white-color
+    :background nil
+    :weight 'extra-bold
+    :box '(:line-width -1
+           :color "near-to-white-color"
+           :style nil)
+    )
+  :bind (
+    ("S-C-r" . vr/mc-mark)
+    ("C-r" . vr/replace)
+    )
+  )
+#+END_SRC
 ** Install Helm (and activate all)
 
 #+BEGIN_SRC emacs-lisp :tangle yes
 (use-package helm
   :ensure t
-  ;;:defer t
+  :defer t
   :config
 
   (my-search-preferences)
@@ -519,7 +556,7 @@ Search is based on Helm package. Put everything in a function.
          ("C-<tab>" . helm-next-line)
          ("C-<iso-lefttab>" . helm-previous-line)
          ("C-f" . helm-next-line)
-         ("S-C-f" . helm-next-line)
+         ("S-C-f" . helm-previous-line)
          )
   )
 #+END_SRC
