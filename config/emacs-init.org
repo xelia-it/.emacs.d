@@ -624,7 +624,8 @@ Projectile package helps discover and remember projects.
   :defer t
   :init
   (setq projectile-completion-system 'helm)
-  (setq projectile-indexing-method 'hybrid)
+  ;; TODO: remove if works on Windows Systems
+  ;; (setq projectile-indexing-method 'hybrid)
 
   (put 'projectile-project-configure-cmd 'safe-local-variable #'stringp)
   (put 'projectile-project-compilation-cmd 'safe-local-variable #'stringp)
