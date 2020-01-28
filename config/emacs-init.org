@@ -155,6 +155,7 @@ Define the function now. Loading theme triggers this function.
 #+END_SRC
 
 ** Show parentesis match
+
 #+BEGIN_SRC emacs-lisp :tangle yes
 (defun my-show-parens()
   "Show parenthesis."
@@ -173,7 +174,34 @@ Define the function now. Loading theme triggers this function.
   )
 #+END_SRC
 
-** Theme
+** Word wrap
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(defun my-word-wrap()
+  "Manage word wrap"
+  (interactive)
+
+  (setq-default truncate-lines t)
+  )
+#+END_SRC
+
+** Kill buffers
+
+Utility for killing buffers other than current buffer.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(defun my-kill-other-buffers ()
+    "Kill all other buffers."
+    (interactive)
+
+    (mapc 'kill-buffer
+          (delq (current-buffer)
+                (remove-if-not 'buffer-file-name (buffer-list))))
+    (message "Killed other buffers")
+    )
+#+END_SRC
+
+** Theme (and activate stuffs)
 
 The main theme is inspired to Atom One theme.
 
@@ -189,28 +217,23 @@ The main theme is inspired to Atom One theme.
   ;; Load default theme
   (load-theme 'atom-one-dark t)
 
-  (my-setup-cursor)
-
   ;; Show current line
   (global-hl-line-mode)
-  ;; Enable flashing mode-line on errors
-  ;;(doom-themes-visual-bell-config)
 
-  ;; Enable custom neotree theme
-  ;; (doom-themes-neotree-config)  ; all-the-icons fonts must be installed!
-
-  ;; Load default theme
-
-  ;; Show line numbers
+  ;; Loada personal preferences
+  (my-setup-cursor)
   (my-show-line-numbers)
   (my-show-parens)
+  (my-word-wrap)
 
   ;; Toggle full screen automatically
   (run-with-idle-timer 0.1 nil 'toggle-frame-fullscreen)
 
   :bind (
          ("C-<f4>" . 'kill-buffer-and-window)
+         ("C-w" . 'kill-buffer-and-window)
          ("S-C-<f4>" . 'my-kill-other-buffers)
+         ("S-C-w" . 'my-kill-other-buffers)
          ("<escape>" . 'keyboard-escape-quit)
          )
   )
@@ -246,10 +269,10 @@ The modeline should be more visible. The doom-modeline package provides a good a
   :ensure t
   :config
   (setq shackle-rules '(
-
                         ("\\`\\*[hH]elm.*?\\*\\'" :regexp t :align 'below :size 0.3)
                         ("\\`\\*bm-bookmarks.*?\\*\\'" :regexp t :align 'below :size 0.2)
-                        ("\\`\\*lsp-diagnostics.*?\\*\\'" :regexp t :align 'below :size 0.3)
+                        ("\\`\\*Flymake.*?\\*\\'" :regexp t :align 'below :size 0.2)
+                        ("\\`\\*Flycheck.*?\\*\\'" :regexp t :align 'below :size 0.2)
                         ))
   (shackle-mode 1)
   )
@@ -360,6 +383,20 @@ Setup Cut-Paste like most Windows and MAC editors.
   )
 #+END_SRC
 
+** Select region
+
+Add ability to easily select regions.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package expand-region
+  :ensure t
+  :defer t
+  :bind (
+         ("C-l" . er/expand-region)
+         )
+  )
+#+END_SRC
+
 ** Kill lines
 
 #+BEGIN_SRC emacs-lisp :tangle yes
@@ -375,7 +412,6 @@ Setup Cut-Paste like most Windows and MAC editors.
   (kill-line nil)
 )
 #+END_SRC
-
 ** Moving lines
 
 Almost all IDE has keystrokes to move and duplicate lines.
@@ -399,30 +435,31 @@ Save buffers needs to be performed without confirmation.
 Also we want to refresh magin buffers automatically.
 
 ** Save buffers
- #+BEGIN_SRC emacs-lisp :tangle yes
- (defun my-save ()
-   "Save current buffer without confirmation."
-   (interactive)
 
-   (save-buffer t)
-   (if (fboundp 'magit-refresh-all)
-     (magit-refresh-all))
-   )
- #+END_SRC
+#+BEGIN_SRC emacs-lisp :tangle yes
+(defun my-save()
+  "Save current buffer without confirmation."
+  (interactive)
 
- Also we want a keystroke to save all buffers.
- Both these setup will be performed later.
+  (save-buffer t)
+  (if (fboundp 'magit-refresh-all)
+    (magit-refresh-all))
+  )
+#+END_SRC
 
- #+BEGIN_SRC emacs-lisp :tangle yes
- (defun my-save-all ()
-   "Save all buffers without confirmation and refresh magit."
-   (interactive)
+Also we want a keystroke to save all buffers.
+Both these setup will be performed later.
 
-   (save-some-buffers t)
-   (if (fboundp 'magit-refresh-all)
-     (magit-refresh-all))
-   )
- #+END_SRC
+#+BEGIN_SRC emacs-lisp :tangle yes
+(defun my-save-all()
+  "Save all buffers without confirmation and refresh magit."
+  (interactive)
+
+  (save-some-buffers t)
+  (if (fboundp 'magit-refresh-all)
+    (magit-refresh-all))
+  )
+#+END_SRC
 
 ** Multiple Cursors (and activate all)
 
@@ -459,13 +496,28 @@ This package also triggers all previous functions.
         ("M-<right>" . end-of-line)
         ("S-M-<up>" . mc/mark-previous-word-like-this)
         ("S-M-<down>" . mc/mark-next-word-like-this)
-        ;; Extra keybindings
+        ;; Extra Keybindings: save
         ("C-s" . save-buffer)
         ("S-C-s" . save-buffer)
+        ;; Extra Keybindings: find related files
+        ("S-C-a" . ff-get-other-file)
         :map mc/keymap
         ("<escape>" . mc/keyboard-quit)
         )
   )
+#+END_SRC
+
+** Indentation (Editor Config)
+
+Add support for EditorConfig files.
+These files apply indentations and editor preferences for each file (per project).
+For more information please read: https://editorconfig.org/
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package editorconfig
+  :ensure t
+  :config
+  (editorconfig-mode 1))
 #+END_SRC
 
 * Completion System
@@ -586,13 +638,6 @@ Projectile package helps discover and remember projects.
          ("C-<f9>" . projectile-run-project)
          ("S-<f9>" . projectile-configure-project)
          ("M-<f9>" . projectile-test-project)
-         ;; Move to the previous error found during compiling
-         ("<f10>" . flymake-goto-prev-error)
-         ;; Move to the next error found during compiling
-         ("<f11>" . flymake-goto-next-error)
-         ;; Show flycheck errors
-         ("<f12>" . flymake-show-diagnostics-buffer)
-         ("C-t" . projectile-find-file)
          )
 	 )
 #+END_SRC
@@ -614,6 +659,8 @@ We want to use helm for selecting and narrowing projects.
 #+END_SRC
 
 ** Git support
+
+Magit is a complete User Interface for Git.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
 (use-package magit
@@ -654,6 +701,67 @@ We want to use helm for selecting and narrowing projects.
   ;; (global-company-mode 1)
   )
 #+END_SRC
+** On the fly check
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package flycheck
+  :ensure t
+  :defer t
+  :config
+  ;; Disable ruby-reek checker: it's too verbose
+  ;;(setq-default flycheck-disabled-checkers '(ruby-reek))
+  ;; Change flycheck icons
+  (define-fringe-bitmap 'flycheck-fringe-bitmap-ball
+    (vector #b00000000
+            #b00000000
+            #b00000000
+            #b00000000
+            #b00000000
+            #b00000000
+            #b00000000
+            #b00111000
+            #b01111100
+            #b11111110
+            #b11111110
+            #b01111100
+            #b00111000
+            #b00000000
+            #b00000000
+            #b00000000
+            #b00000000))
+  ;; Apply "ball" icon to errors ..
+  (flycheck-define-error-level 'error
+    :severity 100
+    :compilation-level 2
+    :overlay-category 'flycheck-error-overlay
+    :fringe-bitmap 'flycheck-fringe-bitmap-ball
+    :fringe-face 'flycheck-fringe-error
+    :error-list-face 'flycheck-error-list-error)
+  ;; .. warnings ..
+  (flycheck-define-error-level 'warning
+    :severity 200
+    :compilation-level 1
+    :overlay-category 'flycheck-warning-overlay
+    :fringe-bitmap 'flycheck-fringe-bitmap-ball
+    :fringe-face 'flycheck-fringe-warning
+    :error-list-face 'flycheck-error-list-warning)
+  ;; .. and infos
+  (flycheck-define-error-level 'info
+    :severity 300
+    :compilation-level 0
+    :overlay-category 'flycheck-info-overlay
+    :fringe-bitmap 'flycheck-fringe-bitmap-ball
+    :fringe-face 'flycheck-fringe-info
+    :error-list-face 'flycheck-error-list-info)
+
+  :hook (prog-mode . flycheck-mode)
+  :bind (
+         ("<f10>" . previous-error)
+         ("<f11>" . next-error)
+         ("<f12>" . flycheck-list-errors)
+         )
+  )
+#+END_SRC
 
 ** LSP
 
@@ -666,6 +774,9 @@ like code completion, find implementation, find references, and so on.
   :defer t
   :commands lsp
   :config
+  (setq lsp-prefer-flymake nil)
+  (setq lsp-ui-doc-use-webkit t)
+
   (lsp-register-client
    (make-lsp-client :new-connection (lsp-stdio-connection '("cquery" "--init={\"cacheDirectory\": \"/tmp/cquery-cache\"}"))
                     :major-modes '(c++-mode)
@@ -676,18 +787,37 @@ like code completion, find implementation, find references, and so on.
     (ruby-mode . lsp)
     (python-mode . lsp)
     (web-mode . lsp)
+    (rust-mode . lsp)
   )
   )
+#+END_SRC
 
+Add lsp-ui package for better user interface.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
 (use-package lsp-ui
   :ensure t
   :defer t
   :after (lsp-mode)
+  :commands lsp-ui-mode
   :hook (lsp-mode . lsp-ui-mode)
   :bind (
         ("C-." . lsp-find-definition)
         ("C-," . lsp-find-references)
         )
+  )
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package company-lsp
+  :ensure t
+  :after (lsp-mode)
+  :commands company-lsp
+  )
+
+(use-package lsp-treemacs
+  :ensure t
+  :after (lsp-mode)
   )
 #+END_SRC
 
@@ -735,3 +865,25 @@ like code completion, find implementation, find references, and so on.
   :defer t
   :mode (
          ("\\.js?\\'" . js2-mode)
+         )
+  )
+#+END_SRC
+
+** Language: CMake
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package cmake-mode
+  :ensure t
+  :defer t
+  )
+#+END_SRC
+
+** Language: Kivy
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package kivy-mode
+  :ensure t
+  :defer t
+  :mode ("\\.kv\\'" . kivy-mode)
+  )
+#+END_SRC
