@@ -470,14 +470,13 @@ This package also triggers all previous functions.
 (use-package multiple-cursors
   :ensure t
 
-  :init
-  ;; use this package to trigger preferences
+  :config
+  ;; Preferences
   (my-cut-paste-preferences)
   (my-backup-preferences)
   (my-indent-preferences)
   (my-compiling-preferences)
 
-  :config
   ;; Always run commands
   (setq-default mc/always-run-for-all t)
   ;; Always run commands
@@ -486,24 +485,35 @@ This package also triggers all previous functions.
   (setq-default mc/max-cursors 30)
 
   ;; Disable annoying minor modes when editing with multiple cursor
-  (add-to-list 'mc/unsupported-minor-modes 'company-mode)
-  (add-to-list 'mc/unsupported-minor-modes 'flycheck-mode)
+  ;;(add-to-list 'mc/unsupported-minor-modes 'company-mode)
+  ;;(add-to-list 'mc/unsupported-minor-modes 'flycheck-mode)
 
-  :bind (
-        ("M-<backspace>" . my-kill-start-of-line)
-        ("M-<delete>" . my-kill-end-of-line)
-        ("M-<left>" . beginning-of-line)
-        ("M-<right>" . end-of-line)
-        ("S-M-<up>" . mc/mark-previous-word-like-this)
-        ("S-M-<down>" . mc/mark-next-word-like-this)
-        ;; Extra Keybindings: save
-        ("C-s" . save-buffer)
-        ("S-C-s" . save-buffer)
-        ;; Extra Keybindings: find related files
-        ("S-C-a" . ff-get-other-file)
-        :map mc/keymap
-        ("<escape>" . mc/keyboard-quit)
-        )
+  ;; NO NOT USE :bind here
+  ;; It doesn't seems working well with multiple cursor
+
+  ;; Exit using escape
+  (define-key mc/keymap (kbd "<escape>") 'mc/keyboard-quit)
+
+  ;; will make <return> insert a newline; multiple-cursors-mode can still
+  ;; be disabled with C-g / ESC
+  (define-key mc/keymap (kbd "<return>") nil)
+
+  ;; Basic selection
+  (global-set-key (kbd "S-C-d") 'mc/mark-previous-like-this-word)
+  (global-set-key (kbd "C-d") 'mc/mark-next-like-this-word)
+
+  ;; Define other keybindingd
+  (global-set-key (kbd "M-<backspace>") 'my-kill-start-of-line)
+  (global-set-key (kbd "M-<delete>") 'my-kill-end-of-line)
+  (global-set-key (kbd "M-<left>") 'beginning-of-line)
+  (global-set-key (kbd "M-<right>") 'end-of-line)
+
+  (global-set-key (kbd "C-s") 'save-buffer)
+  (global-set-key (kbd "S-C-s") 'my-save-all)
+
+  (global-set-key (kbd "S-C-a") 'ff-get-other-file)
+
+  (message "Finish setup multiple-cursor")
   )
 #+END_SRC
 
@@ -801,10 +811,16 @@ Add lsp-ui package for better user interface.
   :defer t
   :after (lsp-mode)
   :commands lsp-ui-mode
+  :config
+    (setq lsp-ui-doc-use-webkit t)
+    (set-face-attribute 'lsp-ui-peek-header nil
+      :foreground (face-foreground 'mode-line) :weight 'extra-bold :box '(:line-width 1 :color "#181A1F")
+      :background (face-background 'mode-line)
+      )
   :hook (lsp-mode . lsp-ui-mode)
   :bind (
-        ("C-." . lsp-find-definition)
-        ("C-," . lsp-find-references)
+        ("C-." . lsp-ui-peek-find-definition)
+        ("C-," . lsp-ui-peek-find-references)
         )
   )
 #+END_SRC
@@ -886,5 +902,17 @@ Add lsp-ui package for better user interface.
   :ensure t
   :defer t
   :mode ("\\.kv\\'" . kivy-mode)
+  )
+#+END_SRC
+
+** Language: Ruby / Rails
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package projectile-rails
+  :ensure t
+  :defer t
+  :config
+  (define-key projectile-rails-mode-map (kbd "C-c r") 'projectile-rails-command-map)
+  :hook (ruby-mode . projectile-rails-mode)
   )
 #+END_SRC

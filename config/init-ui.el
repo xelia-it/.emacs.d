@@ -30,6 +30,7 @@
     (message "Killed other buffers")
     )
 
+
 ;; -----------------------------------------------------------------------------
 
 ;; The theme is very similar to Atom colors.

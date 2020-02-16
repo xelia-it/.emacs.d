@@ -76,58 +76,6 @@
 ;; -----------------------------------------------------------------------------
 ;; On the fly check
 
-(use-package flycheck
-  :ensure t
-  :defer t
-  :config
-  ;; Disable ruby-reek checker: it's too verbose
-  (setq-default flycheck-disabled-checkers '(ruby-reek))
-  ;; Change flycheck icons
-  (define-fringe-bitmap 'flycheck-fringe-bitmap-ball
-    (vector #b00000000
-            #b00000000
-            #b00000000
-            #b00000000
-            #b00000000
-            #b00000000
-            #b00000000
-            #b00111000
-            #b01111100
-            #b11111110
-            #b11111110
-            #b01111100
-            #b00111000
-            #b00000000
-            #b00000000
-            #b00000000
-            #b00000000))
-  ;; Apply "ball" icon to errors ..
-  (flycheck-define-error-level 'error
-    :severity 100
-    :compilation-level 2
-    :overlay-category 'flycheck-error-overlay
-    :fringe-bitmap 'flycheck-fringe-bitmap-ball
-    :fringe-face 'flycheck-fringe-error
-    :error-list-face 'flycheck-error-list-error)
-  ;; .. warnings ..
-  (flycheck-define-error-level 'warning
-    :severity 200
-    :compilation-level 1
-    :overlay-category 'flycheck-warning-overlay
-    :fringe-bitmap 'flycheck-fringe-bitmap-ball
-    :fringe-face 'flycheck-fringe-warning
-    :error-list-face 'flycheck-error-list-warning)
-  ;; .. and infos
-  (flycheck-define-error-level 'info
-    :severity 300
-    :compilation-level 0
-    :overlay-category 'flycheck-info-overlay
-    :fringe-bitmap 'flycheck-fringe-bitmap-ball
-    :fringe-face 'flycheck-fringe-info
-    :error-list-face 'flycheck-error-list-info)
-
-  :hook (prog-mode . flycheck-mode)
-  )
 
 ;; -----------------------------------------------------------------------------
 ;; Autocomplete
