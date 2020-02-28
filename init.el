@@ -6,103 +6,27 @@
 ;;; ----------------------------------------------------------------------------
 ;;; Code:
 
-;; -----------------------------------------------------------------------------
-;;  UTF-8
+;; Define vars here
+(defvar my-vendor-dir (expand-file-name "packages/" user-emacs-directory)
+  "This directory houses packages that are not yet available in ELPA (or MELPA).")
 
-;; Used in every file
-(set-language-environment "UTF-8")
-(set-default-coding-systems 'utf-8)
+(defvar my-config-dir (expand-file-name "config/" user-emacs-directory)
+  "This directory houses packages that are not yet available in ELPA (or MELPA).")
 
-;; -----------------------------------------------------------------------------
-;;  Security
+(defvar my-init-file (expand-file-name "emacs-init.el" my-config-dir)
+  "All configurations stored in this file.")
 
-(require 'cl)
-(setq tls-checktrust t)
+(defvar my-org-file (expand-file-name "emacs-init.org" my-config-dir)
+  "All configurations tangled from this file.")
 
-(setq python (or (executable-find "py.exe")
-                 (executable-find "python")
-                 ))
+;; Disable startup screen
+(setq-default startup-screen-inhibit-startup-screen t)
 
-(let ((trustfile
-       (replace-regexp-in-string
-        "\\\\" "/"
-        (replace-regexp-in-string
-         "\n" ""
-         (shell-command-to-string (concat python " -m certifi"))))))
-  (setq tls-program
-        (list
-         (format "gnutls-cli%s --x509cafile %s -p %%p %%h"
-                 (if (eq window-system 'w32) ".exe" "") trustfile)))
-  (setq gnutls-verify-error t)
-  (setq gnutls-trustfiles (list trustfile)))
+(if (file-exists-p my-init-file)
+  (load my-init-file t t)
+  (progn
+    (org-babel-load-file my-org-file)
+    )
+  )
 
-;; -----------------------------------------------------------------------------
-;;  Package repositories
-
-;; Setup repository
-(require 'package)
-(setq package-enable-at-startup nil)
-
-(defvar repo-gnu '("gnu" . "https://elpa.gnu.org/packages/"))
-(defvar repo-melpa '("melpa" . "https://melpa.org/packages/"))
-;; (defvar repo-melpa-stable '("melpa-stable" . "https://stable.melpa.org/packages/"))
-(defvar repo-org-elpa '("org" . "http://orgmode.org/elpa/"))
-
-(setq package-archives nil)
-(add-to-list 'package-archives repo-gnu t)
-(add-to-list 'package-archives repo-melpa t)
-;; (add-to-list 'package-archives repo-melpa-stable t)
-(add-to-list 'package-archives repo-org-elpa t)
-
-;; Downloads new packages in case of a fresh install
-(package-initialize)
-
-;; Install use-package package if not present
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
-
-(eval-when-compile
-  (require 'use-package))
-
-;; -----------------------------------------------------------------------------
-;; Configuration path
-
-;; Write a separate custom.el
-;;(setq custom-file (concat init-dir "custom.el"))
-;;(load custom-file :noerror)
-
-;; Our scripts are into a subdirectory
-(add-to-list 'load-path "~/.emacs.d/config")
-
-;; Set the path variable
-;; (Works only on Linux/Mac)
-(use-package exec-path-from-shell
-  :if (memq window-system '(mac ns x))
-  :ensure t
-  :config
-  (exec-path-from-shell-initialize))
-
-;; -----------------------------------------------------------------------------
-;; Other config scripts
-
-(load "init-ui.el" t t)
-(load "init-editing.el" t t)
-(load "init-projects.el" t t)
-(load "init-languages.el" t t)
-
-;; -----------------------------------------------------------------------------
-;; Custom set variable
-
-;; Some variables can be put into .dir-locals-el scripts
-;; BEWARE: THIS CAN BE DANGEROUS
-(setq enable-local-variables :all)
-
-;; Use a separate custom file
-(setq custom-file "~/.emacs.d/custom.el")
-(cond
- ((file-exists-p custom-file) (load custom-file t t))
- )
-
-(provide 'init)
 ;;; init.el ends here
