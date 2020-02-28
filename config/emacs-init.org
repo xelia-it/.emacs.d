@@ -1,3 +1,4 @@
+
 #+AUTHOR: Alessandro Passerini
 #+TITLE: Emacs Configuration
 
@@ -323,8 +324,9 @@ Setup Cut-Paste like most Windows and MAC editors.
   ;; Cut-Paste like Windows
   (cua-mode t)
 
-  ;; Standard Windows behaviour
-  (setq-default cua-keep-region-after-copy t)
+  ;; Disable selection after copy.
+  ;; Standard Windows behaviour i.s to keep region instead.
+  (setq cua-keep-region-after-copy nil)
 
   ;; Typed text deletes selected text
   (delete-selection-mode t)
@@ -474,7 +476,6 @@ This package also triggers all previous functions.
   ;; Preferences
   (my-cut-paste-preferences)
   (my-backup-preferences)
-  (my-indent-preferences)
   (my-compiling-preferences)
 
   ;; Always run commands
@@ -502,7 +503,7 @@ This package also triggers all previous functions.
   (global-set-key (kbd "S-C-d") 'mc/mark-previous-like-this-word)
   (global-set-key (kbd "C-d") 'mc/mark-next-like-this-word)
 
-  ;; Define other keybindingd
+  ;; Define other keybindings
   (global-set-key (kbd "M-<backspace>") 'my-kill-start-of-line)
   (global-set-key (kbd "M-<delete>") 'my-kill-end-of-line)
   (global-set-key (kbd "M-<left>") 'beginning-of-line)
@@ -528,6 +529,25 @@ For more information please read: https://editorconfig.org/
   :ensure t
   :config
   (editorconfig-mode 1))
+#+END_SRC
+
+** Indent Guide
+
+Show indent guides.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package highlight-indent-guides
+  :ensure t
+  :defer t
+  :config
+  (setq-default highlight-indent-guides-method 'character)
+  (setq-default highlight-indent-guides-character ?\|)
+  (set-face-attribute 'highlight-indent-guides-character-face
+                      (face-attribute 'font-lock-comment-face :foreground))
+
+  ;; Activate indent guides for all programming languages
+  :hook (prog-mode . highlight-indent-guides-mode)
+  )
 #+END_SRC
 
 * Completion System
@@ -862,12 +882,19 @@ Add lsp-ui package for better user interface.
   (setq web-mode-markup-indent-offset 2)
 
   ;; Configure face
+
+
+  (set-face-attribute 'web-mode-current-column-highlight-face nil
+                      :foreground "#ffffff" :background nil)
+  (set-face-attribute 'web-mode-current-element-highlight-face nil
+                      :foreground "#ffffff" :background nil :weight 'extra-bold)
+
   (set-face-attribute 'web-mode-block-face nil :background nil)
   (set-face-attribute 'web-mode-inlay-face nil :background nil)
   (set-face-attribute 'web-mode-current-column-highlight-face nil
                       :foreground near-to-white-color :background nil)
-  (set-face-attribute 'web-mode-current-column-highlight-face nil
-                      :foreground nil :background (face-background 'hl-line))
+;;  (set-face-attribute 'web-mode-current-column-highlight-face nil
+  ;;                    :foreground nil :background (face-background 'hl-line))
   (set-face-attribute 'web-mode-current-element-highlight-face nil
                       :foreground near-to-white-color
                       :background (face-background 'hl-line)
@@ -916,3 +943,66 @@ Add lsp-ui package for better user interface.
   :hook (ruby-mode . projectile-rails-mode)
   )
 #+END_SRC
+** Language: YAML
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package yaml-mode
+  :ensure t
+  :defer t
+  :mode (
+    ("\\.yaml\\'" . yaml-mode)
+    ("\\.yml\\'" . yaml-mode)
+  )
+  )
+#+END_SRC
+
+** Language: JSON
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package json-mode
+  :ensure t
+  :defer t
+  :mode ("\\.json\\'" . json-mode)
+  )
+#+END_SRC
+
+** Language: Markdown
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package markdown-mode
+  :ensure t
+  :defer t
+  :commands (markdown-mode gfm-mode)
+  :mode (("README\\.md\\'" . gfm-mode)
+         ("\\.md\\'" . markdown-mode)
+         ("\\.markdown\\'" . markdown-mode))
+  :init
+  (setq markdown-command "multimarkdown")
+  )
+#+END_SRC
+
+** Language: Nginx config files
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package nginx-mode
+  :ensure t
+  :defer t
+  :mode ("\\.nginx\\'" . nginx-mode)
+  )
+#+END_SRC
+
+** Language: Kivy files
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package kivy-mode
+  :ensure t
+  :defer t
+  :mode ("\\.kv\\'" . kivy-mode)
+  )
+#+END_SRC
+
+**  Language: Rust
+(use-package rust-mode
+  :ensure t
+  :defer t
+   )
