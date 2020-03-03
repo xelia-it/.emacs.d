@@ -114,7 +114,7 @@ It'll be called later when the theme is loaded.
        (let ((buffer "*Completions*"))
          (and (get-buffer buffer)
              (kill-buffer buffer)))))
-  )
+)
 #+END_SRC
 
 ** Cursor style
@@ -399,7 +399,7 @@ Add ability to easily select regions.
   )
 #+END_SRC
 
-** Kill lines
+** Kill lines and words
 
 #+BEGIN_SRC emacs-lisp :tangle yes
 (defun my-kill-start-of-line()
@@ -413,7 +413,35 @@ Add ability to easily select regions.
   (interactive)
   (kill-line nil)
 )
+
+(defun my-kill-word()
+  """
+  Kill spaces until next word (if any).
+  If there are no space kill word.
+  """
+  (interactive)
+  (if (looking-at "[ \t\n]")
+    ;; Delete forward all spaces
+    (let ((pos (point)))
+      (re-search-forward "[^ \t\n]" nil t)
+      (backward-char)
+      (kill-region pos (point)))
+
+    (kill-word 1))
+)
+
+(defun my-backward-kill-word()
+  """
+  Kill spaces until next word (if any).
+  If there are no space kill word.
+  """
+  (interactive)
+  (if (looking-back "[ \t\n]" 1)
+    (delete-horizontal-space t)
+    (backward-kill-word 1))
+)
 #+END_SRC
+
 ** Moving lines
 
 Almost all IDE has keystrokes to move and duplicate lines.
@@ -503,9 +531,15 @@ This package also triggers all previous functions.
   (global-set-key (kbd "S-C-d") 'mc/mark-previous-like-this-word)
   (global-set-key (kbd "C-d") 'mc/mark-next-like-this-word)
 
-  ;; Define other keybindings
+  ;; Kill word and lines
   (global-set-key (kbd "M-<backspace>") 'my-kill-start-of-line)
+  (global-set-key (kbd "S-C-<backspace>") 'my-kill-start-of-line)
   (global-set-key (kbd "M-<delete>") 'my-kill-end-of-line)
+  (global-set-key (kbd "S-C-<end>") 'my-kill-end-of-line)
+  (global-set-key (kbd "C-<backspace>") 'my-backward-kill-word)
+  (global-set-key (kbd "C-<delete>") 'my-kill-word)
+
+  ;; Movements
   (global-set-key (kbd "M-<left>") 'beginning-of-line)
   (global-set-key (kbd "M-<right>") 'end-of-line)
 
@@ -513,6 +547,12 @@ This package also triggers all previous functions.
   (global-set-key (kbd "S-C-s") 'my-save-all)
 
   (global-set-key (kbd "S-C-a") 'ff-get-other-file)
+
+  ;; Atom like buffer movements
+  (global-unset-key (kbd "C-<prior>"))
+  (global-set-key (kbd "C-<prior>") 'previous-buffer)
+  (global-unset-key (kbd "C-<next>"))
+  (global-set-key (kbd "C-<next>") 'next-buffer)
 
   (message "Finish setup multiple-cursor")
   )
@@ -1001,8 +1041,11 @@ Add lsp-ui package for better user interface.
   )
 #+END_SRC
 
-**  Language: Rust
+** Language: Rust
+
+#+BEGIN_SRC emacs-lisp :tangle yes
 (use-package rust-mode
   :ensure t
   :defer t
    )
+#+END_SRC
