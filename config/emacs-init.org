@@ -79,6 +79,7 @@ Currently only defines a very light color compatible with atom-one-dark-theme.
 
 ** Font
 
+Setup default fonts and size.
 Add your preferred fonts in this list.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
@@ -88,8 +89,8 @@ Add your preferred fonts in this list.
 
   (cond
     ((member "Monospace" (font-family-list)) (set-face-font 'default "Monospace"))
-    ((member "Source Code Pro" (font-family-list)) (set-face-font 'default "Source Code Pro"))
     ((member "DejaVu Sans Mono" (font-family-list)) (set-face-font 'default "DejaVu Sans Mono"))
+    ((member "Source Code Pro" (font-family-list)) (set-face-font 'default "Source Code Pro"))
   )
 
   (set-face-attribute 'default nil :height 110)
