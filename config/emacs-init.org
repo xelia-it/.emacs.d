@@ -77,6 +77,7 @@ Currently only defines a very light color compatible with atom-one-dark-theme.
 #+BEGIN_SRC emacs-lisp :tangle yes
 (defvar near-to-white-color "#86e6f2")
 #+END_SRC
+
 ** Disable unwanted UI stuffs
 
 Scollbars, menu bars, splash screen are distracting and occupies space.
@@ -302,7 +303,9 @@ I prefert o avoid tabs for indentation.
 
 ** Indent preferences (per-project)
 
-EditorConfig is a standard way to configure basic preferences for all editors.
+Add support for EditorConfig files.
+These files apply indentations and editor preferences for each file (per project).
+For more information please read: https://editorconfig.org/
 
 #+BEGIN_SRC emacs-lisp :tangle yes
 (use-package editorconfig
@@ -310,6 +313,25 @@ EditorConfig is a standard way to configure basic preferences for all editors.
   :config
   (my-indent-preferences)
   (editorconfig-mode 1)
+  )
+#+END_SRC
+
+** Indent Guide
+
+Show indent guides.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package highlight-indent-guides
+  :ensure t
+  :defer t
+  :config
+  (setq-default highlight-indent-guides-method 'character)
+  (setq-default highlight-indent-guides-character ?\|)
+  (set-face-attribute 'highlight-indent-guides-character-face
+                      (face-attribute 'font-lock-comment-face :foreground))
+
+  ;; Activate indent guides for all programming languages
+  :hook (prog-mode . highlight-indent-guides-mode)
   )
 #+END_SRC
 ** Cut-Paste like Windows
@@ -325,7 +347,7 @@ Setup Cut-Paste like most Windows and MAC editors.
   (cua-mode t)
 
   ;; Disable selection after copy.
-  ;; Standard Windows behaviour i.s to keep region instead.
+  ;; Standard Windows behaviour is to keep region instead.
   (setq cua-keep-region-after-copy nil)
 
   ;; Typed text deletes selected text
@@ -456,15 +478,16 @@ The package move-dup implements the same feature in Emacs.
   :hook (
         (prog-mode . move-dup-mode)
         (yaml-mode . move-dup-mode)
+        (web-mode . move-dup-mode)
+        (scss-mode . move-dup-mode)
         )
   )
 #+END_SRC
 
+** Save buffers
 
 Save buffers needs to be performed without confirmation.
 Also we want to refresh magin buffers automatically.
-
-** Save buffers
 
 #+BEGIN_SRC emacs-lisp :tangle yes
 (defun my-save()
@@ -553,40 +576,6 @@ This package also triggers all previous functions.
   (global-set-key (kbd "C-<prior>") 'previous-buffer)
   (global-unset-key (kbd "C-<next>"))
   (global-set-key (kbd "C-<next>") 'next-buffer)
-
-  (message "Finish setup multiple-cursor")
-  )
-#+END_SRC
-
-** Indentation (Editor Config)
-
-Add support for EditorConfig files.
-These files apply indentations and editor preferences for each file (per project).
-For more information please read: https://editorconfig.org/
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-(use-package editorconfig
-  :ensure t
-  :config
-  (editorconfig-mode 1))
-#+END_SRC
-
-** Indent Guide
-
-Show indent guides.
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-(use-package highlight-indent-guides
-  :ensure t
-  :defer t
-  :config
-  (setq-default highlight-indent-guides-method 'character)
-  (setq-default highlight-indent-guides-character ?\|)
-  (set-face-attribute 'highlight-indent-guides-character-face
-                      (face-attribute 'font-lock-comment-face :foreground))
-
-  ;; Activate indent guides for all programming languages
-  :hook (prog-mode . highlight-indent-guides-mode)
   )
 #+END_SRC
 
@@ -873,10 +862,19 @@ Add lsp-ui package for better user interface.
   :commands lsp-ui-mode
   :config
     (setq lsp-ui-doc-use-webkit t)
+
+    ;; Customize colors
     (set-face-attribute 'lsp-ui-peek-header nil
       :foreground (face-foreground 'mode-line) :weight 'extra-bold :box '(:line-width 1 :color "#181A1F")
       :background (face-background 'mode-line)
       )
+    (set-face-attribute 'lsp-face-highlight-read nil
+      :background (color-darken-name (face-background 'highlight) 20))
+    (set-face-attribute 'lsp-face-highlight-textual nil
+      :background (color-darken-name (face-background 'highlight) 20))
+    (set-face-attribute 'lsp-face-highlight-write nil
+      :background (color-darken-name (face-background 'highlight) 20))
+
   :hook (lsp-mode . lsp-ui-mode)
   :bind (
         ("C-." . lsp-ui-peek-find-definition)
