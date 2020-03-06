@@ -1,4 +1,3 @@
-
 #+AUTHOR: Alessandro Passerini
 #+TITLE: Emacs Configuration
 
@@ -76,6 +75,25 @@ Currently only defines a very light color compatible with atom-one-dark-theme.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
 (defvar near-to-white-color "#86e6f2")
+#+END_SRC
+
+** Font
+
+Add your preferred fonts in this list.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(defun my-setup-font()
+  "Setup default font and size."
+  (interactive)
+
+  (cond
+    ((member "Monospace" (font-family-list)) (set-face-font 'default "Monospace"))
+    ((member "Source Code Pro" (font-family-list)) (set-face-font 'default "Source Code Pro"))
+    ((member "DejaVu Sans Mono" (font-family-list)) (set-face-font 'default "DejaVu Sans Mono"))
+  )
+
+  (set-face-attribute 'default nil :height 110)
+)
 #+END_SRC
 
 ** Disable unwanted UI stuffs
@@ -219,14 +237,15 @@ The main theme is inspired to Atom One theme.
   ;; Load default theme
   (load-theme 'atom-one-dark t)
 
-  ;; Show current line
-  (global-hl-line-mode)
-
-  ;; Loada personal preferences
+  ;; Load personal preferences
+  (my-setup-font)
   (my-setup-cursor)
   (my-show-line-numbers)
   (my-show-parens)
   (my-word-wrap)
+
+  ;; Show current line
+  (global-hl-line-mode)
 
   ;; Toggle full screen automatically
   (run-with-idle-timer 0.1 nil 'toggle-frame-fullscreen)
