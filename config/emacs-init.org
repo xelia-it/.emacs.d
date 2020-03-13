@@ -868,6 +868,7 @@ like code completion, find implementation, find references, and so on.
     (python-mode . lsp)
     (web-mode . lsp)
     (rust-mode . lsp)
+    (typescript-mode . lsp)
   )
   )
 #+END_SRC
@@ -990,7 +991,7 @@ Add lsp-ui package for better user interface.
   )
 #+END_SRC
 
-** Language: Ruby / Rails
+** Language: Ruby/Rails
 
 #+BEGIN_SRC emacs-lisp :tangle yes
 (use-package projectile-rails
@@ -1059,11 +1060,22 @@ Add lsp-ui package for better user interface.
   )
 #+END_SRC
 
+** Language: Angular
+
+For developing Angular apps support of Typescript language is needed.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package typescript-mode
+  :ensure t
+  :defer t
+  )
+#+END_SRC
+
 ** Language: Rust
 
 #+BEGIN_SRC emacs-lisp :tangle yes
 (use-package rust-mode
   :ensure t
   :defer t
-   )
+  )
 #+END_SRC
