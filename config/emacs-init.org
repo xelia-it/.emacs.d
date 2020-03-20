@@ -114,6 +114,7 @@ It'll be called later when the theme is loaded.
 
   ;; Empty scratch buffer
   (setq initial-scratch-message nil)
+  ;; Scratch buffer without any stuff (simple text)
   (setq initial-major-mode 'text-mode)
 
   ;; Empty minibuffer message
@@ -493,6 +494,12 @@ The package move-dup implements the same feature in Emacs.
 (use-package move-dup
   :ensure t
   :defer t
+  :config
+  (global-set-key (kbd "M-<up>") 'md-move-lines-up)
+  (global-set-key (kbd "M-<down>") 'md-move-lines-down)
+  (global-set-key (kbd "C-M-<up>") 'md-duplicate-up)
+  (global-set-key (kbd "C-M-<down>") 'md-duplicate-down)
+
   ;; move-dup is not activated in all modes: it interferes with org-mode
   ;; Do not activate for text-mode
   :hook (
@@ -500,6 +507,8 @@ The package move-dup implements the same feature in Emacs.
         (yaml-mode . move-dup-mode)
         (web-mode . move-dup-mode)
         (scss-mode . move-dup-mode)
+        (kivy-mode . move-dup-mode)
+        (cmake-mode . move-dup-mode)
         )
   )
 #+END_SRC
@@ -573,12 +582,18 @@ This package also triggers all previous functions.
   ;; Basic selection
   (global-set-key (kbd "S-C-d") 'mc/mark-previous-like-this-word)
   (global-set-key (kbd "C-d") 'mc/mark-next-like-this-word)
+  (global-set-key (kbd "S-M-<up>") 'mc/mark-previous-like-this)
+  (global-set-key (kbd "S-M-<down>") 'mc/mark-next-like-this)
+
+  ;; Movement
+  (global-set-key (kbd "M-<left>") 'start-of-line)
+  (global-set-key (kbd "M-<right>") 'end-of-line)
 
   ;; Kill word and lines
+  (global-set-key (kbd "S-C-<delete>") 'kill-whole-line)
+  (global-set-key (kbd "S-C-<backspace>") 'kill-whole-line)
   (global-set-key (kbd "M-<backspace>") 'my-kill-start-of-line)
-  (global-set-key (kbd "S-C-<backspace>") 'my-kill-start-of-line)
   (global-set-key (kbd "M-<delete>") 'my-kill-end-of-line)
-  (global-set-key (kbd "S-C-<end>") 'my-kill-end-of-line)
   (global-set-key (kbd "C-<backspace>") 'my-backward-kill-word)
   (global-set-key (kbd "C-<delete>") 'my-kill-word)
 
@@ -836,8 +851,8 @@ Magit is a complete User Interface for Git.
 
   :hook (prog-mode . flycheck-mode)
   :bind (
-         ("<f10>" . previous-error)
-         ("<f11>" . next-error)
+         ("<f10>" . flycheck-previous-error)
+         ("<f11>" . flycheck-next-error)
          ("<f12>" . flycheck-list-errors)
          )
   )
@@ -868,6 +883,7 @@ like code completion, find implementation, find references, and so on.
     (python-mode . lsp)
     (web-mode . lsp)
     (rust-mode . lsp)
+    (typescript-mode . lsp)
   )
   )
 #+END_SRC
@@ -888,12 +904,6 @@ Add lsp-ui package for better user interface.
       :foreground (face-foreground 'mode-line) :weight 'extra-bold :box '(:line-width 1 :color "#181A1F")
       :background (face-background 'mode-line)
       )
-    (set-face-attribute 'lsp-face-highlight-read nil
-      :background (color-darken-name (face-background 'highlight) 20))
-    (set-face-attribute 'lsp-face-highlight-textual nil
-      :background (color-darken-name (face-background 'highlight) 20))
-    (set-face-attribute 'lsp-face-highlight-write nil
-      :background (color-darken-name (face-background 'highlight) 20))
 
   :hook (lsp-mode . lsp-ui-mode)
   :bind (
@@ -990,7 +1000,7 @@ Add lsp-ui package for better user interface.
   )
 #+END_SRC
 
-** Language: Ruby / Rails
+** Language: Ruby/Rails
 
 #+BEGIN_SRC emacs-lisp :tangle yes
 (use-package projectile-rails
@@ -1059,11 +1069,22 @@ Add lsp-ui package for better user interface.
   )
 #+END_SRC
 
+** Language: Angular
+
+For developing Angular apps support of Typescript language is needed.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package typescript-mode
+  :ensure t
+  :defer t
+)
+#+END_SRC
+
 ** Language: Rust
 
 #+BEGIN_SRC emacs-lisp :tangle yes
 (use-package rust-mode
   :ensure t
   :defer t
-   )
+  )
 #+END_SRC
