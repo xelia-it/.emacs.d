@@ -590,8 +590,8 @@ This package also triggers all previous functions.
   (global-set-key (kbd "M-<right>") 'end-of-line)
 
   ;; Kill word and lines
-  (global-set-key (kbd "S-C-<delete>") 'kill-line)
-  (global-set-key (kbd "S-C-<backspace>") 'kill-line)
+  (global-set-key (kbd "S-C-<delete>") 'kill-whole-line)
+  (global-set-key (kbd "S-C-<backspace>") 'kill-whole-line)
   (global-set-key (kbd "M-<backspace>") 'my-kill-start-of-line)
   (global-set-key (kbd "M-<delete>") 'my-kill-end-of-line)
   (global-set-key (kbd "C-<backspace>") 'my-backward-kill-word)
@@ -851,8 +851,8 @@ Magit is a complete User Interface for Git.
 
   :hook (prog-mode . flycheck-mode)
   :bind (
-         ("<f10>" . previous-error)
-         ("<f11>" . next-error)
+         ("<f10>" . flycheck-previous-error)
+         ("<f11>" . flycheck-next-error)
          ("<f12>" . flycheck-list-errors)
          )
   )
