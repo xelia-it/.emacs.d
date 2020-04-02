@@ -509,6 +509,7 @@ The package move-dup implements the same feature in Emacs.
         (scss-mode . move-dup-mode)
         (kivy-mode . move-dup-mode)
         (cmake-mode . move-dup-mode)
+        (editorconfig-mode . move-dup-mode)
         )
   )
 #+END_SRC
@@ -907,8 +908,9 @@ Add lsp-ui package for better user interface.
 
   :hook (lsp-mode . lsp-ui-mode)
   :bind (
-        ("C-." . lsp-ui-peek-find-definition)
+        ("C-." . lsp-ui-peek-find-definitions)
         ("C-," . lsp-ui-peek-find-references)
+        ("C--" . lsp-ui-peek-find-implementation)
         )
   )
 #+END_SRC
