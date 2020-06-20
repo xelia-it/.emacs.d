@@ -552,12 +552,13 @@ This package also triggers all previous functions.
 #+BEGIN_SRC emacs-lisp :tangle yes
 (use-package multiple-cursors
   :ensure t
-
   :config
   ;; Preferences
   (my-cut-paste-preferences)
   (my-backup-preferences)
   (my-compiling-preferences)
+
+  (require 'multiple-cursors)
 
   ;; Always run commands
   (setq-default mc/always-run-for-all t)
@@ -567,8 +568,8 @@ This package also triggers all previous functions.
   (setq-default mc/max-cursors 30)
 
   ;; Disable annoying minor modes when editing with multiple cursor
-  ;;(add-to-list 'mc/unsupported-minor-modes 'company-mode)
-  ;;(add-to-list 'mc/unsupported-minor-modes 'flycheck-mode)
+  (add-to-list 'mc/unsupported-minor-modes 'company-mode)
+  (add-to-list 'mc/unsupported-minor-modes 'flycheck-mode)
 
   ;; NO NOT USE :bind here
   ;; It doesn't seems working well with multiple cursor
@@ -581,10 +582,8 @@ This package also triggers all previous functions.
   (define-key mc/keymap (kbd "<return>") nil)
 
   ;; Basic selection
-  (global-set-key (kbd "S-C-d") 'mc/mark-previous-like-this-word)
-  (global-set-key (kbd "C-d") 'mc/mark-next-like-this-word)
-  (global-set-key (kbd "S-M-<up>") 'mc/mark-previous-like-this)
-  (global-set-key (kbd "S-M-<down>") 'mc/mark-next-like-this)
+  (global-set-key (kbd "C-<") 'mc/mark-previous-like-this-word)
+  (global-set-key (kbd "C->") 'mc/mark-next-like-this-word)
 
   ;; Movement
   (global-set-key (kbd "M-<left>") 'start-of-line)
@@ -772,6 +771,23 @@ Magit is a complete User Interface for Git.
   )
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package git-gutter
+  :ensure t
+  :config
+  (custom-set-variables
+	'(git-gutter:modified-sign "❚")
+	'(git-gutter:added-sign "❚")
+	'(git-gutter:deleted-sign "❚"))
+
+  (custom-set-variables
+	'(git-gutter:update-interval 2))
+
+  ;; If you enable global minor mode
+  (global-git-gutter-mode t)
+  )
+#+END_SRC
+
 * Language Support
 ** Code completion
 
@@ -852,8 +868,8 @@ Magit is a complete User Interface for Git.
 
   :hook (prog-mode . flycheck-mode)
   :bind (
-         ("<f10>" . flycheck-previous-error)
-         ("<f11>" . flycheck-next-error)
+         ("<f10>" . previous-error)
+         ("<f11>" . next-error)
          ("<f12>" . flycheck-list-errors)
          )
   )
@@ -873,10 +889,10 @@ like code completion, find implementation, find references, and so on.
   (setq lsp-prefer-flymake nil)
   (setq lsp-ui-doc-use-webkit t)
 
-  (lsp-register-client
-   (make-lsp-client :new-connection (lsp-stdio-connection '("cquery" "--init={\"cacheDirectory\": \"/tmp/cquery-cache\"}"))
-                    :major-modes '(c++-mode)
-                    :server-id 'cquery-lsp))
+;;  (lsp-register-client
+;;   (make-lsp-client :new-connection (lsp-stdio-connection '("cquery" "--init={\"cacheDirectory\": \"/tmp/cquery-cache\"}"))
+;;                    :major-modes '(c++-mode)
+;;                    :server-id 'cquery-lsp))
 
   :hook (
     (c++-mode . lsp)
