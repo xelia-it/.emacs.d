@@ -889,10 +889,12 @@ like code completion, find implementation, find references, and so on.
   (setq lsp-prefer-flymake nil)
   (setq lsp-ui-doc-use-webkit t)
 
-;;  (lsp-register-client
-;;   (make-lsp-client :new-connection (lsp-stdio-connection '("cquery" "--init={\"cacheDirectory\": \"/tmp/cquery-cache\"}"))
-;;                    :major-modes '(c++-mode)
-;;                    :server-id 'cquery-lsp))
+  ;; (setq lsp-clients-clangd-args '("-j=4" "-background-index" "-log=error"))
+  ;; (make-lsp-client :new-connection (lsp-stdio-connection '("ccls" "--init={\"cacheDirectory\": \"/tmp/cquery-cache\"}"))
+  (lsp-register-client
+   (make-lsp-client :new-connection (lsp-stdio-connection '("ccls"))
+                    :major-modes '(c++-mode)
+                    :server-id 'cccls-lsp))
 
   :hook (
     (c++-mode . lsp)
@@ -931,13 +933,30 @@ Add lsp-ui package for better user interface.
   )
 #+END_SRC
 
+Use company for code completion.
+
 #+BEGIN_SRC emacs-lisp :tangle yes
 (use-package company-lsp
   :ensure t
   :after (lsp-mode)
   :commands company-lsp
   )
+#+END_SRC
 
+Use a fancy box.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package company-box
+  :ensure t
+  :config
+  (setq company-box-enable-icon nil)
+  :hook (company-mode . company-box-mode)
+  )
+#+END_SRC
+
+Integration with treemacs.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
 (use-package lsp-treemacs
   :ensure t
   :after (lsp-mode)
