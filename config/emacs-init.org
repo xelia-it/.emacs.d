@@ -767,13 +767,14 @@ Magit is a complete User Interface for Git.
          :map magit-mode-map
          ("<escape>" . magit-mode-bury-buffer)
 	     )
-  :hook (prog . magit-mode)
+  :hook (prog-mope . magit-mode)
   )
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp :tangle yes
 (use-package git-gutter
   :ensure t
+  :defer t
   :config
   (custom-set-variables
 	'(git-gutter:modified-sign "❚")
@@ -783,8 +784,7 @@ Magit is a complete User Interface for Git.
   (custom-set-variables
 	'(git-gutter:update-interval 2))
 
-  ;; If you enable global minor mode
-  (global-git-gutter-mode t)
+  :hook (prog-mode . git-gutter-mode)
   )
 #+END_SRC
 
@@ -886,13 +886,16 @@ like code completion, find implementation, find references, and so on.
   :defer t
   :commands lsp
   :config
-  (setq lsp-prefer-flymake nil)
-  (setq lsp-ui-doc-use-webkit t)
 
-;;  (lsp-register-client
-;;   (make-lsp-client :new-connection (lsp-stdio-connection '("cquery" "--init={\"cacheDirectory\": \"/tmp/cquery-cache\"}"))
-;;                    :major-modes '(c++-mode)
-;;                    :server-id 'cquery-lsp))
+  (setq-default lsp-prefer-flymake nil)
+  (setq-default lsp-ui-doc-use-webkit t)
+  (setq-default lsp-enable-file-watchers t)
+
+  ;; Prefer ccls over cland
+  (lsp-register-client
+   (make-lsp-client :new-connection (lsp-stdio-connection '("ccls"))
+                    :major-modes '(c++-mode)
+                    :server-id 'cccls-lsp))
 
   :hook (
     (c++-mode . lsp)
@@ -901,7 +904,7 @@ like code completion, find implementation, find references, and so on.
     (web-mode . lsp)
     (rust-mode . lsp)
     (typescript-mode . lsp)
-  )
+    )
   )
 #+END_SRC
 
@@ -934,12 +937,28 @@ Add lsp-ui package for better user interface.
 #+BEGIN_SRC emacs-lisp :tangle yes
 (use-package company-lsp
   :ensure t
+  :defer t
   :after (lsp-mode)
   :commands company-lsp
   )
+#+END_SRC
 
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package company-box
+  :ensure t
+  :defer t
+  :config
+  (setq company-box-enable-icon nil)
+  :hook (company-mode . company-box-mode)
+  )
+#+END_SRC
+
+Integration with treemacs.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
 (use-package lsp-treemacs
   :ensure t
+  :defer t
   :after (lsp-mode)
   )
 #+END_SRC
