@@ -385,6 +385,9 @@ Setup Cut-Paste like most Windows and MAC editors.
 (defun my-backup-preferences ()
   "Apply my backup preference."
 
+  ;; Temporary .#files interferes with Angular
+  (setq create-lockfiles nil)
+
   ;; Backup files copying them into a subdirectory
   (setq backup-directory-alist `(("." . "~/.saves")))
 
@@ -497,8 +500,8 @@ The package move-dup implements the same feature in Emacs.
   :config
   (global-set-key (kbd "M-<up>") 'md-move-lines-up)
   (global-set-key (kbd "M-<down>") 'md-move-lines-down)
-  (global-set-key (kbd "C-M-<up>") 'md-duplicate-up)
-  (global-set-key (kbd "C-M-<down>") 'md-duplicate-down)
+  (global-set-key (kbd "M-C-<up>") 'md-duplicate-up)
+  (global-set-key (kbd "M-C-<down>") 'md-duplicate-down)
 
   ;; move-dup is not activated in all modes: it interferes with org-mode
   ;; Do not activate for text-mode
@@ -544,6 +547,33 @@ Both these setup will be performed later.
   )
 #+END_SRC
 
+** Find Other Files
+
+A useful feature is switching automatically between different related files.
+For example switch between headers and source in a C++ Project.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(defun my-file-alist()
+  (defvar my-file-alist
+    '(("\\.cpp\\'" (".hpp" ".ipp"))
+      ("\\.ipp\\'" (".hpp" ".cpp"))
+      ("\\.hpp\\'" (".ipp" ".cpp"))
+      ("\\.cxx\\'" (".hxx" ".ixx"))
+      ("\\.ixx\\'" (".cxx" ".hxx"))
+      ("\\.hxx\\'" (".ixx" ".cxx"))
+      ("\\.c\\'" (".h"))
+      ("\\.h\\'" (".c"))
+
+      ("\\.component.html\\'" (".component.scss"))
+      ("\\.component.scss\\'" (".component.ts"))
+      ("\\.component.ts\\'" (".component.spec.ts"))
+      ("\\.component.spec.ts\\'" (".component.html"))
+      ))
+
+  (setq-default ff-other-file-alist 'my-file-alist)
+)
+#+END_SRC
+
 ** Multiple Cursors (and activate all)
 
 Multiple cursors let Emacs use more cursors like modern editors (Atom, VS Code, and so on).
@@ -557,6 +587,7 @@ This package also triggers all previous functions.
   (my-cut-paste-preferences)
   (my-backup-preferences)
   (my-compiling-preferences)
+  (my-file-alist)
 
   (require 'multiple-cursors)
 
@@ -767,13 +798,14 @@ Magit is a complete User Interface for Git.
          :map magit-mode-map
          ("<escape>" . magit-mode-bury-buffer)
 	     )
-  :hook (prog . magit-mode)
+  :hook (prog-mope . magit-mode)
   )
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp :tangle yes
 (use-package git-gutter
   :ensure t
+  :defer t
   :config
   (custom-set-variables
 	'(git-gutter:modified-sign "❚")
@@ -783,8 +815,19 @@ Magit is a complete User Interface for Git.
   (custom-set-variables
 	'(git-gutter:update-interval 2))
 
-  ;; If you enable global minor mode
-  (global-git-gutter-mode t)
+  :hook (prog-mode . git-gutter-mode)
+
+  ;; If you want to activate git-gutter globally
+  ;; (global-git-gutter-mode t)
+
+  :bind (
+         ("<f7>" . git-gutter:previous-hunk)
+         ("C-<f7>" . git-gutter:popup-hunk)
+         ("S-C-<f7>" . git-gutter:revert-hunk)
+         ("<f8>" . git-gutter:next-hunk)
+         ("C-<f8>" . git-gutter:popup-hunk)
+         ("S-C-<f8>" . git-gutter:revert-hunk)
+         )
   )
 #+END_SRC
 
@@ -886,15 +929,39 @@ like code completion, find implementation, find references, and so on.
   :defer t
   :commands lsp
   :config
+
   (setq lsp-prefer-flymake nil)
   (setq lsp-ui-doc-use-webkit t)
 
   ;; (setq lsp-clients-clangd-args '("-j=4" "-background-index" "-log=error"))
   ;; (make-lsp-client :new-connection (lsp-stdio-connection '("ccls" "--init={\"cacheDirectory\": \"/tmp/cquery-cache\"}"))
+  (setq lsp-enable-file-watchers t)
+  ;; Set warning only if the file to watch are bigger than 100000
+  (setq lsp-file-watch-threshold 100000)
+  (setq read-process-output-max (* 1024 1024)) ;; 1mb
+  (setq gc-cons-threshold 100000000)
+  ;; (setq lsp-idle-delay 0.500)
+
+  ;;(setq-default lsp-prefer-flymake nil)
+  ;;(setq-default lsp-ui-doc-use-webkit t)
+  ;;(setq-default lsp-enable-file-watchers t)
+
+  ;; Prefer ccls over cland
   (lsp-register-client
    (make-lsp-client :new-connection (lsp-stdio-connection '("ccls"))
                     :major-modes '(c++-mode)
                     :server-id 'cccls-lsp))
+
+  ;; Point to the correct location
+  ;; Test with: node /usr/local/lib/node_modules/@angular/language-server --ngProbeLocations /usr/local/lib/node_modules --tsProbeLocations /usr/local/lib/node_modules --stdio
+  (setq lsp-clients-angular-language-server-command
+    '("node"
+      "/usr/local/lib/node_modules/@angular/language-server"
+      "--ngProbeLocations"
+      "/usr/local/lib/node_modules"
+      "--tsProbeLocations"
+      "/usr/local/lib/node_modules"
+      "--stdio"))
 
   :hook (
     (c++-mode . lsp)
@@ -902,8 +969,9 @@ like code completion, find implementation, find references, and so on.
     (python-mode . lsp)
     (web-mode . lsp)
     (rust-mode . lsp)
+    (json-mode . lsp)
     (typescript-mode . lsp)
-  )
+    )
   )
 #+END_SRC
 
@@ -938,6 +1006,7 @@ Use company for code completion.
 #+BEGIN_SRC emacs-lisp :tangle yes
 (use-package company-lsp
   :ensure t
+  :defer t
   :after (lsp-mode)
   :commands company-lsp
   )
@@ -948,6 +1017,7 @@ Use a fancy box.
 #+BEGIN_SRC emacs-lisp :tangle yes
 (use-package company-box
   :ensure t
+  :defer t
   :config
   (setq company-box-enable-icon nil)
   :hook (company-mode . company-box-mode)
@@ -959,7 +1029,11 @@ Integration with treemacs.
 #+BEGIN_SRC emacs-lisp :tangle yes
 (use-package lsp-treemacs
   :ensure t
+  :defer t
   :after (lsp-mode)
+  :bind (
+        ("C-\\" . treemacs)
+        )
   )
 #+END_SRC
 
@@ -990,9 +1064,9 @@ Integration with treemacs.
 
 
   (set-face-attribute 'web-mode-current-column-highlight-face nil
-                      :foreground "#ffffff" :background nil)
+                      :foreground "white" :background nil)
   (set-face-attribute 'web-mode-current-element-highlight-face nil
-                      :foreground "#ffffff" :background nil :weight 'extra-bold)
+                      :foreground "white" :background nil :weight 'extra-bold)
 
   (set-face-attribute 'web-mode-block-face nil :background nil)
   (set-face-attribute 'web-mode-inlay-face nil :background nil)
