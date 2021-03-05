@@ -817,7 +817,9 @@ Magit is a complete User Interface for Git.
 
   :hook (prog-mode . git-gutter-mode)
 
+  ;; If you want to activate git-gutter globally
   ;; (global-git-gutter-mode t)
+
   :bind (
          ("<f7>" . git-gutter:previous-hunk)
          ("C-<f7>" . git-gutter:popup-hunk)
