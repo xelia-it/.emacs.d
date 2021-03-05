@@ -934,6 +934,10 @@ like code completion, find implementation, find references, and so on.
   ;; Set warning only if the file to watch are bigger than 100000
   (setq lsp-file-watch-threshold 100000)
 
+  (setq read-process-output-max (* 1024 1024)) ;; 1mb
+  (setq gc-cons-threshold 100000000)
+  ;; (setq lsp-idle-delay 0.500)
+
   ;;(setq-default lsp-prefer-flymake nil)
   ;;(setq-default lsp-ui-doc-use-webkit t)
   ;;(setq-default lsp-enable-file-watchers t)
@@ -1019,6 +1023,9 @@ Integration with treemacs.
   :ensure t
   :defer t
   :after (lsp-mode)
+  :bind (
+        ("C-\\" . treemacs)
+        )
   )
 #+END_SRC
 
@@ -1049,9 +1056,9 @@ Integration with treemacs.
 
 
   (set-face-attribute 'web-mode-current-column-highlight-face nil
-                      :foreground "#ffffff" :background nil)
+                      :foreground "white" :background nil)
   (set-face-attribute 'web-mode-current-element-highlight-face nil
-                      :foreground "#ffffff" :background nil :weight 'extra-bold)
+                      :foreground "white" :background nil :weight 'extra-bold)
 
   (set-face-attribute 'web-mode-block-face nil :background nil)
   (set-face-attribute 'web-mode-inlay-face nil :background nil)
