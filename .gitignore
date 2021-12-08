@@ -56,3 +56,4 @@ projectile.cache
 /.python-environments/
 /.lsp-session*
 /.cache
+/config/emacs-init.el
