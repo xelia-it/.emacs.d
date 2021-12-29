@@ -5,52 +5,52 @@
 ** Setup repositories and use-package
 
 Setup repository.
-If you want to use only stable packages uncomment melpa-stable repository below.
-Beware that some packages may not exists or not work as expected.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-  (defvar repo-gnu '("gnu" . "https://elpa.gnu.org/packages/"))
-  (defvar repo-melpa '("melpa" . "https://melpa.org/packages/"))
-  ;; (defvar repo-melpa-stable '("melpa-stable" . "https://stable.melpa.org/packages/"))
-  (defvar repo-org-elpa '("org" . "http://orgmode.org/elpa/"))
+;; Setup repository
+;;(require 'package)
+;;(setq package-enable-at-startup nil)
 
-  (setq package-archives nil)
-  (add-to-list 'package-archives repo-gnu t)
-  (add-to-list 'package-archives repo-melpa t)
-  ;; (add-to-list 'package-archives repo-melpa-stable t)
-  (add-to-list 'package-archives repo-org-elpa t)
+(defvar repo-gnu '("gnu" . "https://elpa.gnu.org/packages/"))
+(defvar repo-melpa '("melpa" . "https://melpa.org/packages/"))
+(defvar repo-melpa-stable '("melpa-stable" . "https://stable.melpa.org/packages/"))
+(defvar repo-org-elpa '("org" . "http://orgmode.org/elpa/"))
+
+(setq package-archives nil)
+(add-to-list 'package-archives repo-gnu t)
+(add-to-list 'package-archives repo-melpa t)
+;; (add-to-list 'package-archives repo-melpa-stable t)
+(add-to-list 'package-archives repo-org-elpa t)
 #+END_SRC
 
-** Install use-package
-
-Now we can tell Emacs to install use-package if it's not present.
+Now we can force Emacs to install use-package if it's not present.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-  ;; Downloads new packages in case of a fresh install
-  (package-initialize)
+;; Downloads new packages in case of a fresh install
+(package-initialize)
 
-  ;; Install use-package package if not present
-  (unless (package-installed-p 'use-package)
-    (package-refresh-contents)
-    (package-install 'use-package))
+;; Install use-package package if not present
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
 
-  (eval-when-compile
-    (require 'use-package))
+(eval-when-compile
+  (require 'use-package))
 #+END_SRC
-
-** Configure environment variables
+** Configuration
 
 The environment variables in Emacs looks the same as in user's shell.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-  ;; (Works only on Linux/Mac)
-  (use-package exec-path-from-shell
-    :if (memq window-system '(mac ns x))
-    :ensure t
-    :config
-    (setq exec-path-from-shell-check-startup-files nil)
-      (exec-path-from-shell-initialize)
-    )
+;; Set the path variable
+;; (Works only on Linux/Mac)
+(use-package exec-path-from-shell
+  :if (memq window-system '(mac ns x))
+  :ensure t
+  :config
+  (setq exec-path-from-shell-check-startup-files nil)
+    (exec-path-from-shell-initialize)
+  )
 #+END_SRC
 
 ** Separate customization file

@@ -23,10 +23,12 @@
 (setq-default startup-screen-inhibit-startup-screen t)
 
 (if (file-exists-p my-init-file)
-  (load my-init-file t t)
+  ;; TOD: Just for debug.. DELETE!
+  (delete-file my-init-file)
   (progn
     (org-babel-load-file my-org-file)
     )
+    (load my-init-file t t)
   )
 
 ;;; init.el ends here
