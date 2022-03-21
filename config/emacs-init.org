@@ -67,9 +67,154 @@ in a separate file.
  )
 #+END_SRC
 
+* Save Buffers
+** Customize saving buffers 
+
+Save buffers needs to be performed without confirmation.
+Also we want to refresh magit buffers automatically.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(defun my-save()
+  "Save current buffer without confirmation."
+  (interactive)
+
+  (save-buffer t)
+  (if (fboundp 'magit-refresh-all)
+    (magit-refresh-all))
+  )
+#+END_SRC
+
+Also we want a keystroke to save all buffers.
+Both these setup will be performed later.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(defun my-save-all()
+  "Save all buffers without confirmation and refresh magit."
+  (interactive)
+
+  (save-some-buffers t)
+  (if (fboundp 'magit-refresh-all)
+    (magit-refresh-all))
+  )
+#+END_SRC  
+
+** Backup preferences
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(defun my-backup-preferences ()
+  "Apply my backup preference."
+
+  ;; Temporary .#files interferes with Angular
+  (setq create-lockfiles nil)
+
+  ;; Backup files copying them into a subdirectory
+  (setq backup-directory-alist `(("." . "~/.saves")))
+
+  (setq make-backup-files t               ; backup of a file the first time it is saved.
+        backup-by-copying t               ; don't clobber symlinks
+        version-control t                 ; version numbers for backup files
+        delete-old-versions t             ; delete excess backup files silently
+        delete-by-moving-to-trash t
+        kept-old-versions 6               ; oldest versions to keep when a new numbered backup is made (default: 2)
+        kept-new-versions 9               ; newest versions to keep when a new numbered backup is made (default: 2)
+        auto-save-default t               ; auto-save every buffer that visits a file
+        auto-save-timeout 20              ; number of seconds idle time before auto-save (default: 30)
+        auto-save-interval 200            ; number of keystrokes between auto-saves (default: 300)
+        )
+
+  ;; Save without messages
+  (setq-default save-silently t)
+
+  ;; Delete trailing whitespaces before saving
+  (add-hook 'before-save-hook 'delete-trailing-whitespace)
+
+  ;; No more typing the whole yes or no. Just y or n will do.
+  (fset 'yes-or-no-p 'y-or-n-p)
+  )
+#+END_SRC
+
+* Editing
+** Indent preferences (generic)
+
+First we define a set of default values to be used in every buffer.
+I prefer to avoid tabs for indentation.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(defun my-indent-preferences()
+  "Setup default indentations."
+  (interactive)
+
+  ;; Do not use tabs by default
+  (setq-default indent-tabs-mode nil)
+
+  ;; Use 4 spaces by default
+  (setq-default tab-width 4)
+  (setq-default ruby-indent-level 2)
+  (setq-default css-indent-offset 4)
+  )
+#+END_SRC
+
+** Indent preferences (per-project)
+
+Add support for EditorConfig files.
+These files apply indentations and editor preferences for each file (per project).
+For more information please read: https://editorconfig.org/
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package editorconfig
+    :ensure t
+    :config
+    (editorconfig-mode 1)
+    )
+#+END_SRC
+
+** Indent Guide
+
+Show indent guides.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package highlight-indent-guides
+    :ensure t
+    :defer t
+    :config
+    ;;(setq-default highlight-indent-guides-method 'character)
+    (setq-default highlight-indent-guides-method 'bitmap)
+    ;;(setq-default highlight-indent-guides-character ?\|)
+    (set-face-attribute 'highlight-indent-guides-character-face
+			(face-attribute 'font-lock-comment-face :foreground))
+
+    ;; Activate indent guides for all programming languages
+    :hook (prog-mode . highlight-indent-guides-mode)
+    )
+#+END_SRC
+
+** Cut-Paste like Windows
+
+Setup Cut-Paste like most Windows and MAC editors.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(defun my-cut-paste-preferences()
+  "Setup cut/paste preferences."
+  (interactive)
+
+  ;; Cut-Paste like Windows
+  (cua-mode t)
+
+  ;; Disable selection after copy.
+  ;; Standard Windows behaviour is to keep region instead.
+  (setq cua-keep-region-after-copy nil)
+
+  ;; Typed text deletes selected text
+  (delete-selection-mode t)
+
+  ;; No region when it is not highlighted
+  (transient-mark-mode 1)
+  )
+#+END_SRC
+
 * User Interface
 
-Please note that we are first defining functions.
+All customization are defined inside functions.
 We'll activate everything when loading theme.
 
 ** Disable unwanted UI stuffs
@@ -116,41 +261,173 @@ It'll be called later when the theme is loaded.
   )
 #+END_SRC
 
+** Cursor style
+
+It'll be called later when the theme is loaded.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my-setup-cursor()
+    "My setup cursor."
+    (interactive)
+
+    ;; Cursor like a bar
+    (setq-default cursor-type 'bar))
+    ;; Set cursor color
+    ;;(set-cursor-color near-to-white-color)
+
+    ;; Blink cursor
+    (blink-cursor-mode)
+
+    ;; Cursor like a bar (works only on Linux/Mac)
+    ;;(if (memq window-system '(mac ns x))
+    ;;    (setq-default cursor-type 'bar))
+    ;;)
+#+END_SRC
+
+** Line numbers
+
+Line numbers are useful in programming mode.
+Define the function now. Loading theme triggers this function.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my-show-line-numbers()
+    "Setup line numbers."
+    (interactive)
+
+    (setq display-line-numbers-width 5)
+    (add-hook 'prog-mode-hook 'display-line-numbers-mode)
+    (set-face-foreground 'line-number (face-foreground 'font-lock-comment-face))
+    (set-face-foreground 'line-number-current-line (face-foreground 'font-lock-builtin-face))
+    )
+#+END_SRC
+
+** Show parentesis match
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my-show-parens()
+    "Show parenthesis."
+    (interactive)
+
+    (require 'paren)
+    (set-face-background 'show-paren-match (face-background 'font-lock-builtin-face))
+    ;;(set-face-foreground 'show-paren-match near-to-white-color)
+    (set-face-attribute 'show-paren-match nil :weight 'extra-bold)
+    (set-face-underline 'show-paren-match nil)
+    (defvar match-paren--idle-timer nil)
+    (defvar match-paren--delay 0.5)
+    (setq match-paren--idle-timer
+          (run-with-idle-timer match-paren--delay t #'blink-matching-open))
+    (show-paren-mode 1)
+    )
+#+END_SRC
+
+** Word wrap
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my-word-wrap()
+    "Manage word wrap"
+    (interactive)
+
+    (setq-default truncate-lines t)
+    )
+#+END_SRC
+
 ** Theme (and activate stuffs)
 
 The main theme is inspired to Atom One theme.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-    (use-package doom-themes
-      :ensure t
-      :init
+  (use-package atom-one-dark-theme
+    :ensure t
+    :init
 
-      (my-remove-annoying-ui-features)
+    (my-remove-annoying-ui-features)
+    (my-indent-preferences)
+    (my-cut-paste-preferences)
+    (my-setup-cursor)
+    (my-show-line-numbers)
+    (my-show-parens)
+    (my-word-wrap)
 
-      :config
+    :config
 
-      ;; Load default theme
-      (load-theme 'doom-oceanic-next t)
+    ;; Load default theme
+    (load-theme 'atom-one-dark t)
 
-      ;; Show current line
-      (global-hl-line-mode)
+    ;; Show current line
+    (global-hl-line-mode)
 
-      ;; Toggle full screen automatically
-      ;;(run-with-idle-timer 0.2 nil 'toggle-frame-fullscreen)
-  ;;    (toggle-frame-fullscreen)
+    ;; Toggle full screen automatically
+    ;;(run-with-idle-timer 0.2 nil 'toggle-frame-fullscreen)
+    ;;    (toggle-frame-fullscreen)
 
-      (add-hook 'window-setup-hook 'toggle-frame-maximized t)
-
-
-
-      )
+    (add-hook 'window-setup-hook 'toggle-frame-maximized t)
+    )
 #+END_SRC
 
+Setup also a fancy modeline.
+
 #+BEGIN_SRC emacs-lisp :tangle yes
-(use-package doom-modeline
+  (use-package doom-modeline
+    :ensure t
+    :init
+    (doom-modeline-mode 1)
+    )  
+#+END_SRC
+
+** Key Help Screen
+
+Show help for keybindings. 
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package which-key
+    :ensure t
+    :init
+    (which-key-setup-side-window-right)
+    (which-key-mode)
+    )  
+#+END_SRC
+
+* Completion
+
+** Install Helm
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package helm
   :ensure t
-  :init (doom-modeline-mode 1)
-  )  
+  :defer t
+  :config
+
+  (my-search-preferences)
+  (setq helm-display-function 'pop-to-buffer)
+  (setq helm-display-header-line nil)
+;;  (set-face-attribute 'isearch nil
+    ;;                  :foreground near-to-white-color :background nil :weight 'extra-bold)
+  ;;(set-face-attribute 'helm-match nil
+      ;;                :foreground near-to-white-color :background nil :weight 'extra-bold)
+
+  :bind (
+         ("M-x" . helm-M-x)
+         ("C-o" . helm-find-files)
+         ("C-j" . helm-imenu)
+	     ;; Various common ways to switch buffers
+         ("C-x b" . helm-buffers-list)
+         ("C-<tab>" . helm-buffers-list)
+         ("C-<iso-lefttab>" . helm-buffers-list)
+         ;;;("C-b" . helm-buffers-list)
+         ("C-x C-b" . helm-buffers-list)
+	     ;; The kill ring is handy
+         ("S-C-v" . helm-show-kill-ring)
+         ("C-s" . helm-occur)
+         :map helm-map
+	     ;; Use tab to narrow selection
+         ("<tab>" . helm-execute-persistent-action)
+         ("C-<tab>" . helm-next-line)
+         ("C-<iso-lefttab>" . helm-previous-line)
+         ("C-s" . helm-next-line)
+         ("S-C-s" . helm-previous-line)
+         )
+  )
 #+END_SRC
 
 * Language Support
@@ -160,32 +437,39 @@ Language Service Protocol allows any editor to acquire IDE-like features
 like code completion, find implementation, find references, and so on.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(use-package lsp-mode
-  :ensure t
-  :defer t
-  :commands lsp
-  :config
+  (use-package lsp-mode
+    :ensure t
+    :defer t
+    :commands lsp
+    :init
 
-  (setq lsp-prefer-flymake nil)
-  (setq lsp-ui-doc-use-webkit t)
-  (setq lsp-enable-file-watchers t)
-  ;; Set warning only if the file to watch are bigger than 100000
-  (setq lsp-file-watch-threshold 100000)
+    ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+    (setq lsp-keymap-prefix "C-l")
 
-  (setq read-process-output-max (* 1024 1024)) ;; 1mb
-  (setq gc-cons-threshold 100000000)
-  ;; (setq lsp-idle-delay 0.500)
+    :config
 
-  :hook (
-    (c++-mode . lsp)
-    (ruby-mode . lsp)
-    (python-mode . lsp)
-    (web-mode . lsp)
-    (rust-mode . lsp)
-    (json-mode . lsp)
-    (typescript-mode . lsp)
+    (setq lsp-prefer-flymake nil)
+    (setq lsp-ui-doc-use-webkit t)
+    (setq lsp-enable-file-watchers t)
+    ;; Set warning only if the file to watch are bigger than 100000
+    (setq lsp-file-watch-threshold 100000)
+    (setq read-process-output-max (* 1024 1024)) ;; 1mb
+    (setq gc-cons-threshold 100000000)
+    ;; (setq lsp-idle-delay 0.500)
+
+    :hook (
+           ;; Integrate with which-key
+           (lsp-mode . lsp-enable-which-key-integration)
+           ;; Enable languages
+           (c++-mode . lsp)
+           (ruby-mode . lsp)
+           (python-mode . lsp)
+           (web-mode . lsp)
+           (rust-mode . lsp)
+           (json-mode . lsp)
+           (typescript-mode . lsp)
+           )
     )
-  )
 #+END_SRC
 
 Add lsp-ui package for better user interface.
@@ -203,7 +487,17 @@ Add lsp-ui package for better user interface.
   )
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package helm-lsp
+    :commands helm-lsp-workspace-symbol
+    )
+#+END_SRC
 
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package lsp-treemacs
+    :commands lsp-treemacs-errors-list
+    )
+#+END_SRC
 
 ** Language: Angular
 
@@ -211,6 +505,16 @@ For developing Angular Apps we need the support of TypeScript language.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package typescript-mode
+    :ensure t
+    :defer t
+    )
+#+END_SRC
+
+
+** Language: PHP
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package php-mode
     :ensure t
     :defer t
     )
