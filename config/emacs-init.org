@@ -26,9 +26,6 @@ Beware that some packages may not exists or not work as expected.
 Now we can tell Emacs to install use-package if it's not present.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-  ;; Downloads new packages in case of a fresh install
-  ;;(package-initialize)
-
   ;; Install use-package package if not present
   (unless (package-installed-p 'use-package)
     (package-refresh-contents)
@@ -38,7 +35,7 @@ Now we can tell Emacs to install use-package if it's not present.
     (require 'use-package))
 #+END_SRC
 
-** Configure environment variables
+** Path for executable files
 
 The environment variables in Emacs looks the same as in user's shell.
 
@@ -101,36 +98,36 @@ Both these setup will be performed later.
 ** Backup preferences
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(defun my-backup-preferences ()
-  "Apply my backup preference."
+  (defun my-backup-preferences ()
+    "Apply my backup preference."
 
-  ;; Temporary .#files interferes with Angular
-  (setq create-lockfiles nil)
+    ;; Temporary .#files interferes with Angular
+    (setq create-lockfiles nil)
 
-  ;; Backup files copying them into a subdirectory
-  (setq backup-directory-alist `(("." . "~/.saves")))
+    ;; Backup files copying them into a subdirectory
+    (setq backup-directory-alist `(("." . "~/.saves")))
 
-  (setq make-backup-files t               ; backup of a file the first time it is saved.
-        backup-by-copying t               ; don't clobber symlinks
-        version-control t                 ; version numbers for backup files
-        delete-old-versions t             ; delete excess backup files silently
-        delete-by-moving-to-trash t
-        kept-old-versions 6               ; oldest versions to keep when a new numbered backup is made (default: 2)
-        kept-new-versions 9               ; newest versions to keep when a new numbered backup is made (default: 2)
-        auto-save-default t               ; auto-save every buffer that visits a file
-        auto-save-timeout 20              ; number of seconds idle time before auto-save (default: 30)
-        auto-save-interval 200            ; number of keystrokes between auto-saves (default: 300)
-        )
+    (setq make-backup-files t               ; backup of a file the first time it is saved.
+          backup-by-copying t               ; don't clobber symlinks
+          version-control t                 ; version numbers for backup files
+          delete-old-versions t             ; delete excess backup files silently
+          delete-by-moving-to-trash t
+          kept-old-versions 6               ; oldest versions to keep when a new numbered backup is made (default: 2)
+          kept-new-versions 9               ; newest versions to keep when a new numbered backup is made (default: 2)
+          auto-save-default t               ; auto-save every buffer that visits a file
+          auto-save-timeout 20              ; number of seconds idle time before auto-save (default: 30)
+          auto-save-interval 200            ; number of keystrokes between auto-saves (default: 300)
+          )
 
-  ;; Save without messages
-  (setq-default save-silently t)
+    ;; Save without messages
+    (setq-default save-silently t)
 
-  ;; Delete trailing whitespaces before saving
-  (add-hook 'before-save-hook 'delete-trailing-whitespace)
-
-  ;; No more typing the whole yes or no. Just y or n will do.
-  (fset 'yes-or-no-p 'y-or-n-p)
-  )
+    ;; Delete trailing whitespaces before saving
+    (add-hook 'before-save-hook 'delete-trailing-whitespace)
+  
+    ;; No more typing the whole yes or no. Just y or n will do.
+    (fset 'yes-or-no-p 'y-or-n-p)
+    )
 #+END_SRC
 
 * Editing
@@ -212,10 +209,47 @@ Setup Cut-Paste like most Windows and MAC editors.
   )
 #+END_SRC
 
+** Word wrap
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my-word-wrap()
+    "Manage word wrap"
+    (interactive)
+
+    (setq-default truncate-lines t)
+    )
+#+END_SRC
+
+** Compile Preferences
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my-compiling-preferences()
+    "Configure compiler."
+    (interactive)
+
+    ;; Auto-save before compiling
+    (setq compilation-ask-about-save nil)
+
+    ;; Never prompt to kill a compilation session.
+    (setq-default compilation-always-kill t)
+
+    ;; Always scroll to the bottom.
+    (setq-default compilation-scroll-output t)
+    )
+#+END_SRC
+
 * User Interface
 
 All customization are defined inside functions.
 We'll activate everything when loading theme.
+
+** Colors
+
+Define here all colors to be applyed to the user interface. Currently only defines a very light color compatible with atom-one-dark-theme.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defvar near-to-white-color "#86e6f2")
+#+END_SRC
 
 ** Disable unwanted UI stuffs
 
@@ -261,6 +295,22 @@ It'll be called later when the theme is loaded.
   )
 #+END_SRC
 
+** Kill buffers
+
+Utility for killing buffers other than current buffer.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(defun my-kill-other-buffers ()
+    "Kill all other buffers."
+    (interactive)
+
+    (mapc 'kill-buffer
+          (delq (current-buffer)
+                (remove-if-not 'buffer-file-name (buffer-list))))
+    (message "Killed other buffers")
+    )
+#+END_SRC
+
 ** Cursor style
 
 It'll be called later when the theme is loaded.
@@ -271,17 +321,12 @@ It'll be called later when the theme is loaded.
     (interactive)
 
     ;; Cursor like a bar
-    (setq-default cursor-type 'bar))
+    (setq-default cursor-type '(bar . 3))
     ;; Set cursor color
-    ;;(set-cursor-color near-to-white-color)
-
+    (set-cursor-color near-to-white-color)
     ;; Blink cursor
     (blink-cursor-mode)
-
-    ;; Cursor like a bar (works only on Linux/Mac)
-    ;;(if (memq window-system '(mac ns x))
-    ;;    (setq-default cursor-type 'bar))
-    ;;)
+    )
 #+END_SRC
 
 ** Line numbers
@@ -305,30 +350,35 @@ Define the function now. Loading theme triggers this function.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
   (defun my-show-parens()
-    "Show parenthesis."
+    "Apply style to parenthesis match."
     (interactive)
 
-    (require 'paren)
-    (set-face-background 'show-paren-match (face-background 'font-lock-builtin-face))
-    ;;(set-face-foreground 'show-paren-match near-to-white-color)
-    (set-face-attribute 'show-paren-match nil :weight 'extra-bold)
-    (set-face-underline 'show-paren-match nil)
-    (defvar match-paren--idle-timer nil)
-    (defvar match-paren--delay 0.5)
-    (setq match-paren--idle-timer
-          (run-with-idle-timer match-paren--delay t #'blink-matching-open))
-    (show-paren-mode 1)
+    (set-face-attribute 'show-paren-match nil
+                        :foreground nil
+                        :background nil
+                        :weight 'extra-bold
+                        :box '(:line-width (-1 . -1)
+                                           :color "near-to-white"
+                                           :style nil)
+                        )
     )
 #+END_SRC
 
-** Word wrap
+** Search preferences
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-  (defun my-word-wrap()
-    "Manage word wrap"
+  (defun my-search-preferences()
+    "Configure search & replace."
     (interactive)
 
-    (setq-default truncate-lines t)
+    (set-face-attribute 'isearch nil
+      :foreground nil
+      :background nil
+      :weight 'extra-bold
+      :box '(:line-width (-1 . -1)
+             :color "near-to-white"
+             :style nil)
+      )
     )
 #+END_SRC
 
@@ -341,27 +391,38 @@ The main theme is inspired to Atom One theme.
     :ensure t
     :init
 
+    ;; In early stage customize all non-UI stuffs
     (my-remove-annoying-ui-features)
     (my-indent-preferences)
     (my-cut-paste-preferences)
-    (my-setup-cursor)
-    (my-show-line-numbers)
-    (my-show-parens)
     (my-word-wrap)
+    (my-compiling-preferences)
 
     :config
 
     ;; Load default theme
     (load-theme 'atom-one-dark t)
 
+    ;; Customize UI stuffs after loading theme 
+    (my-setup-cursor)
+    (my-show-line-numbers)
+    (my-show-parens)
+    (my-search-preferences)
+
     ;; Show current line
     (global-hl-line-mode)
 
     ;; Toggle full screen automatically
-    ;;(run-with-idle-timer 0.2 nil 'toggle-frame-fullscreen)
-    ;;    (toggle-frame-fullscreen)
-
     (add-hook 'window-setup-hook 'toggle-frame-maximized t)
+
+    :bind (
+           ("<escape>" . 'keyboard-escape-quit)
+           ("C-<f4>" . 'kill-buffer-and-window)
+           ("C-w" . 'kill-buffer-and-window)
+           ("S-C-<f4>" . 'my-kill-other-buffers)
+           ("S-C-w" . 'my-kill-other-buffers)
+           ("<escape>" . 'keyboard-escape-quit)
+           )
     )
 #+END_SRC
 
@@ -388,6 +449,24 @@ Show help for keybindings.
     )  
 #+END_SRC
 
+** Windows position
+
+Force window positioning for a specified function.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package shackle
+  :ensure t
+  :config
+  (setq shackle-rules '(
+                        ("\\`\\*[hH]elm.*?\\*\\'" :regexp t :align 'below :size 0.3)
+                        ("\\`\\*bm-bookmarks.*?\\*\\'" :regexp t :align 'below :size 0.2)
+                        ("\\`\\*Flymake.*?\\*\\'" :regexp t :align 'below :size 0.2)
+                        ("\\`\\*Flycheck.*?\\*\\'" :regexp t :align 'below :size 0.2)
+                        ))
+  (shackle-mode 1)
+  )
+#+END_SRC
+
 * Completion
 
 ** Install Helm
@@ -398,7 +477,6 @@ Show help for keybindings.
   :defer t
   :config
 
-  (my-search-preferences)
   (setq helm-display-function 'pop-to-buffer)
   (setq helm-display-header-line nil)
 ;;  (set-face-attribute 'isearch nil
@@ -414,7 +492,6 @@ Show help for keybindings.
          ("C-x b" . helm-buffers-list)
          ("C-<tab>" . helm-buffers-list)
          ("C-<iso-lefttab>" . helm-buffers-list)
-         ;;;("C-b" . helm-buffers-list)
          ("C-x C-b" . helm-buffers-list)
 	     ;; The kill ring is handy
          ("S-C-v" . helm-show-kill-ring)
@@ -426,6 +503,99 @@ Show help for keybindings.
          ("C-<iso-lefttab>" . helm-previous-line)
          ("C-s" . helm-next-line)
          ("S-C-s" . helm-previous-line)
+         )
+  )
+#+END_SRC
+
+* Projects Management
+** Project list
+
+Projectile package helps discover and remember projects.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package projectile
+    :ensure t
+    :defer t
+    :init
+
+    (setq projectile-completion-system 'helm)
+
+    (put 'projectile-project-configure-cmd 'safe-local-variable #'stringp)
+    (put 'projectile-project-compilation-cmd 'safe-local-variable #'stringp)
+    (put 'projectile-project-run-cmd 'safe-local-variable #'stringp)
+    (put 'projectile-project-test-cmd 'safe-local-variable #'stringp)
+
+    (projectile-mode)
+
+    :bind (
+           ;; Compile Project
+           ("<f9>" . projectile-compile-project)
+           ("C-<f9>" . projectile-run-project)
+           ("S-<f9>" . projectile-configure-project)
+           ("M-<f9>" . projectile-test-project)
+           )
+       )
+#+END_SRC
+
+We want to use helm for selecting and narrowing projects.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package helm-projectile
+  :ensure t
+  :defer t
+  :bind (
+         ("M-f" . helm-projectile-grep)
+         ("S-C-o" . helm-projectile-switch-project)
+         ("C-t" . helm-projectile-find-file)
+         )
+  :config
+  (helm-projectile-on)
+  )
+#+END_SRC
+
+** Git support
+
+Magit is a complete User Interface for Git.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package magit
+  :ensure t
+  :defer t
+  :bind (
+         ("<f5>" . magit-status)
+         ("<f6>" . magit-log-all)
+         :map magit-mode-map
+         ("<escape>" . magit-mode-bury-buffer)
+	     )
+  :hook (prog-mope . magit-mode)
+  )
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package git-gutter
+  :ensure t
+  :defer t
+  :config
+  (custom-set-variables
+	'(git-gutter:modified-sign "❚")
+	'(git-gutter:added-sign "❚")
+	'(git-gutter:deleted-sign "❚"))
+
+  (custom-set-variables
+	'(git-gutter:update-interval 2))
+
+  :hook (prog-mode . git-gutter-mode)
+
+  ;; If you want to activate git-gutter globally
+  ;; (global-git-gutter-mode t)
+
+  :bind (
+         ("<f7>" . git-gutter:previous-hunk)
+         ("C-<f7>" . git-gutter:popup-hunk)
+         ("S-C-<f7>" . git-gutter:revert-hunk)
+         ("<f8>" . git-gutter:next-hunk)
+         ("C-<f8>" . git-gutter:popup-hunk)
+         ("S-C-<f8>" . git-gutter:revert-hunk)
          )
   )
 #+END_SRC
@@ -509,7 +679,6 @@ For developing Angular Apps we need the support of TypeScript language.
     :defer t
     )
 #+END_SRC
-
 
 ** Language: PHP
 

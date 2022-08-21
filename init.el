@@ -22,13 +22,13 @@
 ;; Disable startup screen
 (setq-default startup-screen-inhibit-startup-screen t)
 
+;; Load compiled Lisp file.
+;; If this do not exists use the original org file to produce Lisp file.
 (if (file-exists-p my-init-file)
-  ;; TOD: Just for debug.. DELETE!
-  (delete-file my-init-file)
+  (load my-init-file t t)
   (progn
     (org-babel-load-file my-org-file)
     )
-    (load my-init-file t t)
   )
 
 ;;; init.el ends here
