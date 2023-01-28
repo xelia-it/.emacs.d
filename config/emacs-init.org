@@ -65,7 +65,7 @@ in a separate file.
 #+END_SRC
 
 * Save Buffers
-** Customize saving buffers 
+** Customize saving buffers
 
 Save buffers needs to be performed without confirmation.
 Also we want to refresh magit buffers automatically.
@@ -93,12 +93,12 @@ Both these setup will be performed later.
   (if (fboundp 'magit-refresh-all)
     (magit-refresh-all))
   )
-#+END_SRC  
+#+END_SRC
 
 ** Backup preferences
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-  (defun my-backup-preferences ()
+  (defun my-backup-preferences()
     "Apply my backup preference."
 
     ;; Temporary .#files interferes with Angular
@@ -124,13 +124,21 @@ Both these setup will be performed later.
 
     ;; Delete trailing whitespaces before saving
     (add-hook 'before-save-hook 'delete-trailing-whitespace)
-  
+
     ;; No more typing the whole yes or no. Just y or n will do.
     (fset 'yes-or-no-p 'y-or-n-p)
     )
 #+END_SRC
 
 * Editing
+** Colors
+
+Define here all colors to be applyed to the user interface. Currently only defines a very light color compatible with atom-one-dark-theme.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defvar near-to-white-color "#86e6f2")
+#+END_SRC
+
 ** Indent preferences (generic)
 
 First we define a set of default values to be used in every buffer.
@@ -209,6 +217,39 @@ Setup Cut-Paste like most Windows and MAC editors.
   )
 #+END_SRC
 
+** Search and Replace
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package visual-regexp
+    :ensure t
+    :defer t
+    :init
+    (setq vr/auto-show-help t)
+
+    :config
+    (set-face-attribute 'vr/match-0 nil
+       :foreground near-to-white-color
+       :background nil
+       :weight 'extra-bold
+       :box '(:line-width -1
+              :color near-to-white-color
+              :style nil)
+      )
+    (set-face-attribute 'vr/match-1 nil
+      :foreground near-to-white-color
+      :background nil
+      :weight 'extra-bold
+      :box '(:line-width -1
+             :color near-to-white-color
+             :style nil)
+      )
+    :bind (
+      ("S-C-r" . vr/mc-mark)
+      ("C-r" . vr/replace)
+      )
+    )
+#+END_SRC
+
 ** Word wrap
 
 #+BEGIN_SRC emacs-lisp :tangle yes
@@ -242,14 +283,6 @@ Setup Cut-Paste like most Windows and MAC editors.
 
 All customization are defined inside functions.
 We'll activate everything when loading theme.
-
-** Colors
-
-Define here all colors to be applyed to the user interface. Currently only defines a very light color compatible with atom-one-dark-theme.
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (defvar near-to-white-color "#86e6f2")
-#+END_SRC
 
 ** Disable unwanted UI stuffs
 
@@ -285,6 +318,10 @@ It'll be called later when the theme is loaded.
 
     ;; No more scrollbars
     (scroll-bar-mode -1)
+
+    ;; Increase error level in *Warnings* buffer
+    ;; (default is :warning). Removes many unwanted warnings.
+    (setq warning-minimum-level :error)
 
     ;; Removes *Completions* from buffer after you've opened a file.
     (add-hook 'minibuffer-exit-hook
@@ -382,48 +419,60 @@ Define the function now. Loading theme triggers this function.
     )
 #+END_SRC
 
+** Icons
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package all-the-icons
+    :ensure t)
+  (use-package all-the-icons-completion
+    :ensure t)
+  (use-package all-the-icons-dired
+    :ensure t)
+#+END_SRC
+
 ** Theme (and activate stuffs)
 
 The main theme is inspired to Atom One theme.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package atom-one-dark-theme
-    :ensure t
-    :init
+      :ensure t
+      :init
 
-    ;; In early stage customize all non-UI stuffs
-    (my-remove-annoying-ui-features)
-    (my-indent-preferences)
-    (my-cut-paste-preferences)
-    (my-word-wrap)
-    (my-compiling-preferences)
+      ;; In early stage customize all non-UI stuffs
+      (my-remove-annoying-ui-features)
+      (my-indent-preferences)
+      (my-cut-paste-preferences)
+      (my-word-wrap)
+      (my-compiling-preferences)
 
-    :config
+      :config
 
-    ;; Load default theme
-    (load-theme 'atom-one-dark t)
+      ;; Load default theme
+      (load-theme 'atom-one-dark t)
 
-    ;; Customize UI stuffs after loading theme 
-    (my-setup-cursor)
-    (my-show-line-numbers)
-    (my-show-parens)
-    (my-search-preferences)
+      ;; Customize UI stuffs after loading theme
+      (my-setup-cursor)
+      (my-show-line-numbers)
+      (my-show-parens)
+      (my-search-preferences)
+      (my-backup-preferences)
 
-    ;; Show current line
-    (global-hl-line-mode)
+      ;; Show current line
+      (global-hl-line-mode)
 
-    ;; Toggle full screen automatically
-    (add-hook 'window-setup-hook 'toggle-frame-maximized t)
+      ;; Toggle full screen automatically
+      (add-hook 'window-setup-hook 'toggle-frame-maximized t)
 
-    :bind (
-           ("<escape>" . 'keyboard-escape-quit)
-           ("C-<f4>" . 'kill-buffer-and-window)
-           ("C-w" . 'kill-buffer-and-window)
-           ("S-C-<f4>" . 'my-kill-other-buffers)
-           ("S-C-w" . 'my-kill-other-buffers)
-           ("<escape>" . 'keyboard-escape-quit)
-           )
-    )
+      :bind (
+             ("<escape>" . 'keyboard-escape-quit)
+             ("C-<f4>" . 'kill-buffer-and-window)
+             ("C-w" . 'kill-buffer-and-window)
+             ("S-C-<f4>" . 'my-kill-other-buffers)
+             ("S-C-w" . 'my-kill-other-buffers)
+             ("<escape>" . 'keyboard-escape-quit)
+             )
+      )
 #+END_SRC
 
 Setup also a fancy modeline.
@@ -433,12 +482,12 @@ Setup also a fancy modeline.
     :ensure t
     :init
     (doom-modeline-mode 1)
-    )  
+    )
 #+END_SRC
 
 ** Key Help Screen
 
-Show help for keybindings. 
+Show help for keybindings.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package which-key
@@ -446,7 +495,7 @@ Show help for keybindings.
     :init
     (which-key-setup-side-window-right)
     (which-key-mode)
-    )  
+    )
 #+END_SRC
 
 ** Windows position
@@ -472,39 +521,40 @@ Force window positioning for a specified function.
 ** Install Helm
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(use-package helm
-  :ensure t
-  :defer t
-  :config
+  (use-package helm
+    :ensure t
+    :defer t
+    :config
 
-  (setq helm-display-function 'pop-to-buffer)
-  (setq helm-display-header-line nil)
-;;  (set-face-attribute 'isearch nil
-    ;;                  :foreground near-to-white-color :background nil :weight 'extra-bold)
-  ;;(set-face-attribute 'helm-match nil
-      ;;                :foreground near-to-white-color :background nil :weight 'extra-bold)
+    (setq helm-display-function 'pop-to-buffer)
+    (setq helm-display-header-line nil)
 
-  :bind (
-         ("M-x" . helm-M-x)
-         ("C-o" . helm-find-files)
-         ("C-j" . helm-imenu)
-	     ;; Various common ways to switch buffers
-         ("C-x b" . helm-buffers-list)
-         ("C-<tab>" . helm-buffers-list)
-         ("C-<iso-lefttab>" . helm-buffers-list)
-         ("C-x C-b" . helm-buffers-list)
-	     ;; The kill ring is handy
-         ("S-C-v" . helm-show-kill-ring)
-         ("C-s" . helm-occur)
-         :map helm-map
-	     ;; Use tab to narrow selection
-         ("<tab>" . helm-execute-persistent-action)
-         ("C-<tab>" . helm-next-line)
-         ("C-<iso-lefttab>" . helm-previous-line)
-         ("C-s" . helm-next-line)
-         ("S-C-s" . helm-previous-line)
-         )
-  )
+    ;; Colors
+    ;; Set "match" color for searches.
+    (set-face-attribute 'helm-match nil
+                        :foreground near-to-white-color :background nil :weight 'extra-bold)
+
+    :bind (
+           ("M-x" . helm-M-x)
+           ("C-o" . helm-find-files)
+           ("C-j" . helm-imenu)
+           ;; Various common ways to switch buffers
+           ("C-x b" . helm-buffers-list)
+           ("C-<tab>" . helm-buffers-list)
+           ("C-<iso-lefttab>" . helm-buffers-list)
+           ("C-x C-b" . helm-buffers-list)
+           ;; The kill ring is handy
+           ("S-C-v" . helm-show-kill-ring)
+           ("C-s" . helm-occur)
+           :map helm-map
+           ;; Use tab to narrow selection
+           ("<tab>" . helm-execute-persistent-action)
+           ("C-<tab>" . helm-next-line)
+           ("C-<iso-lefttab>" . helm-previous-line)
+           ("C-s" . helm-next-line)
+           ("S-C-s" . helm-previous-line)
+           )
+    )
 #+END_SRC
 
 * Projects Management
@@ -627,6 +677,10 @@ like code completion, find implementation, find references, and so on.
     (setq gc-cons-threshold 100000000)
     ;; (setq lsp-idle-delay 0.500)
 
+    :bind (
+           ("<f12>" . lsp-treemacs-errors-list)
+           )
+
     :hook (
            ;; Integrate with which-key
            (lsp-mode . lsp-enable-which-key-integration)
@@ -635,9 +689,10 @@ like code completion, find implementation, find references, and so on.
            (ruby-mode . lsp)
            (python-mode . lsp)
            (web-mode . lsp)
+           (typescript-mode . lsp)
            (rust-mode . lsp)
            (json-mode . lsp)
-           (typescript-mode . lsp)
+           (sh-mode . lsp)
            )
     )
 #+END_SRC
@@ -657,11 +712,27 @@ Add lsp-ui package for better user interface.
   )
 #+END_SRC
 
+Use a fancy box for completion selection.
+
 #+BEGIN_SRC emacs-lisp :tangle yes
-  (use-package helm-lsp
-    :commands helm-lsp-workspace-symbol
+  (use-package company-box
+    :ensure t
+    :defer t
+    :config
+    (setq company-box-enable-icon nil)
+    :hook (company-mode . company-box-mode)
     )
 #+END_SRC
+
+Integrate with helm package.
+
+  ,#+BEGIN_SRC emacs-lisp :tangle yes
+    (use-package helm-lsp
+      :commands helm-lsp-workspace-symbol
+      )
+#+END_SRC
+
+Integrate with treemacs package.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package lsp-treemacs
@@ -686,5 +757,182 @@ For developing Angular Apps we need the support of TypeScript language.
   (use-package php-mode
     :ensure t
     :defer t
+    )
+#+END_SRC
+
+** Language: HTML, CSS, JavaScript
+
+Install packages for write web pages.
+The web-mode package is good for HTML and SCSS mode.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package web-mode
+    :ensure t
+    :defer t
+    :config
+
+    ;; Configuration
+    (setq web-mode-enable-auto-pairing t)
+    (setq web-mode-enable-css-colorization t)
+    (setq web-mode-enable-block-face t)
+    (setq web-mode-enable-part-face t)
+    (setq web-mode-enable-heredoc-fontification t)
+    (setq web-mode-enable-current-element-highlight t)
+    (setq web-mode-enable-current-column-highlight t)
+    (setq web-mode-markup-indent-offset 2)
+
+    ;; Colors
+    (set-face-attribute 'web-mode-block-face nil :background nil)
+    (set-face-attribute 'web-mode-inlay-face nil :background nil)
+    (set-face-attribute 'web-mode-current-column-highlight-face nil
+                        :foreground near-to-white-color :background nil)
+    (set-face-attribute 'web-mode-current-element-highlight-face nil
+                        :foreground near-to-white-color
+                        :background (face-background 'hl-line)
+                        :weight 'extra-bold
+                        :underline nil)
+    :mode (
+           ("\\.html?\\'" . web-mode)
+           ("\\.erb\\'" . web-mode)
+           ("\\.handlebars\\'" . web-mode)
+           ("\\.mustache\\'" . web-mode)
+           )
+    )
+#+END_SRC
+
+For pure JavaScript code js2-mode is a great package.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package js2-mode
+    :ensure t
+    :defer t
+    :mode (
+           ("\\.js?\\'" . js2-mode)
+           )
+    )
+#+END_SRC
+
+** Language: JSON
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package json-mode
+    :ensure t
+    :defer t
+    :mode ("\\.json\\'" . json-mode)
+    )
+#+END_SRC
+
+** Language: YAML
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package yaml-mode
+    :ensure t
+    :defer t
+    :mode (
+      ("\\.yaml\\'" . yaml-mode)
+      ("\\.yml\\'" . yaml-mode)
+    )
+    )
+#+END_SRC
+
+** Language: CMake
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package cmake-mode
+    :ensure t
+    :defer t
+    )
+#+END_SRC
+
+** Language: Kivy
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package kivy-mode
+    :ensure t
+    :defer t
+    :mode ("\\.kv\\'" . kivy-mode)
+    )
+#+END_SRC
+
+** Language: Ruby On Rails
+
+Integrate with projevtile package.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package projectile-rails
+    :ensure t
+    :defer t
+    :config
+
+    (define-key projectile-rails-mode-map (kbd "C-c r") 'projectile-rails-command-map)
+
+    :hook (ruby-mode . projectile-rails-mode)
+    )
+#+END_SRC
+
+** Language: Markdown
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package markdown-mode
+    :ensure t
+    :defer t
+    :init
+    (setq markdown-command "multimarkdown")
+
+    :commands (markdown-mode gfm-mode)
+
+    :mode (("README\\.md\\'" . gfm-mode)
+           ("\\.md\\'" . markdown-mode)
+           ("\\.markdown\\'" . markdown-mode))
+    )
+#+END_SRC
+
+** Language: Nginx
+
+Manage nginx configuration files.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package nginx-mode
+    :ensure t
+    :defer t
+    :mode ("\\.nginx\\'" . nginx-mode)
+    )
+#+END_SRC
+
+** Language: Rust
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package rust-mode
+    :ensure t
+    :defer t
+    )
+#+END_SRC
+
+** Language: Vue
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package vue-mode
+    :ensure t
+    :defer t
+    )
+#+END_SRC
+
+** Language: Haml
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package haml-mode
+    :ensure t
+    :defer t
+
+    )
+#+END_SRC
+
+** Language: Docker
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package dockerfile-mode
+    :ensure t
+    :defer t
+
     )
 #+END_SRC
