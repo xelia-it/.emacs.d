@@ -26,6 +26,8 @@ Beware that some packages may not exists or not work as expected.
 Now we can tell Emacs to install use-package if it's not present.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
+  (require 'package)
+
   ;; Install use-package package if not present
   (unless (package-installed-p 'use-package)
     (package-refresh-contents)
