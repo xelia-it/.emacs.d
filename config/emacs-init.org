@@ -246,9 +246,9 @@ Setup Cut-Paste like most Windows and MAC editors.
              :style nil)
       )
     :bind (
-      ("S-C-r" . vr/mc-mark)
-      ("C-r" . vr/replace)
-      )
+           ("S-C-r" . vr/mc-mark)
+           ("C-r" . vr/replace)
+           )
     )
 #+END_SRC
 
@@ -438,43 +438,43 @@ The main theme is inspired to Atom One theme.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package atom-one-dark-theme
-      :ensure t
-      :init
+    :ensure t
+    :init
 
-      ;; In early stage customize all non-UI stuffs
-      (my-remove-annoying-ui-features)
-      (my-indent-preferences)
-      (my-cut-paste-preferences)
-      (my-word-wrap)
-      (my-compiling-preferences)
+    ;; In early stage customize all non-UI stuffs
+    (my-remove-annoying-ui-features)
+    (my-indent-preferences)
+    (my-cut-paste-preferences)
+    (my-word-wrap)
+    (my-compiling-preferences)
 
-      :config
+    :config
 
-      ;; Load default theme
-      (load-theme 'atom-one-dark t)
+    ;; Load default theme
+    (load-theme 'atom-one-dark t)
 
-      ;; Customize UI stuffs after loading theme
-      (my-setup-cursor)
-      (my-show-line-numbers)
-      (my-show-parens)
-      (my-search-preferences)
-      (my-backup-preferences)
+    ;; Customize UI stuffs after loading theme
+    (my-setup-cursor)
+    (my-show-line-numbers)
+    (my-show-parens)
+    (my-search-preferences)
+    (my-backup-preferences)
 
-      ;; Show current line
-      (global-hl-line-mode)
+    ;; Show current line
+    (global-hl-line-mode)
 
-      ;; Toggle full screen automatically
-      (add-hook 'window-setup-hook 'toggle-frame-maximized t)
+    ;; Toggle full screen automatically
+    (add-hook 'window-setup-hook 'toggle-frame-maximized t)
 
-      :bind (
-             ("<escape>" . 'keyboard-escape-quit)
-             ("C-<f4>" . 'kill-buffer-and-window)
-             ("C-w" . 'kill-buffer-and-window)
-             ("S-C-<f4>" . 'my-kill-other-buffers)
-             ("S-C-w" . 'my-kill-other-buffers)
-             ("<escape>" . 'keyboard-escape-quit)
-             )
-      )
+    :bind (
+           ("<escape>" . 'keyboard-escape-quit)
+           ("C-<f4>" . 'kill-buffer-and-window)
+           ("C-w" . 'kill-buffer-and-window)
+           ("S-C-<f4>" . 'my-kill-other-buffers)
+           ("S-C-w" . 'my-kill-other-buffers)
+           ("<escape>" . 'keyboard-escape-quit)
+           )
+    )
 #+END_SRC
 
 Setup also a fancy modeline.
@@ -484,6 +484,17 @@ Setup also a fancy modeline.
     :ensure t
     :init
     (doom-modeline-mode 1)
+    )
+#+END_SRC
+
+Add tree
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package treemacs
+    :ensure t
+    :bind (
+           ("C-\\" . 'treemacs)
+           )
     )
 #+END_SRC
 
@@ -605,6 +616,15 @@ We want to use helm for selecting and narrowing projects.
   )
 #+END_SRC
 
+Let projectile integrate with Treemacs.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package treemacs-projectile
+    :ensure t
+    :defer t
+    )
+#+END_SRC
+
 ** Git support
 
 Magit is a complete User Interface for Git.
@@ -619,7 +639,7 @@ Magit is a complete User Interface for Git.
          :map magit-mode-map
          ("<escape>" . magit-mode-bury-buffer)
 	     )
-  :hook (prog-mope . magit-mode)
+  ;;:hook (prog-mode . magit-mode)
   )
 #+END_SRC
 
@@ -695,6 +715,7 @@ like code completion, find implementation, find references, and so on.
            (rust-mode . lsp)
            (json-mode . lsp)
            (sh-mode . lsp)
+           (dockerfile-mode . lsp)
            )
     )
 #+END_SRC
@@ -728,18 +749,20 @@ Use a fancy box for completion selection.
 
 Integrate with helm package.
 
-  ,#+BEGIN_SRC emacs-lisp :tangle yes
-    (use-package helm-lsp
-      :commands helm-lsp-workspace-symbol
-      )
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package helm-lsp
+    :ensure t
+    :commands helm-lsp-workspace-symbol
+    )
 #+END_SRC
 
 Integrate with treemacs package.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-  (use-package lsp-treemacs
-    :commands lsp-treemacs-errors-list
-    )
+;;  (use-package lsp-treemacs
+;;    :ensure t
+;;    :commands lsp-treemacs-errors-list
+ ;;   )
 #+END_SRC
 
 ** Language: Angular
@@ -935,6 +958,5 @@ Manage nginx configuration files.
   (use-package dockerfile-mode
     :ensure t
     :defer t
-
     )
 #+END_SRC
