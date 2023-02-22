@@ -5,7 +5,7 @@
 ** Setup repositories and use-package
 
 Setup repository.
-If you want to use only stable packages uncomment melpa-stable repository below.
+If you want to use only *stable* packages uncomment *melpa-stable* repository below.
 Beware that some packages may not exists or not work as expected.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
@@ -35,6 +35,16 @@ Now we can tell Emacs to install use-package if it's not present.
 
   (eval-when-compile
     (require 'use-package))
+#+END_SRC
+
+** Native compilation
+
+I strongly suggest to enabel Native Compilation whenever possible.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+(setq native-comp-deferred-compilation t)
+(setq package-native-compile t)
+(setq comp-async-report-warnings-errors nil)
 #+END_SRC
 
 ** Path for executable files
@@ -233,22 +243,40 @@ Setup Cut-Paste like most Windows and MAC editors.
        :foreground near-to-white-color
        :background nil
        :weight 'extra-bold
-       :box '(:line-width -1
-              :color near-to-white-color
+       :box '(:line-width (-1 . -1)
+              :color "near-to-white"
               :style nil)
       )
     (set-face-attribute 'vr/match-1 nil
       :foreground near-to-white-color
       :background nil
       :weight 'extra-bold
-      :box '(:line-width -1
-             :color near-to-white-color
+      :box '(:line-width (-1 . -1)
+             :color "near-to-white"
              :style nil)
       )
     :bind (
            ("S-C-r" . vr/mc-mark)
            ("C-r" . vr/replace)
            )
+    )
+#+END_SRC
+
+** Search preferences
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my-search-preferences()
+    "Configure search & replace."
+    (interactive)
+
+    (set-face-attribute 'isearch nil
+      :foreground nil
+      :background nil
+      :weight 'extra-bold
+      :box '(:line-width (-1 . -1)
+             :color "near-to-white"
+             :style nil)
+      )
     )
 #+END_SRC
 
@@ -260,6 +288,74 @@ Setup Cut-Paste like most Windows and MAC editors.
     (interactive)
 
     (setq-default truncate-lines t)
+    )
+#+END_SRC
+
+** Move line
+
+Almost all IDE has keystrokes to move and duplicate lines. The package move-dup implements the same feature in Emacs.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package move-dup
+     :ensure t
+     :defer t
+     :config
+
+     ;; move-dup is not activated in all modes: it interferes with org-mode
+     ;; Do not activate for text-mode
+     :hook (
+           (prog-mode . move-dup-mode)
+           (yaml-mode . move-dup-mode)
+           (web-mode . move-dup-mode)
+           (scss-mode . move-dup-mode)
+           (kivy-mode . move-dup-mode)
+           (cmake-mode . move-dup-mode)
+           (editorconfig-mode . move-dup-mode)
+           )
+
+     :bind (
+            ("M-<up>" . md-move-lines-up)
+            ("M-<down>" . md-move-lines-down)
+            ("M-C-<up>" . md-duplicate-up)
+            ("M-C-<down>" . md-duplicate-down)
+            )
+     )
+#+END_SRC
+
+** Multiple Cursors
+
+Add the ability to manage multiple cursors.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+    (use-package multiple-cursors
+      :ensure t
+      :config
+
+      ;; Needed to configure this package
+    (require 'multiple-cursors)
+
+    ;; Always run commands
+    (setq-default mc/always-run-for-all t)
+    ;; Always run commands
+    (setq-default mc/always-repeat-command t)
+    ;; Safety ceil
+    (setq-default mc/max-cursors 30)
+
+
+    ;; NO NOT USE :bind here
+    ;; It doesn't seems working well with multiple cursor
+
+    ;; Exit using escape
+    (define-key mc/keymap (kbd "<escape>") 'mc/keyboard-quit)
+
+    ;; will make <return> insert a newline; multiple-cursors-mode can still
+    ;; be disabled with C-g / ESC
+    (define-key mc/keymap (kbd "<return>") nil)
+
+
+    ;; Basic selection
+    (global-set-key (kbd "C-<") 'mc/mark-previous-like-this-word)
+    (global-set-key (kbd "C->") 'mc/mark-next-like-this-word)
     )
 #+END_SRC
 
@@ -360,9 +456,9 @@ It'll be called later when the theme is loaded.
     (interactive)
 
     ;; Cursor like a bar
-    (setq-default cursor-type '(bar . 3))
+    (setq-default cursor-type 'hbox)
     ;; Set cursor color
-    (set-cursor-color near-to-white-color)
+    (set-cursor-color "white")
     ;; Blink cursor
     (blink-cursor-mode)
     )
@@ -397,27 +493,9 @@ Define the function now. Loading theme triggers this function.
                         :background nil
                         :weight 'extra-bold
                         :box '(:line-width (-1 . -1)
-                                           :color "near-to-white"
-                                           :style nil)
+                               :color "near-to-white"
+                               :style nil)
                         )
-    )
-#+END_SRC
-
-** Search preferences
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (defun my-search-preferences()
-    "Configure search & replace."
-    (interactive)
-
-    (set-face-attribute 'isearch nil
-      :foreground nil
-      :background nil
-      :weight 'extra-bold
-      :box '(:line-width (-1 . -1)
-             :color "near-to-white"
-             :style nil)
-      )
     )
 #+END_SRC
 
@@ -467,7 +545,6 @@ The main theme is inspired to Atom One theme.
     (add-hook 'window-setup-hook 'toggle-frame-maximized t)
 
     :bind (
-           ("<escape>" . 'keyboard-escape-quit)
            ("C-<f4>" . 'kill-buffer-and-window)
            ("C-w" . 'kill-buffer-and-window)
            ("S-C-<f4>" . 'my-kill-other-buffers)
@@ -530,7 +607,6 @@ Force window positioning for a specified function.
 #+END_SRC
 
 * Completion
-
 ** Install Helm
 
 #+BEGIN_SRC emacs-lisp :tangle yes
@@ -690,17 +766,25 @@ like code completion, find implementation, find references, and so on.
 
     :config
 
-    (setq lsp-prefer-flymake nil)
-    (setq lsp-ui-doc-use-webkit t)
+    (setq lsp-prefer-flymake t)
+      ;;  (setq lsp-ui-doc-use-webkit t)
     (setq lsp-enable-file-watchers t)
     ;; Set warning only if the file to watch are bigger than 100000
     (setq lsp-file-watch-threshold 100000)
-    (setq read-process-output-max (* 1024 1024)) ;; 1mb
+    (setq read-process-output-max 5242880) ;; 5 MByte
     (setq gc-cons-threshold 100000000)
-    ;; (setq lsp-idle-delay 0.500)
+    (setq lsp-idle-delay 0.250)
+    (setq lsp-log-io nil) ;; if set to true can cause a performance hit
+
+    (setq lsp-enable-file-watchers nil)
+
+    ;; Disable automatic server installation suggestions.
+    ;; Please look at the README.md to show suggestion for LSP server installations.
+    (setq lsp-enable-suggest-server-download nil)
 
     :bind (
            ("<f12>" . lsp-treemacs-errors-list)
+           ("C-SPC" . completion-at-point)
            )
 
     :hook (
