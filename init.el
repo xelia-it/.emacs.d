@@ -20,7 +20,16 @@
   "All configurations tangled from this file.")
 
 ;; Disable startup screen
-(setq-default startup-screen-inhibit-startup-screen t)
+;;(setq-default startup-screen-inhibit-startup-screen t)
+
+;; No more default Emacs splash screen
+(setq inhibit-splash-screen t)
+;; Disable toolbar on top
+(tool-bar-mode -1)
+;; Disable menu bar on top
+(menu-bar-mode -1)
+;; No more scrollbars
+(scroll-bar-mode -1)
 
 ;; Load compiled Lisp file.
 ;; If this do not exists use the original org file to produce Lisp file.

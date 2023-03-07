@@ -42,9 +42,9 @@ Now we can tell Emacs to install use-package if it's not present.
 I strongly suggest to enabel Native Compilation whenever possible.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(setq native-comp-deferred-compilation t)
-(setq package-native-compile t)
-(setq comp-async-report-warnings-errors nil)
+  (setq native-comp-deferred-compilation t)
+  (setq package-native-compile t)
+  (setq comp-async-report-warnings-errors nil)
 #+END_SRC
 
 ** Path for executable files
@@ -352,10 +352,9 @@ Add the ability to manage multiple cursors.
     ;; be disabled with C-g / ESC
     (define-key mc/keymap (kbd "<return>") nil)
 
-
     ;; Basic selection
-    (global-set-key (kbd "C-<") 'mc/mark-previous-like-this-word)
-    (global-set-key (kbd "C->") 'mc/mark-next-like-this-word)
+    (global-set-key (kbd "C-S-D") 'mc/mark-previous-like-this-word)
+    (global-set-key (kbd "C-D") 'mc/mark-next-like-this-word)
     )
 #+END_SRC
 
@@ -390,12 +389,9 @@ Please note that we only define a function.
 It'll be called later when the theme is loaded.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-  (defun my-remove-annoying-ui-features()
-    "Remove unwanted UI stuffs."
+  (defun my-manage-buffers()
+    "Remove unwanted buffers."
     (interactive)
-
-    ;; No more default Emacs splash screen
-    (setq inhibit-splash-screen t)
 
     ;; Empty scratch buffer
     (setq initial-scratch-message nil)
@@ -408,26 +404,17 @@ It'll be called later when the theme is loaded.
       "Overwrite default startup message."
       (message ""))
 
-    ;; Disable toolbar on top
-    (tool-bar-mode -1)
-
-    ;; Disable menu bar on top
-    (menu-bar-mode -1)
-
-    ;; No more scrollbars
-    (scroll-bar-mode -1)
-
     ;; Increase error level in *Warnings* buffer
     ;; (default is :warning). Removes many unwanted warnings.
     (setq warning-minimum-level :error)
 
     ;; Removes *Completions* from buffer after you've opened a file.
     (add-hook 'minibuffer-exit-hook
-      '(lambda ()
-         (let ((buffer "*Completions*"))
-           (and (get-buffer buffer)
-               (kill-buffer buffer)))))
-  )
+              '(lambda ()
+                 (let ((buffer "*Completions*"))
+                   (and (get-buffer buffer)
+                        (kill-buffer buffer)))))
+    )
 #+END_SRC
 
 ** Kill buffers
@@ -456,7 +443,7 @@ It'll be called later when the theme is loaded.
     (interactive)
 
     ;; Cursor like a bar
-    (setq-default cursor-type 'hbox)
+    (setq-default cursor-type '(bar . 3))
     ;; Set cursor color
     (set-cursor-color "white")
     ;; Blink cursor
@@ -512,46 +499,65 @@ Define the function now. Loading theme triggers this function.
 
 ** Theme (and activate stuffs)
 
-The main theme is inspired to Atom One theme.
+The main theme is inspired to Visual Studio Code.
+Solaire helps enhance the current buffer.
+It should be run before the theme.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-  (use-package atom-one-dark-theme
+  (use-package solaire-mode
     :ensure t
-    :init
-
-    ;; In early stage customize all non-UI stuffs
-    (my-remove-annoying-ui-features)
-    (my-indent-preferences)
-    (my-cut-paste-preferences)
-    (my-word-wrap)
-    (my-compiling-preferences)
-
     :config
+    (solaire-global-mode +1))
+#+END_SRC
 
-    ;; Load default theme
-    (load-theme 'atom-one-dark t)
+Now load the main theme.
 
-    ;; Customize UI stuffs after loading theme
-    (my-setup-cursor)
-    (my-show-line-numbers)
-    (my-show-parens)
-    (my-search-preferences)
-    (my-backup-preferences)
+#+BEGIN_SRC emacs-lisp :tangle yes
+    (use-package vscode-dark-plus-theme
+      :ensure t
+      :init
 
-    ;; Show current line
-    (global-hl-line-mode)
+      ;; In early stage customize all non-UI stuffs
+      (my-manage-buffers)
+      (my-indent-preferences)
+      (my-cut-paste-preferences)
+      (my-word-wrap)
+      (my-compiling-preferences)
 
-    ;; Toggle full screen automatically
-    (add-hook 'window-setup-hook 'toggle-frame-maximized t)
+      :config
 
-    :bind (
-           ("C-<f4>" . 'kill-buffer-and-window)
-           ("C-w" . 'kill-buffer-and-window)
-           ("S-C-<f4>" . 'my-kill-other-buffers)
-           ("S-C-w" . 'my-kill-other-buffers)
-           ("<escape>" . 'keyboard-escape-quit)
-           )
-    )
+      ;; Load default theme
+      (load-theme 'vscode-dark-plus t)
+      ;; Remove the border around the TODO word on org-mode files
+      (setq vscode-dark-plus-box-org-todo nil)
+      ;; Do not set different heights for some org faces
+      (setq vscode-dark-plus-scale-org-faces nil)
+      ;; Avoid inverting hl-todo face
+      (setq vscode-dark-plus-invert-hl-todo nil)
+      ;; Configure current line highlighting style (works best with Emacs 28 or newer)
+      (setq vscode-dark-plus-render-line-highlight 'line)
+
+      ;; Customize UI stuffs after loading theme
+      (my-setup-cursor)
+      (my-show-line-numbers)
+      (my-show-parens)
+      (my-search-preferences)
+      (my-backup-preferences)
+
+      ;; Show current line
+      (global-hl-line-mode)
+
+      ;; Toggle full screen automatically
+      (add-hook 'window-setup-hook 'toggle-frame-maximized t)
+
+      :bind (
+             ("C-<f4>" . 'kill-buffer-and-window)
+             ("C-w" . 'kill-buffer-and-window)
+             ("S-C-<f4>" . 'my-kill-other-buffers)
+             ("S-C-w" . 'my-kill-other-buffers)
+             ("<escape>" . 'keyboard-quit)
+             )
+      )
 #+END_SRC
 
 Setup also a fancy modeline.
@@ -560,19 +566,79 @@ Setup also a fancy modeline.
   (use-package doom-modeline
     :ensure t
     :init
+    ;; The maximum displayed length of the branch name of version control.
+    (setq doom-modeline-vcs-max-length 25)
     (doom-modeline-mode 1)
     )
 #+END_SRC
 
-Add tree
+Add project tree.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package treemacs
     :ensure t
-    :bind (
-           ("C-\\" . 'treemacs)
-           )
-    )
+    :defer t
+    :config
+
+    (progn
+      (setq treemacs-collapse-dirs                   (if treemacs-python-executable 3 0)
+            treemacs-deferred-git-apply-delay        0.5
+            treemacs-directory-name-transformer      #'identity
+            treemacs-display-in-side-window          t
+            treemacs-eldoc-display                   'simple
+            treemacs-file-event-delay                2000
+            treemacs-file-extension-regex            treemacs-last-period-regex-value
+            treemacs-file-follow-delay               0.2
+            treemacs-file-name-transformer           #'identity
+            treemacs-follow-after-init               t
+            treemacs-expand-after-init               t
+            treemacs-find-workspace-method           'find-for-file-or-pick-first
+            treemacs-git-command-pipe                ""
+            treemacs-goto-tag-strategy               'refetch-index
+            treemacs-header-scroll-indicators        '(nil . "^^^^^^")
+            treemacs-hide-dot-git-directory          t
+            treemacs-indentation                     2
+            treemacs-indentation-string              " "
+            treemacs-is-never-other-window           nil
+            treemacs-max-git-entries                 5000
+            treemacs-missing-project-action          'ask
+            treemacs-move-forward-on-expand          nil
+            treemacs-no-png-images                   nil
+            treemacs-no-delete-other-windows         t
+            treemacs-project-follow-cleanup          nil
+            treemacs-persist-file                    (expand-file-name ".cache/treemacs-persist" user-emacs-directory)
+            treemacs-position                        'left
+            treemacs-read-string-input               'from-child-frame
+            treemacs-recenter-distance               0.1
+            treemacs-recenter-after-file-follow      nil
+            treemacs-recenter-after-tag-follow       nil
+            treemacs-recenter-after-project-jump     'always
+            treemacs-recenter-after-project-expand   'on-distance
+            treemacs-litter-directories              '("/node_modules" "/.venv" "/.cask")
+            treemacs-project-follow-into-home        nil
+            treemacs-show-cursor                     nil
+            treemacs-show-hidden-files               t
+            treemacs-silent-filewatch                nil
+            treemacs-silent-refresh                  nil
+            treemacs-sorting                         'alphabetic-asc
+            treemacs-select-when-already-in-treemacs 'move-back
+            treemacs-space-between-root-nodes        t
+            treemacs-tag-follow-cleanup              t
+            treemacs-tag-follow-delay                1.5
+            treemacs-text-scale                      nil
+            treemacs-user-mode-line-format           nil
+            treemacs-user-header-line-format         nil
+            treemacs-wide-toggle-width               70
+            treemacs-width                           45
+            treemacs-width-increment                 1
+            treemacs-width-is-initially-locked       t
+            treemacs-workspace-switch-cleanup        nil)
+      )
+
+      :bind (
+             ("C-\\" . 'treemacs)
+             )
+      )
 #+END_SRC
 
 ** Key Help Screen
@@ -593,17 +659,17 @@ Show help for keybindings.
 Force window positioning for a specified function.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(use-package shackle
-  :ensure t
-  :config
-  (setq shackle-rules '(
-                        ("\\`\\*[hH]elm.*?\\*\\'" :regexp t :align 'below :size 0.3)
-                        ("\\`\\*bm-bookmarks.*?\\*\\'" :regexp t :align 'below :size 0.2)
-                        ("\\`\\*Flymake.*?\\*\\'" :regexp t :align 'below :size 0.2)
-                        ("\\`\\*Flycheck.*?\\*\\'" :regexp t :align 'below :size 0.2)
-                        ))
-  (shackle-mode 1)
-  )
+  (use-package shackle
+    :ensure t
+    :config
+    (setq shackle-rules '(
+                          ("\\`\\*[hH]elm.*?\\*\\'" :regexp t :align 'below :size 0.3)
+                          ("\\`\\*bm-bookmarks.*?\\*\\'" :regexp t :align 'below :size 0.2)
+                          ("\\`\\*Flymake.*?\\*\\'" :regexp t :align 'below :size 0.2)
+                          ("\\`\\*Flycheck.*?\\*\\'" :regexp t :align 'below :size 0.2)
+                          ))
+    (shackle-mode 1)
+    )
 #+END_SRC
 
 * Completion
@@ -836,6 +902,7 @@ Integrate with helm package.
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package helm-lsp
     :ensure t
+    :defer t
     :commands helm-lsp-workspace-symbol
     )
 #+END_SRC
@@ -843,10 +910,11 @@ Integrate with helm package.
 Integrate with treemacs package.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-;;  (use-package lsp-treemacs
-;;    :ensure t
-;;    :commands lsp-treemacs-errors-list
- ;;   )
+  (use-package lsp-treemacs
+    :ensure t
+    :defer t
+    :commands lsp-treemacs-errors-list
+   )
 #+END_SRC
 
 ** Language: Angular
