@@ -157,18 +157,18 @@ First we define a set of default values to be used in every buffer.
 I prefer to avoid tabs for indentation.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(defun my-indent-preferences()
-  "Setup default indentations."
-  (interactive)
+  (defun my-indent-preferences()
+    "Setup default indentations."
+    (interactive)
 
-  ;; Do not use tabs by default
-  (setq-default indent-tabs-mode nil)
+    ;; Do not use tabs by default
+    (setq-default indent-tabs-mode nil)
 
-  ;; Use 4 spaces by default
-  (setq-default tab-width 4)
-  (setq-default ruby-indent-level 2)
-  (setq-default css-indent-offset 4)
-  )
+    ;; Use 4 spaces by default
+    (setq-default tab-width 4)
+    (setq-default ruby-indent-level 2)
+    (setq-default css-indent-offset 4)
+    )
 #+END_SRC
 
 ** Indent preferences (per-project)
@@ -327,35 +327,36 @@ Almost all IDE has keystrokes to move and duplicate lines. The package move-dup 
 Add the ability to manage multiple cursors.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-    (use-package multiple-cursors
-      :ensure t
-      :config
+  (use-package multiple-cursors
+    :ensure t
+    :config
 
-      ;; Needed to configure this package
-    (require 'multiple-cursors)
+    ;; Needed to configure this package
+  (require 'multiple-cursors)
 
-    ;; Always run commands
-    (setq-default mc/always-run-for-all t)
-    ;; Always run commands
-    (setq-default mc/always-repeat-command t)
-    ;; Safety ceil
-    (setq-default mc/max-cursors 30)
+  ;; Always run commands
+  (setq-default mc/always-run-for-all t)
+  ;; Always run commands
+  (setq-default mc/always-repeat-command t)
+  ;; Safety ceil
+  (setq-default mc/max-cursors 30)
 
+  (set-face-attribute 'mc/cursor-bar-face nil :background "white" :height 1)
 
-    ;; NO NOT USE :bind here
-    ;; It doesn't seems working well with multiple cursor
+  ;; NO NOT USE :bind here
+  ;; It doesn't seems working well with multiple cursor
 
-    ;; Exit using escape
-    (define-key mc/keymap (kbd "<escape>") 'mc/keyboard-quit)
+  ;; Exit using escape
+  (define-key mc/keymap (kbd "<escape>") 'mc/keyboard-quit)
 
-    ;; will make <return> insert a newline; multiple-cursors-mode can still
-    ;; be disabled with C-g / ESC
-    (define-key mc/keymap (kbd "<return>") nil)
+  ;; will make <return> insert a newline; multiple-cursors-mode can still
+  ;; be disabled with C-g / ESC
+  (define-key mc/keymap (kbd "<return>") nil)
 
-    ;; Basic selection
-    (global-set-key (kbd "C-S-D") 'mc/mark-previous-like-this-word)
-    (global-set-key (kbd "C-D") 'mc/mark-next-like-this-word)
-    )
+  ;; Basic selection
+  (global-set-key (kbd "C-S-D") 'mc/mark-previous-like-this-word)
+  (global-set-key (kbd "C-D") 'mc/mark-next-like-this-word)
+  )
 #+END_SRC
 
 ** Compile Preferences
@@ -381,12 +382,10 @@ Add the ability to manage multiple cursors.
 All customization are defined inside functions.
 We'll activate everything when loading theme.
 
-** Disable unwanted UI stuffs
+** Remove unwanted buffers
 
-Scollbars, menu bars, splash screen are distracting and occupies space.
-Remove all unwanted features.
-Please note that we only define a function.
-It'll be called later when the theme is loaded.
+Remove all unwanted buffers and limit the amounte of messages shown.
+Also show an empty scratch when starting.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
   (defun my-manage-buffers()
@@ -417,6 +416,26 @@ It'll be called later when the theme is loaded.
     )
 #+END_SRC
 
+** Icons
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package all-the-icons
+    :ensure t)
+  (use-package all-the-icons-completion
+    :ensure t)
+  (use-package all-the-icons-dired
+    :ensure t)
+#+END_SRC
+
+** Fonts
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my-set-default-font()
+    "Set default font"
+    (set-face-attribute 'default nil :family "Liberation Mono" :slant 'normal :weight 'normal :height 98)
+    )
+#+END_SRC
+
 ** Kill buffers
 
 Utility for killing buffers other than current buffer.
@@ -435,7 +454,7 @@ Utility for killing buffers other than current buffer.
 
 ** Cursor style
 
-It'll be called later when the theme is loaded.
+Set default cursor style.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
   (defun my-setup-cursor()
@@ -486,17 +505,6 @@ Define the function now. Loading theme triggers this function.
     )
 #+END_SRC
 
-** Icons
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (use-package all-the-icons
-    :ensure t)
-  (use-package all-the-icons-completion
-    :ensure t)
-  (use-package all-the-icons-dired
-    :ensure t)
-#+END_SRC
-
 ** Theme (and activate stuffs)
 
 The main theme is inspired to Visual Studio Code.
@@ -513,11 +521,15 @@ It should be run before the theme.
 Now load the main theme.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-    (use-package vscode-dark-plus-theme
+  ;;  (use-package vscode-dark-plus-theme
+
+    (use-package doom-themes
+    ;;(use-package vscode-dark-plus-theme
       :ensure t
       :init
 
       ;; In early stage customize all non-UI stuffs
+      (my-backup-preferences)
       (my-manage-buffers)
       (my-indent-preferences)
       (my-cut-paste-preferences)
@@ -527,22 +539,15 @@ Now load the main theme.
       :config
 
       ;; Load default theme
-      (load-theme 'vscode-dark-plus t)
-      ;; Remove the border around the TODO word on org-mode files
-      (setq vscode-dark-plus-box-org-todo nil)
-      ;; Do not set different heights for some org faces
-      (setq vscode-dark-plus-scale-org-faces nil)
-      ;; Avoid inverting hl-todo face
-      (setq vscode-dark-plus-invert-hl-todo nil)
-      ;; Configure current line highlighting style (works best with Emacs 28 or newer)
-      (setq vscode-dark-plus-render-line-highlight 'line)
+      (load-theme 'doom-spacegrey t)
 
       ;; Customize UI stuffs after loading theme
+      (my-set-default-font)
       (my-setup-cursor)
       (my-show-line-numbers)
       (my-show-parens)
       (my-search-preferences)
-      (my-backup-preferences)
+
 
       ;; Show current line
       (global-hl-line-mode)
@@ -700,14 +705,14 @@ Force window positioning for a specified function.
            ("C-x C-b" . helm-buffers-list)
            ;; The kill ring is handy
            ("S-C-v" . helm-show-kill-ring)
-           ("C-s" . helm-occur)
+           ("C-f" . helm-occur)
            :map helm-map
            ;; Use tab to narrow selection
            ("<tab>" . helm-execute-persistent-action)
            ("C-<tab>" . helm-next-line)
            ("C-<iso-lefttab>" . helm-previous-line)
-           ("C-s" . helm-next-line)
-           ("S-C-s" . helm-previous-line)
+           ;;("C-s" . helm-next-line)
+           ;;("S-C-s" . helm-previous-line)
            )
     )
 #+END_SRC
@@ -749,7 +754,7 @@ We want to use helm for selecting and narrowing projects.
   :ensure t
   :defer t
   :bind (
-         ("M-f" . helm-projectile-grep)
+         ("C-M-f" . helm-projectile-grep)
          ("S-C-o" . helm-projectile-switch-project)
          ("C-t" . helm-projectile-find-file)
          )
@@ -850,7 +855,7 @@ like code completion, find implementation, find references, and so on.
 
     :bind (
            ("<f12>" . lsp-treemacs-errors-list)
-           ("C-SPC" . completion-at-point)
+           ("C-SPC" . company-capf)
            )
 
     :hook (
@@ -892,9 +897,10 @@ Use a fancy box for completion selection.
     :ensure t
     :defer t
     :config
-    (setq company-box-enable-icon nil)
+      (setq company-box-enable-icon t)
     :hook (company-mode . company-box-mode)
     )
+
 #+END_SRC
 
 Integrate with helm package.

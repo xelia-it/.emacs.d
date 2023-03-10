@@ -19,9 +19,7 @@
 (defvar my-org-file (expand-file-name "emacs-init.org" my-config-dir)
   "All configurations tangled from this file.")
 
-;; Disable startup screen
-;;(setq-default startup-screen-inhibit-startup-screen t)
-
+;; Scollbars, menu bars, splash screen are distracting and occupies space.
 ;; No more default Emacs splash screen
 (setq inhibit-splash-screen t)
 ;; Disable toolbar on top
