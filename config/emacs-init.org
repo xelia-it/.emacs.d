@@ -301,17 +301,7 @@ Almost all IDE has keystrokes to move and duplicate lines. The package move-dup 
      :defer t
      :config
 
-     ;; move-dup is not activated in all modes: it interferes with org-mode
-     ;; Do not activate for text-mode
-     :hook (
-           (prog-mode . move-dup-mode)
-           (yaml-mode . move-dup-mode)
-           (web-mode . move-dup-mode)
-           (scss-mode . move-dup-mode)
-           (kivy-mode . move-dup-mode)
-           (cmake-mode . move-dup-mode)
-           (editorconfig-mode . move-dup-mode)
-           )
+     (global-move-dup-mode)
 
      :bind (
             ("M-<up>" . md-move-lines-up)
@@ -356,6 +346,8 @@ Add the ability to manage multiple cursors.
   ;; Basic selection
   (global-set-key (kbd "C-S-D") 'mc/mark-previous-like-this-word)
   (global-set-key (kbd "C-D") 'mc/mark-next-like-this-word)
+  (global-set-key (kbd "M-S-<up>") 'mc/mark-previous-lines)
+  (global-set-key (kbd "M-S-<down>") 'mc/mark-next-lines)
   )
 #+END_SRC
 
@@ -374,6 +366,9 @@ Add the ability to manage multiple cursors.
 
     ;; Always scroll to the bottom.
     (setq-default compilation-scroll-output t)
+
+    ;; Show ANSI color
+    (add-hook 'compilation-filter-hook 'ansi-color-compilation-filter)
     )
 #+END_SRC
 
@@ -432,7 +427,7 @@ Also show an empty scratch when starting.
 #+BEGIN_SRC emacs-lisp :tangle yes
   (defun my-set-default-font()
     "Set default font"
-    (set-face-attribute 'default nil :family "Liberation Mono" :slant 'normal :weight 'normal :height 98)
+    (set-face-attribute 'default nil :family "DejaVu Sans Mono" :slant 'normal :weight 'normal :height 113)
     )
 #+END_SRC
 
@@ -521,48 +516,44 @@ It should be run before the theme.
 Now load the main theme.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-  ;;  (use-package vscode-dark-plus-theme
+  (use-package doom-themes
+    :ensure t
+    :init
 
-    (use-package doom-themes
-    ;;(use-package vscode-dark-plus-theme
-      :ensure t
-      :init
+    ;; In early stage customize all non-UI stuffs
+    (my-backup-preferences)
+    (my-manage-buffers)
+    (my-indent-preferences)
+    (my-cut-paste-preferences)
+    (my-word-wrap)
+    (my-compiling-preferences)
 
-      ;; In early stage customize all non-UI stuffs
-      (my-backup-preferences)
-      (my-manage-buffers)
-      (my-indent-preferences)
-      (my-cut-paste-preferences)
-      (my-word-wrap)
-      (my-compiling-preferences)
+    :config
 
-      :config
+    ;; Load default theme
+    (load-theme 'doom-spacegrey t)
 
-      ;; Load default theme
-      (load-theme 'doom-spacegrey t)
+    ;; Customize UI stuffs after loading theme
+    (my-set-default-font)
+    (my-setup-cursor)
+    (my-show-line-numbers)
+    (my-show-parens)
+    (my-search-preferences)
 
-      ;; Customize UI stuffs after loading theme
-      (my-set-default-font)
-      (my-setup-cursor)
-      (my-show-line-numbers)
-      (my-show-parens)
-      (my-search-preferences)
+    ;; Show current line
+    (global-hl-line-mode)
 
+    ;; Toggle full screen automatically
+    (add-hook 'window-setup-hook 'toggle-frame-maximized t)
 
-      ;; Show current line
-      (global-hl-line-mode)
-
-      ;; Toggle full screen automatically
-      (add-hook 'window-setup-hook 'toggle-frame-maximized t)
-
-      :bind (
-             ("C-<f4>" . 'kill-buffer-and-window)
-             ("C-w" . 'kill-buffer-and-window)
-             ("S-C-<f4>" . 'my-kill-other-buffers)
-             ("S-C-w" . 'my-kill-other-buffers)
-             ("<escape>" . 'keyboard-quit)
-             )
-      )
+    :bind (
+           ("C-<f4>" . 'kill-buffer-and-window)
+           ("C-w" . 'kill-buffer-and-window)
+           ("S-C-<f4>" . 'my-kill-other-buffers)
+           ("S-C-w" . 'my-kill-other-buffers)
+           ("<escape>" . 'keyboard-quit)
+           )
+    )
 #+END_SRC
 
 Setup also a fancy modeline.
@@ -711,8 +702,6 @@ Force window positioning for a specified function.
            ("<tab>" . helm-execute-persistent-action)
            ("C-<tab>" . helm-next-line)
            ("C-<iso-lefttab>" . helm-previous-line)
-           ;;("C-s" . helm-next-line)
-           ;;("S-C-s" . helm-previous-line)
            )
     )
 #+END_SRC
