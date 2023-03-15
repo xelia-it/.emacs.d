@@ -1,3 +1,4 @@
+
 #+AUTHOR: Alessandro Passerini
 #+TITLE: Emacs Configuration
 
@@ -531,7 +532,8 @@ Now load the main theme.
     :config
 
     ;; Load default theme
-    (load-theme 'doom-spacegrey t)
+    ;; (load-theme 'doom-spacegrey t)
+    (load-theme 'doom-dark+ t)
 
     ;; Customize UI stuffs after loading theme
     (my-set-default-font)
@@ -827,24 +829,24 @@ like code completion, find implementation, find references, and so on.
     :config
 
     (setq lsp-prefer-flymake t)
-      ;;  (setq lsp-ui-doc-use-webkit t)
+    ;;  (setq lsp-ui-doc-use-webkit t)
     (setq lsp-enable-file-watchers t)
     ;; Set warning only if the file to watch are bigger than 100000
     (setq lsp-file-watch-threshold 100000)
-    (setq read-process-output-max 5242880) ;; 5 MByte
+    ;; Read process output up to 5 MByte
+    (setq read-process-output-max 5242880)
     (setq gc-cons-threshold 100000000)
     (setq lsp-idle-delay 0.250)
-    (setq lsp-log-io nil) ;; if set to true can cause a performance hit
-
+    ;; If set to true can cause a performance hit
+    ;; Enable it only for debugging
+    (setq lsp-log-io nil)
+    ;; Don't watch the file in the workspace
     (setq lsp-enable-file-watchers nil)
-
     ;; Disable automatic server installation suggestions.
-    ;; Please look at the README.md to show suggestion for LSP server installations.
     (setq lsp-enable-suggest-server-download nil)
 
     :bind (
-           ("<f12>" . lsp-treemacs-errors-list)
-           ("C-SPC" . company-capf)
+           ("C-SPC" . completion-at-point)
            )
 
     :hook (
@@ -889,17 +891,6 @@ Use a fancy box for completion selection.
       (setq company-box-enable-icon t)
     :hook (company-mode . company-box-mode)
     )
-
-#+END_SRC
-
-Integrate with helm package.
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (use-package helm-lsp
-    :ensure t
-    :defer t
-    :commands helm-lsp-workspace-symbol
-    )
 #+END_SRC
 
 Integrate with treemacs package.
@@ -908,7 +899,11 @@ Integrate with treemacs package.
   (use-package lsp-treemacs
     :ensure t
     :defer t
+    :after (treemacs lsp)
     :commands lsp-treemacs-errors-list
+    :bind (
+           ("<f12>" . lsp-treemacs-errors-list)
+           )
    )
 #+END_SRC
 
