@@ -2,7 +2,7 @@
 #+AUTHOR: Alessandro Passerini
 #+TITLE: Emacs Configuration
 
-* Package Management
+* Preparation
 ** Setup repositories and use-package
 
 Setup repository.
@@ -12,12 +12,14 @@ Beware that some packages may not exists or not work as expected.
 #+BEGIN_SRC emacs-lisp :tangle yes
   (defvar repo-gnu '("gnu" . "https://elpa.gnu.org/packages/"))
   (defvar repo-melpa '("melpa" . "https://melpa.org/packages/"))
+  ;; Uncomment to use stable packages
   ;; (defvar repo-melpa-stable '("melpa-stable" . "https://stable.melpa.org/packages/"))
   (defvar repo-org-elpa '("org" . "http://orgmode.org/elpa/"))
 
   (setq package-archives nil)
   (add-to-list 'package-archives repo-gnu t)
   (add-to-list 'package-archives repo-melpa t)
+  ;; Uncomment to use stable packages
   ;; (add-to-list 'package-archives repo-melpa-stable t)
   (add-to-list 'package-archives repo-org-elpa t)
 #+END_SRC
@@ -48,13 +50,20 @@ I strongly suggest to enabel Native Compilation whenever possible.
   (setq comp-async-report-warnings-errors nil)
 #+END_SRC
 
+** Fix compile warnings
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  ;; (require 'cc-mode)
+  (setq personal-keybindings ())
+#+END_SRC
+
 ** Path for executable files
 
 The environment variables in Emacs looks the same as in user's shell.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-  ;; (Works only on Linux/Mac)
   (use-package exec-path-from-shell
+    ;; (Works only on Linux/Mac)
     :if (memq window-system '(mac ns x))
     :ensure t
     :config
@@ -70,11 +79,11 @@ In order to keep clean configuration all customizations are written
 in a separate file.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-;; Use a separate custom file
-(setq custom-file "~/.emacs.d/custom.el")
-(cond
- ((file-exists-p custom-file) (load custom-file t t))
- )
+  ;; Use a separate custom file
+  (setq custom-file "~/.emacs.d/custom.el")
+  (cond
+   ((file-exists-p custom-file) (load custom-file t t))
+   )
 #+END_SRC
 
 * Save Buffers
@@ -84,28 +93,28 @@ Save buffers needs to be performed without confirmation.
 Also we want to refresh magit buffers automatically.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(defun my-save()
-  "Save current buffer without confirmation."
-  (interactive)
+  (defun my-save()
+    "Save current buffer without confirmation."
+    (interactive)
 
-  (save-buffer t)
-  (if (fboundp 'magit-refresh-all)
-    (magit-refresh-all))
-  )
+    (save-buffer t)
+    (if (fboundp 'magit-refresh-all)
+      (magit-refresh-all))
+    )
 #+END_SRC
 
 Also we want a keystroke to save all buffers.
 Both these setup will be performed later.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(defun my-save-all()
-  "Save all buffers without confirmation and refresh magit."
-  (interactive)
+  (defun my-save-all()
+    "Save all buffers without confirmation and refresh magit."
+    (interactive)
 
-  (save-some-buffers t)
-  (if (fboundp 'magit-refresh-all)
-    (magit-refresh-all))
-  )
+    (save-some-buffers t)
+    (if (fboundp 'magit-refresh-all)
+      (magit-refresh-all))
+    )
 #+END_SRC
 
 ** Backup preferences
@@ -198,9 +207,10 @@ Show indent guides.
     ;;(setq-default highlight-indent-guides-method 'character)
     (setq-default highlight-indent-guides-method 'bitmap)
     ;;(setq-default highlight-indent-guides-character ?\|)
-    (set-face-attribute 'highlight-indent-guides-character-face
-			(face-attribute 'font-lock-comment-face :foreground))
-
+   ;; (set-face-attribute 'highlight-indent-guides-character-face nil
+   ;;         :foreground (face-attribute 'font-lock-comment-face :foreground)
+   ;;         )
+;;    (setq highlight-indent-guides-highlighter-function 'highlight-indent-guides--bitmap-line)
     ;; Activate indent guides for all programming languages
     :hook (prog-mode . highlight-indent-guides-mode)
     )
@@ -240,22 +250,22 @@ Setup Cut-Paste like most Windows and MAC editors.
     (setq vr/auto-show-help t)
 
     :config
-    (set-face-attribute 'vr/match-0 nil
-       :foreground near-to-white-color
-       :background nil
-       :weight 'extra-bold
-       :box '(:line-width (-1 . -1)
-              :color "near-to-white"
-              :style nil)
-      )
-    (set-face-attribute 'vr/match-1 nil
-      :foreground near-to-white-color
-      :background nil
-      :weight 'extra-bold
-      :box '(:line-width (-1 . -1)
-             :color "near-to-white"
-             :style nil)
-      )
+ ;;   (set-face-attribute 'vr/match-0 nil
+ ;;      :foreground near-to-white-color
+ ;;      :background nil
+ ;;      :weight 'extra-bold
+ ;;      :box '(:line-width (-1 . -1)
+ ;;             :color "near-to-white"
+ ;;             :style nil)
+ ;;     )
+ ;;   (set-face-attribute 'vr/match-1 nil
+ ;;     :foreground near-to-white-color
+ ;;     :background nil
+ ;;     :weight 'extra-bold
+ ;;     :box '(:line-width (-1 . -1)
+ ;;            :color "near-to-white"
+ ;;            :style nil)
+ ;;     )
     :bind (
            ("S-C-r" . vr/mc-mark)
            ("C-r" . vr/replace)
@@ -270,14 +280,14 @@ Setup Cut-Paste like most Windows and MAC editors.
     "Configure search & replace."
     (interactive)
 
-    (set-face-attribute 'isearch nil
-      :foreground nil
-      :background nil
-      :weight 'extra-bold
-      :box '(:line-width (-1 . -1)
-             :color "near-to-white"
-             :style nil)
-      )
+;;    (set-face-attribute 'isearch nil
+;;      :foreground nil
+;;      :background nil
+;;      :weight 'extra-bold
+;;      :box '(:line-width (-1 . -1)
+;;             :color "near-to-white"
+;;             :style nil)
+;;      )
     )
 #+END_SRC
 
@@ -472,14 +482,25 @@ Line numbers are useful in programming mode.
 Define the function now. Loading theme triggers this function.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-  (defun my-show-line-numbers()
+  (defun my-line-preferences()
     "Setup line numbers."
     (interactive)
 
+    ;; Manage line numbers
     (setq display-line-numbers-width 5)
     (add-hook 'prog-mode-hook 'display-line-numbers-mode)
-    (set-face-foreground 'line-number (face-foreground 'font-lock-comment-face))
-    (set-face-foreground 'line-number-current-line (face-foreground 'font-lock-builtin-face))
+
+    ;; Show active line (globally)
+    (global-hl-line-mode)
+
+;;    (set-face-attribute 'hl-line nil
+;;                        ;;                      :foreground nil
+;;                      :background nil
+;;                        :box '(:line-width (-1 . -1)
+;;                                           :color "#404040"
+;;                                           :style nil)
+;;                       )
+
     )
 #+END_SRC
 
@@ -490,12 +511,23 @@ Define the function now. Loading theme triggers this function.
     "Apply style to parenthesis match."
     (interactive)
 
+    (show-paren-mode +1)
+    (setq show-paren-style 'parenthesis)
     (set-face-attribute 'show-paren-match nil
                         :foreground nil
                         :background nil
                         :weight 'extra-bold
                         :box '(:line-width (-1 . -1)
-                               :color "near-to-white"
+                               :color "#666"
+                               :style nil)
+                        )
+
+    (set-face-attribute 'show-paren-match nil
+                        :foreground nil
+                        :background nil
+                        :weight 'extra-bold
+                        :box '(:line-width (-1 . -1)
+                               :color "#666"
                                :style nil)
                         )
     )
@@ -517,9 +549,12 @@ It should be run before the theme.
 Now load the main theme.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-  (use-package doom-themes
+  (use-package vscode-dark-plus-theme
     :ensure t
     :init
+
+    ;; Toggle full screen automatically
+    ;; (add-hook 'window-setup-hook 'toggle-frame-maximized t)
 
     ;; In early stage customize all non-UI stuffs
     (my-backup-preferences)
@@ -531,22 +566,39 @@ Now load the main theme.
 
     :config
 
+
+    (set-face-attribute 'vertical-border nil
+                        :foreground "#252526")
+
+    ;; Remove the border around the TODO word on org-mode files
+    (setq vscode-dark-plus-box-org-todo nil)
+
+    ;; Do not set different heights for some org faces
+    (setq vscode-dark-plus-scale-org-faces nil)
+
+    ;; Avoid inverting hl-todo face
+    (setq vscode-dark-plus-invert-hl-todo nil)
+
+    ;; Configure current line highlighting style (works best with Emacs 28 or newer)
+    (setq vscode-dark-plus-render-line-highlight 'line)
+
     ;; Load default theme
+    (load-theme 'vscode-dark-plus t)
     ;; (load-theme 'doom-spacegrey t)
-    (load-theme 'doom-dark+ t)
+    ;;(load-theme 'doom-dark+ t)
+    ;; (load-theme 'doom-opera t)
 
     ;; Customize UI stuffs after loading theme
     (my-set-default-font)
     (my-setup-cursor)
-    (my-show-line-numbers)
+    (my-line-preferences)
     (my-show-parens)
     (my-search-preferences)
 
-    ;; Show current line
-    (global-hl-line-mode)
 
-    ;; Toggle full screen automatically
-    (add-hook 'window-setup-hook 'toggle-frame-maximized t)
+
+
+    ;;    eec902
 
     :bind (
            ("C-<f4>" . 'kill-buffer-and-window)
@@ -684,8 +736,8 @@ Force window positioning for a specified function.
 
     ;; Colors
     ;; Set "match" color for searches.
-    (set-face-attribute 'helm-match nil
-                        :foreground near-to-white-color :background nil :weight 'extra-bold)
+;;    (set-face-attribute 'helm-match nil
+ ;;                       :foreground near-to-white-color :background nil :weight 'extra-bold)
 
     :bind (
            ("M-x" . helm-M-x)
@@ -829,7 +881,6 @@ like code completion, find implementation, find references, and so on.
     :config
 
     (setq lsp-prefer-flymake t)
-    ;;  (setq lsp-ui-doc-use-webkit t)
     (setq lsp-enable-file-watchers t)
     ;; Set warning only if the file to watch are bigger than 100000
     (setq lsp-file-watch-threshold 100000)
@@ -872,7 +923,7 @@ Add lsp-ui package for better user interface.
 (use-package lsp-ui
   :ensure t
   :defer t
-  :after (lsp-mode)
+;;  :after (lsp-mode)
   :commands lsp-ui-mode
   :config
     (setq lsp-ui-doc-use-webkit t)
@@ -899,8 +950,7 @@ Integrate with treemacs package.
   (use-package lsp-treemacs
     :ensure t
     :defer t
-    :after (treemacs lsp)
-    :commands lsp-treemacs-errors-list
+    :commands lsp-treemacs-error-list
     :bind (
            ("<f12>" . lsp-treemacs-errors-list)
            )
@@ -949,15 +999,15 @@ The web-mode package is good for HTML and SCSS mode.
     (setq web-mode-markup-indent-offset 2)
 
     ;; Colors
-    (set-face-attribute 'web-mode-block-face nil :background nil)
-    (set-face-attribute 'web-mode-inlay-face nil :background nil)
-    (set-face-attribute 'web-mode-current-column-highlight-face nil
-                        :foreground near-to-white-color :background nil)
-    (set-face-attribute 'web-mode-current-element-highlight-face nil
-                        :foreground near-to-white-color
-                        :background (face-background 'hl-line)
-                        :weight 'extra-bold
-                        :underline nil)
+   ;; (set-face-attribute 'web-mode-block-face nil :background nil)
+   ;; (set-face-attribute 'web-mode-inlay-face nil :background nil)
+   ;; (set-face-attribute 'web-mode-current-column-highlight-face nil
+   ;;                     :foreground near-to-white-color :background nil)
+  ;;  (set-face-attribute 'web-mode-current-element-highlight-face nil
+  ;;                      :foreground near-to-white-color
+  ;;                      :background (face-background 'hl-line)
+  ;;                      :weight 'extra-bold
+  ;;                      :underline nil)
     :mode (
            ("\\.html?\\'" . web-mode)
            ("\\.erb\\'" . web-mode)
