@@ -200,17 +200,31 @@ For more information please read: https://editorconfig.org/
 Show indent guides.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my-bitmap-line (width height crep zrep)
+    "Defines a solid guide line, one pixels wide."
+    (let* ((left (/ (- width 2) 2))
+           (right (- width left 1))
+           (row (append (make-list left zrep) (make-list 1 crep) (make-list right zrep)))
+           rows)
+      (dotimes (i height rows)
+        (setq rows (cons row rows)))))
+
   (use-package highlight-indent-guides
     :ensure t
     :defer t
     :config
-    ;;(setq-default highlight-indent-guides-method 'character)
-    (setq-default highlight-indent-guides-method 'bitmap)
-    ;;(setq-default highlight-indent-guides-character ?\|)
-   ;; (set-face-attribute 'highlight-indent-guides-character-face nil
-   ;;         :foreground (face-attribute 'font-lock-comment-face :foreground)
-   ;;         )
-;;    (setq highlight-indent-guides-highlighter-function 'highlight-indent-guides--bitmap-line)
+    ;; Highlight the first level of indentation
+    (setq highlight-indent-guides-responsive 'top)
+    ;; Use a bitmap line ..
+    (setq highlight-indent-guides-method 'bitmap)
+    ;; .. customized with a one pixel with
+    (setq highlight-indent-guides-bitmap-function 'my-bitmap-line)
+
+    ;; This plays well with VSCode Theme
+    (setq highlight-indent-guides-auto-odd-face-perc 5)
+    (setq highlight-indent-guides-auto-even-face-perc 5)
+    (setq highlight-indent-guides-auto-character-face-perc 10)
+
     ;; Activate indent guides for all programming languages
     :hook (prog-mode . highlight-indent-guides-mode)
     )
@@ -438,7 +452,7 @@ Also show an empty scratch when starting.
 #+BEGIN_SRC emacs-lisp :tangle yes
   (defun my-set-default-font()
     "Set default font"
-    (set-face-attribute 'default nil :family "DejaVu Sans Mono" :slant 'normal :weight 'normal :height 113)
+    (set-face-attribute 'default nil :family "DejaVu Sans Mono" :slant 'normal :weight 'normal :height 105)
     )
 #+END_SRC
 
@@ -543,7 +557,8 @@ It should be run before the theme.
   (use-package solaire-mode
     :ensure t
     :config
-    (solaire-global-mode +1))
+    (solaire-global-mode +1)
+    )
 #+END_SRC
 
 Now load the main theme.
@@ -566,10 +581,6 @@ Now load the main theme.
 
     :config
 
-
-    (set-face-attribute 'vertical-border nil
-                        :foreground "#252526")
-
     ;; Remove the border around the TODO word on org-mode files
     (setq vscode-dark-plus-box-org-todo nil)
 
@@ -584,9 +595,6 @@ Now load the main theme.
 
     ;; Load default theme
     (load-theme 'vscode-dark-plus t)
-    ;; (load-theme 'doom-spacegrey t)
-    ;;(load-theme 'doom-dark+ t)
-    ;; (load-theme 'doom-opera t)
 
     ;; Customize UI stuffs after loading theme
     (my-set-default-font)
@@ -595,8 +603,8 @@ Now load the main theme.
     (my-show-parens)
     (my-search-preferences)
 
-
-
+    ;; Fine tune
+    (set-face-attribute 'vertical-border nil :foreground "#252526")
 
     ;;    eec902
 
@@ -616,8 +624,21 @@ Setup also a fancy modeline.
   (use-package doom-modeline
     :ensure t
     :init
+
     ;; The maximum displayed length of the branch name of version control.
     (setq doom-modeline-vcs-max-length 25)
+
+    ;; How tall the mode-line should be. It's only respected in GUI.
+    ;; If the actual char height is larger, it respects the actual height.
+    (setq doom-modeline-height 28)
+
+    ;; How wide the mode-line bar should be. It's only respected in GUI.
+    (setq doom-modeline-bar-width 1)
+
+    ;; I prefer to show buffer name always with the same color
+    (setq doom-modeline-highlight-modified-buffer-name nil)
+
+    ;; Activate modeline everywhere
     (doom-modeline-mode 1)
     )
 #+END_SRC
@@ -628,8 +649,10 @@ Add project tree.
   (use-package treemacs
     :ensure t
     :defer t
+    :init
+    (with-eval-after-load 'winum
+      (define-key winum-keymap (kbd "M-0") #'treemacs-select-window))
     :config
-
     (progn
       (setq treemacs-collapse-dirs                   (if treemacs-python-executable 3 0)
             treemacs-deferred-git-apply-delay        0.5
@@ -683,12 +706,46 @@ Add project tree.
             treemacs-width-increment                 1
             treemacs-width-is-initially-locked       t
             treemacs-workspace-switch-cleanup        nil)
-      )
 
-      :bind (
-             ("C-\\" . 'treemacs)
-             )
-      )
+      ;; The default width and height of the icons is 22 pixels.
+      (treemacs-resize-icons 20)
+
+      ;;
+      (set-face-attribute 'treemacs-root-face nil
+                          :weight 'bold
+                          :height 1.0
+                          )
+
+      ;;
+      (treemacs-follow-mode t)
+      (treemacs-filewatch-mode t)
+      (treemacs-fringe-indicator-mode 'always)
+      (when treemacs-python-executable
+        (treemacs-git-commit-diff-mode t))
+
+      (pcase (cons (not (null (executable-find "git")))
+                   (not (null treemacs-python-executable)))
+        (`(t . t)
+         (treemacs-git-mode 'deferred))
+        (`(t . _)
+         (treemacs-git-mode 'simple)))
+
+      (treemacs-hide-gitignored-files-mode nil))
+    :bind
+    (:map global-map
+          ("M-0"       . treemacs-select-window)
+          ("C-\\"      . treemacs)
+          ("C-x t 1"   . treemacs-delete-other-windows)
+          ("C-x t t"   . treemacs)
+          ("C-x t d"   . treemacs-select-directory)
+          ("C-x t B"   . treemacs-bookmark)
+          ("C-x t C-t" . treemacs-find-file)
+          ("C-x t M-t" . treemacs-find-tag))
+    )
+
+  (use-package treemacs-projectile
+    :after (treemacs projectile)
+    :ensure t)
 #+END_SRC
 
 ** Key Help Screen
