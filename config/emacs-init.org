@@ -318,23 +318,34 @@ Setup Cut-Paste like most Windows and MAC editors.
 
 ** Move line
 
-Almost all IDE has keystrokes to move and duplicate lines. The package move-dup implements the same feature in Emacs.
+Almost all IDE has keystrokes to move and duplicate lines.
+The package move-dup implements the same feature in Emacs.
+This package interferes with org-mode so we
 
 #+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my-activate-move-dup()
+    "Choose when activate mode-dup"
+    (interactive)
+
+    (if (eq major-mode 'org-mode)
+        (message "move-dup disabled in org-mode")
+        (move-dup-mode)
+        )
+    )
+
   (use-package move-dup
-     :ensure t
-     :defer t
-     :config
-
-     (global-move-dup-mode)
-
-     :bind (
-            ("M-<up>" . md-move-lines-up)
-            ("M-<down>" . md-move-lines-down)
-            ("M-C-<up>" . md-duplicate-up)
-            ("M-C-<down>" . md-duplicate-down)
-            )
-     )
+    :ensure t
+    :defer t
+    :hook (
+           (after-change-major-mode  . my-activate-move-dup)
+           )
+    :bind (
+           ("M-<up>" . md-move-lines-up)
+           ("M-<down>" . md-move-lines-down)
+           ("M-C-<up>" . md-duplicate-up)
+           ("M-C-<down>" . md-duplicate-down)
+           )
+    )
 #+END_SRC
 
 ** Multiple Cursors
