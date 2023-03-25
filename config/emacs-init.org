@@ -625,6 +625,8 @@ Now load the main theme.
            ("S-C-<f4>" . 'my-kill-other-buffers)
            ("S-C-w" . 'my-kill-other-buffers)
            ("<escape>" . 'keyboard-quit)
+           ("C-s" . 'my-save)
+           ("C-S-s" . 'my-save-all)
            )
     )
 #+END_SRC
@@ -786,8 +788,8 @@ Force window positioning for a specified function.
 
     ;; Colors
     ;; Set "match" color for searches.
-;;    (set-face-attribute 'helm-match nil
- ;;                       :foreground near-to-white-color :background nil :weight 'extra-bold)
+    (set-face-attribute 'helm-match nil
+                        :foreground "#2aaaff" :background nil :weight 'extra-bold)
 
     :bind (
            ("M-x" . helm-M-x)
@@ -870,17 +872,16 @@ Let projectile integrate with Treemacs.
 Magit is a complete User Interface for Git.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(use-package magit
-  :ensure t
-  :defer t
-  :bind (
-         ("<f5>" . magit-status)
-         ("<f6>" . magit-log-all)
-         :map magit-mode-map
-         ("<escape>" . magit-mode-bury-buffer)
-	     )
-  ;;:hook (prog-mode . magit-mode)
-  )
+  (use-package magit
+    :ensure t
+    :defer t
+    :bind (
+           ("<f5>" . magit-status)
+           ("<f6>" . magit-log-all)
+           :map magit-mode-map
+           ("<escape>" . quit-window)
+           )
+    )
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp :tangle yes
@@ -917,6 +918,85 @@ Magit is a complete User Interface for Git.
 
 Language Service Protocol allows any editor to acquire IDE-like features
 like code completion, find implementation, find references, and so on.
+You still need to install manually all the related servers.
+There is a complete guide for this behaviour here: https://emacs-lsp.github.io/lsp-mode/.
+
+All the LSP fine tuning are grouped in the following functions.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my-lsp-performance-settings()
+    "Fine tune LSP for maximum performance."
+    (interactive)
+
+    ;; I still prefer flymake: it's simple, fast and integrated in core Emacs
+    (setq lsp-prefer-flymake t)
+    ;; Don't watch the file in the workspace
+    (setq lsp-enable-file-watchers nil)
+    ;; Set warning only if the file to watch are bigger than 100000
+    (setq lsp-file-watch-threshold 100000)
+    ;; Read process output up to 5 MByte.
+    (setq read-process-output-max 5242880)
+    ;;
+    (setq gc-cons-threshold 100000000)
+    ;; Set a not too small idle for autocompletion
+    (setq lsp-idle-delay 0.250)
+    ;; Disable lsp log.
+    ;; If set to true can cause a performance hit.
+    ;; Enable it only for debugging.
+    (setq lsp-log-io nil)
+
+    ;; Disable automatic server installation suggestions.
+    (setq lsp-enable-suggest-server-download nil)
+  )
+#+END_SRC
+
+Enable only needed UI.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my-lsp-ui-settings()
+    "Fine tune LSP for maximum performance."
+    (interactive)
+
+    ;; Symbol highlighting
+    (setq lsp-enable-symbol-highlighting t)
+
+    ;; Shows a hover dialog with function documentation
+    (setq lsp-ui-doc-enable t)             ;; enable the feature
+    (setq lsp-ui-doc-show-with-cursor t)   ;; disable cursor hover (keep mouse hover)
+    (setq lsp-ui-doc-show-with-mouse nil)  ;; disable mouse hover (keep cursor hover)
+
+    ;; Lenses are reference above a method or a variable
+    (setq lsp-lens-enable nil)
+
+    ;; The headerline shows a breadcrumb over the code buffer
+    (setq lsp-headerline-breadcrumb-enable nil)
+
+    ;; Sideline code actions
+    (setq lsp-ui-sideline-enable t)              ;; disable whole sideline via
+    (setq lsp-ui-sideline-show-code-actions nil) ;; hide code actions
+    (setq lsp-ui-sideline-show-hover nil)        ;; hide only hover symbols
+        (setq lsp-ui-sideline-show-symbol t)    ;; hide only errors
+    (setq lsp-ui-sideline-show-diagnostics t)    ;; hide only errors
+
+    ;; Modeline code actions
+    (setq lsp-modeline-code-actions-enable nil)
+
+    ;; Flycheck (or flymake if no flycheck is present)
+    (setq lsp-diagnostics-provider :flymake)
+
+    ;; Eldoc shows information about methods in the modeline
+    (setq lsp-eldoc-enable-hover nil)
+
+    ;; Modeline diagnostics statistics
+    ;; shows error information in the modeline
+    (setq lsp-modeline-diagnostics-enable nil)
+
+    ;; Completion (company-mode)
+    (setq lsp-completion-provider :capf)   ;; It can be disabled with :none
+    (setq lsp-completion-show-detail t)    ;; Show item details
+    (setq lsp-completion-show-kind t)      ;; show item kind
+    )
+#+END_SRC
 
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package lsp-mode
@@ -925,26 +1005,14 @@ like code completion, find implementation, find references, and so on.
     :commands lsp
     :init
 
-    ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+    ;; Set prefix for LSP commands
     (setq lsp-keymap-prefix "C-l")
 
     :config
 
-    (setq lsp-prefer-flymake t)
-    (setq lsp-enable-file-watchers t)
-    ;; Set warning only if the file to watch are bigger than 100000
-    (setq lsp-file-watch-threshold 100000)
-    ;; Read process output up to 5 MByte
-    (setq read-process-output-max 5242880)
-    (setq gc-cons-threshold 100000000)
-    (setq lsp-idle-delay 0.250)
-    ;; If set to true can cause a performance hit
-    ;; Enable it only for debugging
-    (setq lsp-log-io nil)
-    ;; Don't watch the file in the workspace
-    (setq lsp-enable-file-watchers nil)
-    ;; Disable automatic server installation suggestions.
-    (setq lsp-enable-suggest-server-download nil)
+    ;; Performance settings
+    (my-lsp-performance-settings)
+    (my-lsp-ui-settings)
 
     :bind (
            ("C-SPC" . completion-at-point)
