@@ -518,15 +518,6 @@ Define the function now. Loading theme triggers this function.
 
     ;; Show active line (globally)
     (global-hl-line-mode)
-
-;;    (set-face-attribute 'hl-line nil
-;;                        ;;                      :foreground nil
-;;                      :background nil
-;;                        :box '(:line-width (-1 . -1)
-;;                                           :color "#404040"
-;;                                           :style nil)
-;;                       )
-
     )
 #+END_SRC
 
@@ -720,9 +711,9 @@ Add project tree.
         treemacs-workspace-switch-cleanup        nil)
 
       ;; The default width and height of the icons is 22 pixels.
-      (treemacs-resize-icons 18)
+      (treemacs-resize-icons 20)
 
-      ;;
+      ;; Set root folder similar to VSCode theme
       (set-face-attribute 'treemacs-root-face nil
               :weight 'bold
               :height 1.0
@@ -732,13 +723,13 @@ Add project tree.
 
     :bind
     (:map global-map
-      ("C-\\"      . treemacs-select-window)
-      ("C-x t 1"   . treemacs-delete-other-windows)
-      ("C-x t t"   . treemacs)
-      ("C-x t d"   . treemacs-select-directory)
-      ("C-x t B"   . treemacs-bookmark)
-      ("C-x t C-t" . treemacs-find-file)
-      ("C-x t M-t" . treemacs-find-tag)
+      ("C-\\"          . treemacs-select-window)
+      ("C-x t 1"       . treemacs-delete-other-windows)
+      ("C-x t t"       . treemacs)
+      ("C-x t d"       . treemacs-select-directory)
+      ("C-x t B"       . treemacs-bookmark)
+      ("C-x t C-t"     . treemacs-find-file)
+      ("C-x t M-t"     . treemacs-find-tag)
       :map treemacs-mode-map
       ("<escape>"      . treemacs-kill-buffer)
       )
@@ -785,10 +776,10 @@ Force window positioning for a specified function.
     :defer t
     :config
 
-    (setq helm-split-window-in-side-p           t ;; Open helm buffer inside current window, not occupy whole other window
-          helm-move-to-line-cycle-in-source     t ; move to end or beginning of source when reaching top or bottom of source.
-          helm-ff-search-library-in-sexp        t ; search for library in `require' and `declare-function' sexp.
-          helm-scroll-amount                    8 ; scroll 8 lines other window using M-<next>/M-<prior>
+    (setq helm-split-window-in-side-p           t   ;; Open helm buffer inside current window, not occupy whole other window
+          helm-move-to-line-cycle-in-source     t   ;; move to end or beginning of source when reaching top or bottom of source.
+          helm-ff-search-library-in-sexp        t   ;; search for library in `require' and `declare-function' sexp.
+          helm-scroll-amount                    10  ;; scroll 8 lines other window using M-<next>/M-<prior>
           helm-ff-file-name-history-use-recentf t
           helm-display-header-line              nil ;; Hide header line
           helm-echo-input-in-header-line        nil ;; Do not echo in header line
@@ -805,23 +796,23 @@ Force window positioning for a specified function.
                         :foreground "#2aaaff" :background nil :weight 'extra-bold)
 
     :bind (
-           ("M-x" . helm-M-x)
-           ("C-o" . helm-find-files)
-           ("C-j" . helm-imenu)
+           ("M-x"             . helm-M-x)
+           ("C-o"             . helm-find-files)
+           ("C-j"             . helm-imenu)
            ;; Various common ways to switch buffers
-           ("C-x b" . helm-buffers-list)
-           ("C-<tab>" . helm-buffers-list)
+           ("C-x b"           . helm-buffers-list)
+           ("C-<tab>"         . helm-buffers-list)
            ("C-<iso-lefttab>" . helm-buffers-list)
-           ("C-x C-b" . helm-buffers-list)
+           ("C-x C-b"         . helm-buffers-list)
            ;; The kill ring is handy
-           ("S-C-v" . helm-show-kill-ring)
-           ("C-f" . helm-occur)
+           ("S-C-v"           . helm-show-kill-ring)
+           ("C-f"             . helm-occur)
            :map helm-map
            ;; Use tab to narrow selection
-           ("<tab>" . helm-execute-persistent-action)
-           ("C-<tab>" . helm-next-line)
+           ("<tab>"           . helm-execute-persistent-action)
+           ("C-<tab>"         . helm-next-line)
            ("C-<iso-lefttab>" . helm-previous-line)
-           ("<escape>" . helm-keyboard-quit)
+           ("<escape>"        . helm-keyboard-quit)
            )
     )
 #+END_SRC
