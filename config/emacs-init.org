@@ -75,7 +75,7 @@ The environment variables in Emacs looks the same as in user's shell.
     :if (memq window-system '(mac ns x))
     :ensure t
     :config
-    (setq exec-path-from-shell-arguments nil)
+    ;; (setq exec-path-from-shell-arguments nil)
     (setq exec-path-from-shell-check-startup-files nil)
       (exec-path-from-shell-initialize)
     )
@@ -460,12 +460,15 @@ Also show an empty scratch when starting.
 ** Icons
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-  (use-package all-the-icons
-    :ensure t)
-  (use-package all-the-icons-completion
-    :ensure t)
-  (use-package all-the-icons-dired
-    :ensure t)
+;;  (use-package all-the-icons
+;;    :if (display-graphic-p)
+ ;;   :ensure t)
+  ;;(use-package all-the-icons-completion
+ ;;   :if (display-graphic-p)
+ ;;   :ensure t)
+ ;; (use-package all-the-icons-dired
+ ;;   :if (display-graphic-p)
+ ;;   :ensure t)
 #+END_SRC
 
 ** Fonts
@@ -630,7 +633,29 @@ Now load the main theme.
     )
 #+END_SRC
 
-Setup also a fancy modeline.
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package nerd-icons
+    :ensure t
+    ;; :custom
+    ;; The Nerd Font you want to use in GUI
+    ;; "Symbols Nerd Font Mono" is the default and is recommended
+    ;; but you can use any other Nerd Font if you want
+    ;; (nerd-icons-font-family "Symbols Nerd Font Mono")
+    )
+
+  (use-package nerd-icons-completion
+    :ensure t
+    :config
+    (nerd-icons-completion-mode)
+    )
+
+  (use-package treemacs-nerd-icons
+    :ensure t
+  :config
+  (treemacs-load-theme "nerd-icons"))
+#+END_SRC
+
+Setup a fancy modeline
 
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package doom-modeline
@@ -780,50 +805,51 @@ Force window positioning for a specified function.
 ** Install Helm
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-  (use-package helm
-    :ensure t
-    :defer t
-    :config
+    (use-package helm
+      :ensure t
+      :defer t
+      :config
 
-    (setq helm-split-window-in-side-p           t   ;; Open helm buffer inside current window, not occupy whole other window
-          helm-move-to-line-cycle-in-source     t   ;; move to end or beginning of source when reaching top or bottom of source.
-          helm-ff-search-library-in-sexp        t   ;; search for library in `require' and `declare-function' sexp.
-          helm-scroll-amount                    10  ;; scroll 8 lines other window using M-<next>/M-<prior>
-          helm-ff-file-name-history-use-recentf t
-          helm-display-header-line              nil ;; Hide header line
-          helm-echo-input-in-header-line        nil ;; Do not echo in header line
+      (setq helm-split-window-in-side-p           t   ;; Open helm buffer inside current window, not occupy whole other window
+            helm-move-to-line-cycle-in-source     t   ;; move to end or beginning of source when reaching top or bottom of source.
+            helm-ff-search-library-in-sexp        t   ;; search for library in `require' and `declare-function' sexp.
+            helm-scroll-amount                    10  ;; scroll 8 lines other window using M-<next>/M-<prior>
+            helm-ff-file-name-history-use-recentf t
+            helm-display-header-line              nil ;; Hide header line
+            helm-echo-input-in-header-line        nil ;; Do not echo in header line
 
-          helm-autoresize-max-height            0   ;;
-          helm-autoresize-min-height            20  ;;
-          )
+            helm-autoresize-max-height            0   ;;
+            helm-autoresize-min-height            20  ;;
+            )
 
-    (helm-autoresize-mode 1)
+      (helm-autoresize-mode 1)
 
-    ;; Colors
-    ;; Set "match" color for searches.
-    (set-face-attribute 'helm-match nil
-                        :foreground "#2aaaff" :background nil :weight 'extra-bold)
+      ;; Colors
+      ;; Set "match" color for searches.
+      (set-face-attribute 'helm-match nil
+                          :foreground "#2aaaff" :background nil :weight 'extra-bold)
 
-    :bind (
-           ("M-x"             . helm-M-x)
-           ("C-o"             . helm-find-files)
-           ("C-j"             . helm-imenu)
-           ;; Various common ways to switch buffers
-           ("C-x b"           . helm-buffers-list)
-           ("C-<tab>"         . helm-buffers-list)
-           ("C-<iso-lefttab>" . helm-buffers-list)
-           ("C-x C-b"         . helm-buffers-list)
-           ;; The kill ring is handy
-           ("S-C-v"           . helm-show-kill-ring)
-           ("C-f"             . helm-occur)
-           :map helm-map
-           ;; Use tab to narrow selection
-           ("<tab>"           . helm-execute-persistent-action)
-           ("C-<tab>"         . helm-next-line)
-           ("C-<iso-lefttab>" . helm-previous-line)
-           ("<escape>"        . helm-keyboard-quit)
-           )
-    )
+      :bind (
+             ("M-x"             . helm-M-x)
+             ("C-o"             . helm-find-files)
+             ("C-j"             . helm-imenu)
+             ;; Various common ways to switch buffers
+             ("C-x b"           . helm-buffers-list)
+             ("C-x C-b"         . helm-buffers-list)
+             ;; Switch all buffers
+             ("C-<tab>"         . helm-browse-project)
+             ("C-<iso-lefttab>" . helm-browse-project)
+             ;; The kill ring is handy
+             ("S-C-v"           . helm-show-kill-ring)
+             ("C-f"             . helm-occur)
+             :map helm-map
+             ;; Use tab to narrow selection
+             ("<escape>"        . helm-quit-and-helm-mini)
+             ("<tab>"           . helm-execute-persistent-action)
+             ("C-<tab>"         . helm-next-line)
+             ("C-<iso-lefttab>" . helm-previous-line)
+             )
+      )
 #+END_SRC
 
 * Projects Management
@@ -961,6 +987,9 @@ All the LSP fine tuning are grouped in the following functions.
 
     ;; Disable automatic server installation suggestions.
     (setq lsp-enable-suggest-server-download nil)
+
+    ;; Disable "Restart LSP Server" requests
+    (setq lsp-restart 'ignore)
   )
 #+END_SRC
 
@@ -978,6 +1007,7 @@ Enable only needed UI.
     (setq lsp-ui-doc-enable nil)           ;; disable the feature
     (setq lsp-ui-doc-show-with-cursor nil) ;; disable cursor hover (keep mouse hover)
     (setq lsp-ui-doc-show-with-mouse nil)  ;; disable mouse hover (keep cursor hover)
+    (setq lsp-ui-doc-use-webkit t)
 
     ;; Lenses are reference above a method or a variable
     (setq lsp-lens-enable nil)
@@ -989,8 +1019,8 @@ Enable only needed UI.
     (setq lsp-ui-sideline-enable nil)            ;; disable whole sideline
     (setq lsp-ui-sideline-show-code-actions nil) ;; hide code actions
     (setq lsp-ui-sideline-show-hover nil)        ;; hide only hover symbols
-        (setq lsp-ui-sideline-show-symbol nil)   ;; hide only errors
-    (setq lsp-ui-sideline-show-diagnostics nil)  ;; hide only errors
+    (setq lsp-ui-sideline-show-symbol t)         ;; show errors
+    (setq lsp-ui-sideline-show-diagnostics t)    ;; show errors
 
     ;; Modeline code actions
     (setq lsp-modeline-code-actions-enable nil)
@@ -1010,9 +1040,6 @@ Enable only needed UI.
     (setq lsp-completion-show-detail t)    ;; Show item details
     (setq lsp-completion-show-kind t)      ;; show item kind
     )
-
-  (completion-at-point
-   )
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp :tangle yes
@@ -1049,6 +1076,7 @@ Enable only needed UI.
            (json-mode . lsp)
            (sh-mode . lsp)
            (dockerfile-mode . lsp)
+           (php-mode . lsp)
            )
     )
 #+END_SRC
@@ -1059,7 +1087,6 @@ Add lsp-ui package for better user interface.
 (use-package lsp-ui
   :ensure t
   :defer t
-;;  :after (lsp-mode)
   :commands lsp-ui-mode
   :config
     (setq lsp-ui-doc-use-webkit t)
@@ -1076,6 +1103,7 @@ Use a fancy box for completion selection.
     :defer t
     :config
       (setq company-box-enable-icon t)
+
     :hook (company-mode . company-box-mode)
     )
 #+END_SRC
@@ -1171,7 +1199,9 @@ For pure JavaScript code js2-mode is a great package.
   (use-package json-mode
     :ensure t
     :defer t
-    :mode ("\\.json\\'" . json-mode)
+    :mode (
+           ("\\.json\\'" . json-mode)
+           )
     )
 #+END_SRC
 
@@ -1209,7 +1239,7 @@ For pure JavaScript code js2-mode is a great package.
 
 ** Language: Ruby On Rails
 
-Integrate with projevtile package.
+Integrate with projectile package.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package projectile-rails
@@ -1284,6 +1314,33 @@ Manage nginx configuration files.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package dockerfile-mode
+    :ensure t
+    :defer t
+    )
+#+END_SRC
+
+** Language: Groovy
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package groovy-mode
+    :ensure t
+    :defer t
+    )
+#+END_SRC
+
+** Language: PHP
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package php-mode
+    :ensure t
+    :defer t
+    )
+#+END_SRC
+
+** Language: Git
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package git-modes
     :ensure t
     :defer t
     )

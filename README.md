@@ -12,7 +12,7 @@ Tested on Debian 11 with Emacs 28.1.
 ```
 $ sudo apt install build-essential xorg-dev libgtk2.0-dev libjpeg-dev libgif-dev libtiff-dev libncurses5-dev libjansson-dev libgccjit-10-dev
 $ ./configure --prefix=/opt/emacs --with-native-compilation --with-mailutils
-$ make 
+$ make
 $ make install
 ```
 
@@ -27,11 +27,12 @@ I've installed Language Servers for this configuration using:
 ```
 $ npm install -g @angular/language-service@next typescript @angular/language-server # Angular
 $ npm install -g typescript-language-server typescript                              # TypeScript
-$ npm i -g bash-language-server                                                     # Bash
-$ npm i -g dockerfile-language-server-nodejs                                        # Docker
+$ npm install -g bash-language-server                                               # Bash
+$ npm install -g dockerfile-language-server-nodejs                                  # Docker
+$ npm install -g intelephense                                                       # PHP
+$ pip install cmake-language-server                                                 # CMake
 ```
 
 ## Licence
 
 This configuration is released as Public Domain (Unlicensed).
-

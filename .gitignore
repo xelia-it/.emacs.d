@@ -58,3 +58,4 @@ projectile.cache
 /.cache
 /config/emacs-init.el
 /eln-cache/
+lsp-cache
