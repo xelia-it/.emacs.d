@@ -39,32 +39,6 @@ Now we can tell Emacs to install use-package if it's not present.
     (require 'use-package))
 #+END_SRC
 
-** Native compilation
-
-I strongly suggest to enabel Native Compilation whenever possible.
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (setq native-comp-deferred-compilation t)
-  (setq package-native-compile t)
-  (setq comp-async-report-warnings-errors nil)
-#+END_SRC
-
-** Fix SVG Error
-
-Workaround for (temporary?) Emacs error.
-Details can be found here: https://emacs.stackexchange.com/questions/74289/emacs-28-2-error-in-macos-ventura-image-type-invalid-image-type-svg
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (setq image-types (cons 'svg image-types))
-#+END_SRC
-
-** Fix compile warnings
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-  ;; (require 'cc-mode)
-  (setq personal-keybindings ())
-#+END_SRC
-
 ** Path for executable files
 
 The environment variables in Emacs looks the same as in user's shell.
