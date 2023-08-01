@@ -43,7 +43,8 @@
 
 ;; Workaround for (temporary?) Emacs error.
 ;; Details can be found here: https://emacs.stackexchange.com/questions/74289/emacs-28-2-error-in-macos-ventura-image-type-invalid-image-type-svg
-(setq image-types (cons 'svg image-types))
+;; (setq image-types (cons 'svg image-types))
+;;(add-to-list 'image-types 'svg)
 
 ;; Load compiled Lisp file.
 ;; If this do not exists use the original org file to produce Lisp file.
