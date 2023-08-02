@@ -629,7 +629,7 @@ Now load the main theme.
            ("C-w"      . 'kill-buffer-and-window)
            ("S-C-<f4>" . 'my-kill-other-buffers)
            ("S-C-w"    . 'my-kill-other-buffers)
-           ("<escape>" . 'keyboard-quit)
+           ("<escape>" . 'keyboard-escape-quit)
            ("C-s"      . 'my-save)
            ("C-S-s"    . 'my-save-all)
            ("C-S-a"    . 'ff-find-other-file)
@@ -809,51 +809,51 @@ Force window positioning for a specified function.
 ** Install Helm
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-    (use-package helm
-      :ensure t
-      :defer t
-      :config
+  (use-package helm
+    :ensure t
+    :defer t
+    :config
 
-      (setq helm-split-window-in-side-p           t   ;; Open helm buffer inside current window, not occupy whole other window
-            helm-move-to-line-cycle-in-source     t   ;; move to end or beginning of source when reaching top or bottom of source.
-            helm-ff-search-library-in-sexp        t   ;; search for library in `require' and `declare-function' sexp.
-            helm-scroll-amount                    10  ;; scroll 8 lines other window using M-<next>/M-<prior>
-            helm-ff-file-name-history-use-recentf t
-            helm-display-header-line              nil ;; Hide header line
-            helm-echo-input-in-header-line        nil ;; Do not echo in header line
+    (setq helm-split-window-in-side-p           t   ;; Open helm buffer inside current window, not occupy whole other window
+          helm-move-to-line-cycle-in-source     t   ;; move to end or beginning of source when reaching top or bottom of source.
+          helm-ff-search-library-in-sexp        t   ;; search for library in `require' and `declare-function' sexp.
+          helm-scroll-amount                    10  ;; scroll 8 lines other window using M-<next>/M-<prior>
+          helm-ff-file-name-history-use-recentf t
+          helm-display-header-line              nil ;; Hide header line
+          helm-echo-input-in-header-line        nil ;; Do not echo in header line
 
-            helm-autoresize-max-height            0   ;;
-            helm-autoresize-min-height            20  ;;
-            )
+          helm-autoresize-max-height            0   ;;
+          helm-autoresize-min-height            20  ;;
+          )
 
-      (helm-autoresize-mode 1)
+    (helm-autoresize-mode 1)
 
-      ;; Colors
-      ;; Set "match" color for searches.
-      (set-face-attribute 'helm-match nil
-                          :foreground "#2aaaff" :background nil :weight 'extra-bold)
+    ;; Colors
+    ;; Set "match" color for searches.
+    (set-face-attribute 'helm-match nil
+                        :foreground "#2aaaff" :background nil :weight 'extra-bold)
 
-      :bind (
-             ("M-x"             . helm-M-x)
-             ("C-o"             . helm-find-files)
-             ("C-j"             . helm-imenu)
-             ;; Various common ways to switch buffers
-             ("C-x b"           . helm-buffers-list)
-             ("C-x C-b"         . helm-buffers-list)
-             ;; Switch all buffers
-             ("C-<tab>"         . helm-browse-project)
-             ("C-<iso-lefttab>" . helm-browse-project)
-             ;; The kill ring is handy
-             ("S-C-v"           . helm-show-kill-ring)
-             ("C-f"             . helm-occur)
-             :map helm-map
-             ;; Use tab to narrow selection
-             ("<escape>"        . helm-quit-and-helm-mini)
-             ("<tab>"           . helm-execute-persistent-action)
-             ("C-<tab>"         . helm-next-line)
-             ("C-<iso-lefttab>" . helm-previous-line)
-             )
-      )
+    :bind (
+           ("M-x"             . helm-M-x)
+           ("C-o"             . helm-find-files)
+           ("C-j"             . helm-imenu)
+           ;; Various common ways to switch buffers
+           ("C-x b"           . helm-buffers-list)
+           ("C-x C-b"         . helm-buffers-list)
+           ;; Switch all buffers
+           ("C-<tab>"         . helm-browse-project)
+           ("C-<iso-lefttab>" . helm-browse-project)
+           ;; The kill ring is handy
+           ("S-C-v"           . helm-show-kill-ring)
+           ("C-f"             . helm-occur)
+           :map helm-map
+           ;; Use tab to narrow selection
+           ("<escape>"        . helm-keyboard-quit)
+           ("<tab>"           . helm-execute-persistent-action)
+           ("C-<tab>"         . helm-next-line)
+           ("C-<iso-lefttab>" . helm-previous-line)
+           )
+    )
 #+END_SRC
 
 * Projects Management
@@ -1063,7 +1063,6 @@ Enable only needed UI.
     (my-lsp-ui-settings)
 
     :bind (
-           ("C-SPC" . completion-at-point)
            ("<f2>" . lsp-rename)
            )
 
@@ -1088,28 +1087,44 @@ Enable only needed UI.
 Add lsp-ui package for better user interface.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(use-package lsp-ui
-  :ensure t
-  :defer t
-  :commands lsp-ui-mode
-  :config
+  (use-package lsp-ui
+    :ensure t
+    :defer t
+    :commands lsp-ui-mode
+    :config
     (setq lsp-ui-doc-use-webkit t)
 
-  :hook (lsp-mode . lsp-ui-mode)
-  )
+    :hook (lsp-mode . lsp-ui-mode)
+    )
 #+END_SRC
 
 Use a fancy box for completion selection.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-;;  (use-package company-box
-;;    :ensure t
-;;    :defer t
-;;    :config
-;;      (setq company-box-enable-icon t)
-;;
-;;    :hook (company-mode . company-box-mode)
-;;    )
+  (use-package company
+    :ensure t
+    :defer t
+    ;;     :init
+    ;;    (global-company-mode)
+
+    :init
+    (setq company-backends '(company-capf))
+
+    :bind (
+           ("C-SPC" . company-complete)
+           )
+    )
+
+  (use-package company-box
+    :ensure t
+    :defer t
+
+    :config
+
+    (setq company-box-enable-icon t)
+
+    :hook (company-mode . company-box-mode)
+    )
 #+END_SRC
 
 Integrate with treemacs package.
