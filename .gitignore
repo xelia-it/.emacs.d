@@ -57,3 +57,5 @@ projectile.cache
 /.lsp-session*
 /.cache
 /config/emacs-init.el
+/eln-cache/
+lsp-cache
