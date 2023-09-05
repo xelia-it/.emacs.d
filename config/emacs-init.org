@@ -840,9 +840,6 @@ Force window positioning for a specified function.
            ;; Various common ways to switch buffers
            ("C-x b"           . helm-buffers-list)
            ("C-x C-b"         . helm-buffers-list)
-           ;; Switch all buffers
-           ("C-<tab>"         . helm-browse-project)
-           ("C-<iso-lefttab>" . helm-browse-project)
            ;; The kill ring is handy
            ("S-C-v"           . helm-show-kill-ring)
            ("C-f"             . helm-occur)
@@ -850,8 +847,6 @@ Force window positioning for a specified function.
            ;; Use tab to narrow selection
            ("<escape>"        . helm-keyboard-quit)
            ("<tab>"           . helm-execute-persistent-action)
-           ("C-<tab>"         . helm-next-line)
-           ("C-<iso-lefttab>" . helm-previous-line)
            )
     )
 #+END_SRC
@@ -889,17 +884,25 @@ Projectile package helps discover and remember projects.
 We want to use helm for selecting and narrowing projects.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(use-package helm-projectile
-  :ensure t
-  :defer t
-  :bind (
-         ("C-M-f" . helm-projectile-grep)
-         ("S-C-o" . helm-projectile-switch-project)
-         ("C-t"   . helm-projectile-find-file)
-         )
-  :config
-  (helm-projectile-on)
-  )
+  (use-package helm-projectile
+    :ensure t
+    :defer t
+    :bind (
+           ("C-M-f" . helm-projectile-grep)
+           ("S-C-o" . helm-projectile-switch-project)
+           ("C-t"   . helm-projectile-find-file)
+           ;; Switch all buffers
+           ("C-<tab>"         . helm-projectile-switch-to-buffer)
+           ("C-<iso-lefttab>" . helm-projectile-switch-to-buffer)
+           :map helm-map
+           ;; Use tab to narrow selection
+           ("C-<tab>"         . helm-next-line)
+           ("C-<iso-lefttab>" . helm-previous-line)
+           )
+
+    :config
+    (helm-projectile-on)
+    )
 #+END_SRC
 
 Let projectile integrate with Treemacs.
