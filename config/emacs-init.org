@@ -1067,11 +1067,15 @@ Enable only needed UI.
 
     :bind (
            ("<f2>" . lsp-rename)
+           ("C-?" . hs-hide-block) ;; C-S-'
+           ("C-^" . hs-show-block) ;; C-S-ì
            )
 
     :hook (
            ;; Integrate with which-key
            (lsp-mode . lsp-enable-which-key-integration)
+           ;; Activate folding when activate LSP
+           (lsp-mode . hs-minor-mode)
            ;; Enable languages
            (c++-mode . lsp)
            (ruby-mode . lsp)
