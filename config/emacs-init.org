@@ -1004,17 +1004,23 @@ Enable only needed UI.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
   (defun my-lsp-ui-settings()
-    "Fine tune LSP for maximum performance."
+    "Fine tune LSP user interface features."
     (interactive)
 
     ;; Symbol highlighting
     (setq lsp-enable-symbol-highlighting t)
 
     ;; Shows a hover dialog with function documentation
-    (setq lsp-ui-doc-enable nil)           ;; disable the feature
-    (setq lsp-ui-doc-show-with-cursor nil) ;; disable cursor hover (keep mouse hover)
-    (setq lsp-ui-doc-show-with-mouse nil)  ;; disable mouse hover (keep cursor hover)
+    (setq lsp-ui-doc-enable t)             ;; disable the feature
+    (setq lsp-ui-doc-show-with-cursor t)   ;; disable cursor hover (keep mouse hover)
+    (setq lsp-ui-doc-show-with-mouse t)    ;; disable mouse hover (keep cursor hover)
     (setq lsp-ui-doc-use-webkit t)
+
+    ;; Try to remove annoying ElDoc in minibuffer
+    (setq lsp-eldoc-render-all nil)        ;; disable render of docs in minibuffer
+    (setq lsp-eldoc-enable-hover nil)
+    (setq lsp-signature-render-documentation nil)
+    (setq lsp-signature-auto-activate nil)
 
     ;; Lenses are reference above a method or a variable
     (setq lsp-lens-enable nil)
