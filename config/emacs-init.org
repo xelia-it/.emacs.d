@@ -529,6 +529,8 @@ Define the function now. Loading theme triggers this function.
     ;; Manage line numbers
     (setq display-line-numbers-width 5)
     (add-hook 'prog-mode-hook 'display-line-numbers-mode)
+    (add-hook 'json-mode-hook 'display-line-numbers-mode)
+    (add-hook 'yaml-mode-hook 'display-line-numbers-mode)
 
     ;; Show active line (globally)
     (global-hl-line-mode)
@@ -986,7 +988,7 @@ All the LSP fine tuning are grouped in the following functions.
     ;;
     (setq gc-cons-threshold 100000000)
     ;; Set a not too small idle for autocompletion
-    (setq lsp-idle-delay 0.250)
+    (setq lsp-idle-delay 0.400)
     ;; Disable lsp log.
     ;; If set to true can cause a performance hit.
     ;; Enable it only for debugging.
