@@ -537,6 +537,18 @@ Define the function now. Loading theme triggers this function.
     )
 #+END_SRC
 
+** End-of-line vertical ruler
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my-display-fill-column()
+    "Show a vertical line at the end of the line"
+    (interactive)
+
+    (setq-default fill-column 80)
+    (add-hook 'prog-mode-hook 'display-fill-column-indicator-mode)
+    )
+#+END_SRC
+
 ** Show parentesis match
 
 #+BEGIN_SRC emacs-lisp :tangle yes
@@ -619,6 +631,7 @@ Now load the main theme.
     (my-set-default-font)
     (my-setup-cursor)
     (my-line-preferences)
+    (my-display-fill-column)
     (my-show-parens)
     (my-search-preferences)
     (my-other-file-settings)
