@@ -1,10 +1,10 @@
 # emacs.d
 
-An Emacs configuration with keybinding similar to Atom.
+An Emacs configuration with theme and keybinding similar to Visual Studio Code.
 
 ## Requirements
 
-Tested on Debian 11 with Emacs 28.1.
+Tested on Debian 11 and Debian 12 with Emacs 28.1+.
 
 ## How to compile EMacs
 
