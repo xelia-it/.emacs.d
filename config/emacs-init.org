@@ -475,10 +475,28 @@ Also show an empty scratch when starting.
 
 ** Fonts
 
+Set the default font for the editor.
+It tries to use Visual Studio Code fonts first ("Consolas" then "Monaco").
+If these are not installed it fallbacks to "DejaVu Sans Mono" that is pretty common.
+These fonts should be installed manually.
+
 #+BEGIN_SRC emacs-lisp :tangle yes
   (defun my-set-default-font()
     "Set default font"
-    (set-face-attribute 'default nil :family "DejaVu Sans Mono" :slant 'normal :weight 'normal :height 105)
+    (cond
+
+     ((find-font (font-spec :name "Consolas"))
+      (set-face-attribute 'default nil :family "Consolas" :slant 'normal :weight 'normal :height 110)
+      )
+
+     ((find-font (font-spec :name "Monaco"))
+      (set-face-attribute 'default nil :family "Monaco" :slant 'normal :weight 'normal :height 110)
+      )
+
+     ((find-font (font-spec :name "DejaVu Sans Mono"))
+      (set-face-attribute 'default nil :family "DejaVu Sans Mono" :slant 'normal :weight 'normal :height 105)
+      )
+     )
     )
 #+END_SRC
 
