@@ -248,22 +248,22 @@ Setup Cut-Paste like most Windows and MAC editors.
     (setq vr/auto-show-help t)
 
     :config
- ;;   (set-face-attribute 'vr/match-0 nil
- ;;      :foreground near-to-white-color
- ;;      :background nil
- ;;      :weight 'extra-bold
- ;;      :box '(:line-width (-1 . -1)
- ;;             :color "near-to-white"
- ;;             :style nil)
- ;;     )
- ;;   (set-face-attribute 'vr/match-1 nil
- ;;     :foreground near-to-white-color
- ;;     :background nil
- ;;     :weight 'extra-bold
- ;;     :box '(:line-width (-1 . -1)
- ;;            :color "near-to-white"
- ;;            :style nil)
- ;;     )
+    (set-face-attribute 'vr/match-0 nil
+       :foreground nil
+       :background "#623315"
+       :weight 'extra-bold
+       :box '(:line-width (-1 . -1)
+              :color "#767676"
+              :style nil)
+      )
+    (set-face-attribute 'vr/match-1 nil
+      :foreground nil
+      :background "#623315"
+      :weight 'extra-bold
+      :box '(:line-width (-1 . -1)
+             :color "#767676"
+             :style nil)
+      )
     :bind (
            ("S-C-r" . vr/mc-mark)
            ("C-r" . vr/replace)
