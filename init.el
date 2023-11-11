@@ -7,17 +7,29 @@
 ;;; Code:
 
 ;; Define vars here
-(defvar my-vendor-dir (expand-file-name "packages/" user-emacs-directory)
-  "This directory houses packages that are not yet available in ELPA (or MELPA).")
+(defvar my-vendor-dir
+  (expand-file-name "packages/" user-emacs-directory)
+  "Directory with packages that are not yet available in ELPA (or MELPA).")
 
-(defvar my-config-dir (expand-file-name "config/" user-emacs-directory)
-  "This directory houses packages that are not yet available in ELPA (or MELPA).")
+(defvar my-config-dir
+  (expand-file-name "config/" user-emacs-directory)
+  "Directory containing configuration files.")
 
-(defvar my-init-file (expand-file-name "emacs-init.elc" my-config-dir)
-  "All configurations stored in this file.")
+(defvar my-init-basename
+  "emacs-init"
+  "The base name for all configuration files.")
 
-(defvar my-org-file (expand-file-name "emacs-init.org" my-config-dir)
-  "All configurations tangled from this file.")
+(defvar my-init-org-file
+  (expand-file-name (concat my-init-basename ".org") my-config-dir)
+  "Configurations source organized in sections and subsections.")
+
+(defvar my-init-file
+  (expand-file-name (concat my-init-basename ".el") my-config-dir)
+  "All configurations tangled from org file.")
+
+(defvar my-init-compiled-file
+  (expand-file-name (concat my-init-basename ".elc") my-config-dir)
+  "Byte compiled configurations file.")
 
 ;; Scollbars, menu bars, splash screen are distracting and occupies space.
 ;; No more default Emacs splash screen
@@ -44,16 +56,30 @@
 ;; Workaround for (temporary?) Emacs error.
 ;; Details can be found here: https://emacs.stackexchange.com/questions/74289/emacs-28-2-error-in-macos-ventura-image-type-invalid-image-type-svg
 ;; (setq image-types (cons 'svg image-types))
-;;(add-to-list 'image-types 'svg)
+;; (add-to-list 'image-types 'svg)
 
 ;; Load compiled Lisp file.
 ;; If this do not exists use the original org file to produce Lisp file.
 (if (file-exists-p my-init-file)
-  ;; Load compiled config file
-  ;; Arguments means: report error if file not found, do not print loading message, do not add suffix
-  (load my-init-file nil t t)
+  ;; If ".el" config file exists..
   (progn
-    (org-babel-load-file my-org-file t)
+    ;; Byte compile to ".elc" if needed.
+    (unless (file-exists-p my-init-compiled-file)
+      (message "Byte-compiling init file ...")
+      (byte-compile-file my-init-file)
+      )
+    ;; Then load it
+    ;; Arguments meaning:
+    ;;  1st) report error if file not found,
+    ;;  2nd) do not print loading message,
+    ;;  3rd) add suffix
+    (load (file-name-sans-extension my-init-compiled-file) t t nil)
+    )
+
+  ;; If ".el" do not exists extract source code from ".org" file.
+  ;; This function byte compiles by default.
+  (progn
+    (org-babel-load-file my-init-org-file t)
     )
   )
 
