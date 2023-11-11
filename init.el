@@ -60,27 +60,22 @@
 
 ;; Load compiled Lisp file.
 ;; If this do not exists use the original org file to produce Lisp file.
-(if (file-exists-p my-init-file)
-  ;; If ".el" config file exists..
-  (progn
-    ;; Byte compile to ".elc" if needed.
-    (unless (file-exists-p my-init-compiled-file)
-      (message "Byte-compiling init file ...")
-      (byte-compile-file my-init-file)
-      )
-    ;; Then load it
-    ;; Arguments meaning:
-    ;;  1st) report error if file not found,
-    ;;  2nd) do not print loading message,
-    ;;  3rd) add suffix
-    (load (file-name-sans-extension my-init-compiled-file) t t nil)
-    )
 
-  ;; If ".el" do not exists extract source code from ".org" file.
-  ;; This function byte compiles by default.
-  (progn
-    (org-babel-load-file my-init-org-file t)
+(unless (file-exists-p my-init-compiled-file)
+  (unless (file-exists-p my-init-file)
+    (message "Extracting code from init file ...")
+    (require 'ob-tangle)
+    (org-babel-tangle-file my-init-org-file my-init-file)
     )
+  (message "Byte-compiling init file ...")
+  (byte-compile-file my-init-file)
   )
+
+;; Then load it
+;; Arguments meaning:
+;;  1st) report error if file not found,
+;;  2nd) do not print loading message,
+;;  3rd) add suffix
+(load my-init-compiled-file nil t t t)
 
 ;;; init.el ends here
