@@ -66,16 +66,18 @@
     (message "Extracting code from init file ...")
     (require 'ob-tangle)
     (org-babel-tangle-file my-init-org-file my-init-file)
-    )
-  (message "Byte-compiling init file ...")
-  (byte-compile-file my-init-file)
   )
+	
+  (message "Byte-compiling init file ...")
+  (require 'use-package)
+  (byte-compile-file my-init-file t)
+)
 
 ;; Then load it
 ;; Arguments meaning:
 ;;  1st) report error if file not found,
 ;;  2nd) do not print loading message,
 ;;  3rd) add suffix
-(load my-init-compiled-file nil t t t)
+(load my-init-file nil t t t)
 
 ;;; init.el ends here
