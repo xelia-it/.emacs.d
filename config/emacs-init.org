@@ -1,44 +1,7 @@
 #+AUTHOR: Alessandro Passerini
 #+TITLE: Emacs Configuration
 
-* Preparation
-** Setup repositories and use-package
-
-Setup repository.
-If you want to use only *stable* packages uncomment *melpa-stable* repository below.
-Beware that some packages may not exists or not work as expected.
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (defvar repo-gnu '("gnu" . "https://elpa.gnu.org/packages/"))
-  (defvar repo-melpa '("melpa" . "https://melpa.org/packages/"))
-  ;; Uncomment to use stable packages
-  ;; (defvar repo-melpa-stable '("melpa-stable" . "https://stable.melpa.org/packages/"))
-  (defvar repo-org-elpa '("org" . "http://orgmode.org/elpa/"))
-
-  (setq package-archives nil)
-  (add-to-list 'package-archives repo-gnu t)
-  (add-to-list 'package-archives repo-melpa t)
-  ;; Uncomment to use stable packages
-  ;; (add-to-list 'package-archives repo-melpa-stable t)
-  (add-to-list 'package-archives repo-org-elpa t)
-#+END_SRC
-
-** Install use-package
-
-Now we can tell Emacs to install use-package if it's not present.
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (require 'package)
-
-  ;; Install use-package package if not present
-  (unless (package-installed-p 'use-package)
-    (package-refresh-contents)
-    (package-install 'use-package))
-
-  (eval-when-compile
-    (require 'use-package))
-#+END_SRC
-
+* Base setup
 ** Path for executable files
 
 The environment variables in Emacs looks the same as in user's shell.
@@ -69,7 +32,6 @@ in a separate file.
    )
 #+END_SRC
 
-* Save Buffers
 ** Customize saving buffers
 
 Save buffers needs to be performed without confirmation.
@@ -461,7 +423,6 @@ Also show an empty scratch when starting.
 
 ** Icons
 
-
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package nerd-icons
     :ensure t
@@ -488,7 +449,6 @@ Also show an empty scratch when starting.
     (treemacs-load-theme "nerd-icons")
     )
 #+END_SRC
-
 
 ** Fonts
 

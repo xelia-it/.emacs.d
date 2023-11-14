@@ -31,6 +31,9 @@
   (expand-file-name (concat my-init-basename ".elc") my-config-dir)
   "Byte compiled configurations file.")
 
+
+;; Early disable annoying features
+
 ;; Scollbars, menu bars, splash screen are distracting and occupies space.
 ;; No more default Emacs splash screen
 (setq inhibit-splash-screen t)
@@ -40,15 +43,45 @@
 (menu-bar-mode -1)
 ;; No more scrollbars
 (scroll-bar-mode -1)
-
 ;; Start maximized
 (add-hook 'window-setup-hook 'toggle-frame-maximized t)
 
+
+;; Setup repository.
+
+(defvar repo-gnu '("gnu" . "https://elpa.gnu.org/packages/"))
+(defvar repo-melpa '("melpa" . "https://melpa.org/packages/"))
+;; Uncomment to use stable packages
+;; (defvar repo-melpa-stable '("melpa-stable" . "https://stable.melpa.org/packages/"))
+(defvar repo-org-elpa '("org" . "http://orgmode.org/elpa/"))
+
+(setq package-archives nil)
+(add-to-list 'package-archives repo-gnu t)
+(add-to-list 'package-archives repo-melpa t)
+;; Uncomment to use stable packages
+;; (add-to-list 'package-archives repo-melpa-stable t)
+(add-to-list 'package-archives repo-org-elpa t)
+
+
+;; Setup packages
+
+(require 'package)
+
+;; Install use-package package if not present
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+
+(eval-when-compile (require 'use-package))
+
+
 ;; Native compilation
+
 ;; I strongly suggest to enable  Native Compilation whenever possible.
 (setq native-comp-deferred-compilation t)
 (setq package-native-compile t)
 (setq comp-async-report-warnings-errors nil)
+
 
 ;; Fix compile warnings
 (setq personal-keybindings ())
@@ -57,6 +90,7 @@
 ;; Details can be found here: https://emacs.stackexchange.com/questions/74289/emacs-28-2-error-in-macos-ventura-image-type-invalid-image-type-svg
 ;; (setq image-types (cons 'svg image-types))
 ;; (add-to-list 'image-types 'svg)
+
 
 ;; Load compiled Lisp file.
 ;; If this do not exists use the original org file to produce Lisp file.
@@ -69,7 +103,6 @@
   )
 	
   (message "Byte-compiling init file ...")
-  (require 'use-package)
   (byte-compile-file my-init-file t)
 )
 
