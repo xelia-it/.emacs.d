@@ -461,17 +461,34 @@ Also show an empty scratch when starting.
 
 ** Icons
 
+
 #+BEGIN_SRC emacs-lisp :tangle yes
-;;  (use-package all-the-icons
-;;    :if (display-graphic-p)
- ;;   :ensure t)
-  ;;(use-package all-the-icons-completion
- ;;   :if (display-graphic-p)
- ;;   :ensure t)
- ;; (use-package all-the-icons-dired
- ;;   :if (display-graphic-p)
- ;;   :ensure t)
+  (use-package nerd-icons
+    :ensure t
+    ;; :custom
+    ;; The Nerd Font you want to use in GUI
+    ;; "Symbols Nerd Font Mono" is the default and is recommended
+    ;; but you can use any other Nerd Font if you want
+    ;; (nerd-icons-font-family "Symbols Nerd Font Mono")
+    )
+
+  (use-package nerd-icons-completion
+    :ensure t
+    :defer t
+    :after (:lsp)
+    :config
+    (nerd-icons-completion-mode)
+    )
+
+  (use-package treemacs-nerd-icons
+    :ensure t
+    :defer t
+    :after (:treemacs)
+    :config
+    (treemacs-load-theme "nerd-icons")
+    )
 #+END_SRC
+
 
 ** Fonts
 
@@ -486,15 +503,19 @@ These fonts should be installed manually.
     (cond
 
      ((find-font (font-spec :name "Consolas"))
-      (set-face-attribute 'default nil :family "Consolas" :slant 'normal :weight 'normal :height 110)
+      (set-frame-font "Consolas 11" nil t)
       )
 
      ((find-font (font-spec :name "Monaco"))
-      (set-face-attribute 'default nil :family "Monaco" :slant 'normal :weight 'normal :height 110)
+      (set-frame-font "Monaco 10" nil t)
+      )
+
+     ((find-font (font-spec :name "Monospace"))
+      (set-frame-font "Monospace 10" nil t)
       )
 
      ((find-font (font-spec :name "DejaVu Sans Mono"))
-      (set-face-attribute 'default nil :family "DejaVu Sans Mono" :slant 'normal :weight 'normal :height 105)
+      (set-frame-font "DejaVu Sans Mono 10" nil t)
       )
      )
     )
@@ -670,34 +691,15 @@ Now load the main theme.
     )
 #+END_SRC
 
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (use-package nerd-icons
-    :ensure t
-    ;; :custom
-    ;; The Nerd Font you want to use in GUI
-    ;; "Symbols Nerd Font Mono" is the default and is recommended
-    ;; but you can use any other Nerd Font if you want
-    ;; (nerd-icons-font-family "Symbols Nerd Font Mono")
-    )
-
-  (use-package nerd-icons-completion
-    :ensure t
-    :config
-    (nerd-icons-completion-mode)
-    )
-
-  (use-package treemacs-nerd-icons
-    :ensure t
-  :config
-  (treemacs-load-theme "nerd-icons"))
-#+END_SRC
-
 Setup a fancy modeline
 
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package doom-modeline
     :ensure t
     :init
+
+    (set-face-attribute 'mode-line nil :background "#181818")
+    (set-face-attribute 'mode-line-inactive nil :background "#212121")
 
     ;; The maximum displayed length of the branch name of version control.
     (setq doom-modeline-vcs-max-length 25)
