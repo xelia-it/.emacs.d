@@ -955,6 +955,13 @@ Magit is a complete User Interface for Git.
   )
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package git-timemachine
+    :ensure t
+    :defer t
+    )
+#+END_SRC
+
 * Language Support
 ** LSP
 
@@ -1047,6 +1054,12 @@ Enable only needed UI.
     (setq lsp-completion-provider :capf)   ;; It can be disabled with :none
     (setq lsp-completion-show-detail t)    ;; Show item details
     (setq lsp-completion-show-kind t)      ;; show item kind
+
+    ;; Colors
+    (set-face-attribute 'highlight nil :background "#093d5b" :underline nil)
+    (set-face-attribute 'lsp-face-highlight-read nil :underline nil)
+    (set-face-attribute 'lsp-face-highlight-textual nil :underline nil)
+    (set-face-attribute 'lsp-face-highlight-write nil :underline nil)
     )
 #+END_SRC
 
@@ -1368,6 +1381,18 @@ Manage nginx configuration files.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package git-modes
+    :ensure t
+    :defer t
+    )
+#+END_SRC
+
+* Misc tools
+** Impatient Mode
+
+The package imatient mode provides a tool for show HTML page on demand.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package impatient-mode
     :ensure t
     :defer t
     )
