@@ -42,13 +42,16 @@
 
 ;; There are other repository:
 ;; - GNU ELPA: https://elpa.gnu.org/packages/
-;; - MELPA: https://melpa.org/packages/
+;; - MELPA STABLE: https://stable.melpa.org/packages/
 ;; - ORG http://orgmode.org/elpa/
-;; I use only MELPA stable packages.
+;; I use only MELPA packages.
 ;;  
-(defvar repo-melpa-stable '("melpa-stable" . "https://stable.melpa.org/packages/"))
+(defvar repo-melpa '("melpa" . "https://melpa.org/packages/"))
+(defvar repo-elpa '("elpa" . "https://elpa.gnu.org/packages/"))
+(defvar repo-stable-melpa '("melpa" . "https://stable.melpa.org/packages/"))
 (setq package-archives nil)
-(add-to-list 'package-archives repo-melpa-stable t)
+(add-to-list 'package-archives repo-elpa t)
+(add-to-list 'package-archives repo-melpa t)
 
 ;; Package compile
 
