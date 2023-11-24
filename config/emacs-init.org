@@ -927,32 +927,32 @@ Magit is a complete User Interface for Git.
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(use-package git-gutter
-  :ensure t
-  :defer t
-  :config
-  (custom-set-variables
-	'(git-gutter:modified-sign "❚")
-	'(git-gutter:added-sign "❚")
-	'(git-gutter:deleted-sign "❚"))
+  (use-package git-gutter
+    :ensure t
+    :defer t
+    :config
+     (setq git-gutter:added-sign "▐")
+     (setq git-gutter:modified-sign "▐")
+     (setq git-gutter:deleted-sign "▐")
 
-  (custom-set-variables
-	'(git-gutter:update-interval 2))
+    ;; With this char the whole column is always present in prog-mode
+    (setq git-gutter:unchanged-sign " ")
 
-  :hook (prog-mode . git-gutter-mode)
+    ;; Disable background for unchanged text
+    (set-face-attribute 'git-gutter:unchanged nil :background nil)
 
-  ;; If you want to activate git-gutter globally
-  ;; (global-git-gutter-mode t)
 
-  :bind (
-         ("<f7>" . git-gutter:previous-hunk)
-         ("C-<f7>" . git-gutter:popup-hunk)
-         ("S-C-<f7>" . git-gutter:revert-hunk)
-         ("<f8>" . git-gutter:next-hunk)
-         ("C-<f8>" . git-gutter:popup-hunk)
-         ("S-C-<f8>" . git-gutter:revert-hunk)
-         )
-  )
+    :hook (prog-mode . git-gutter-mode)
+
+    :bind (
+           ("<f7>" . git-gutter:previous-hunk)
+           ("C-<f7>" . git-gutter:popup-hunk)
+           ("S-C-<f7>" . git-gutter:revert-hunk)
+           ("<f8>" . git-gutter:next-hunk)
+           ("C-<f8>" . git-gutter:popup-hunk)
+           ("S-C-<f8>" . git-gutter:revert-hunk)
+           )
+    )
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp :tangle yes
