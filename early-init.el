@@ -1,3 +1,11 @@
+;;; package --- Emacs configuration with batteries included
+
+;;; ----------------------------------------------------------------------------
+;;; Commentary:
+
+;;; ----------------------------------------------------------------------------
+;;; Code:
+
 ;; Early disable annoying features
 
 ;; Scollbars, menu bars, splash screen are distracting and occupies space.
@@ -39,16 +47,13 @@
 
 ;; Setup repository.
 
-
 ;; There are other repository:
-;; - GNU ELPA: https://elpa.gnu.org/packages/
 ;; - MELPA STABLE: https://stable.melpa.org/packages/
 ;; - ORG http://orgmode.org/elpa/
-;; I use only MELPA packages.
-;;  
+;; I use only MELPA+ELPA packages.
+;;
 (defvar repo-melpa '("melpa" . "https://melpa.org/packages/"))
 (defvar repo-elpa '("elpa" . "https://elpa.gnu.org/packages/"))
-(defvar repo-stable-melpa '("melpa" . "https://stable.melpa.org/packages/"))
 (setq package-archives nil)
 (add-to-list 'package-archives repo-elpa t)
 (add-to-list 'package-archives repo-melpa t)
@@ -65,4 +70,7 @@
 (setq comp-async-report-warnings-errors nil)
 
 ;; Fix compile warnings
+
 ;;(setq personal-keybindings ())
+
+;;; early-init.el ends here

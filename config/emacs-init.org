@@ -152,7 +152,7 @@ Show indent guides.
            (right (- width left 1))
            (row (append (make-list left zrep) (make-list 1 crep) (make-list right zrep)))
            rows)
-      (dotimes (i (- height 1) rows)
+      (dotimes (i height rows)
         (setq rows (cons row rows)))))
 
   (use-package highlight-indent-guides
@@ -658,8 +658,12 @@ Setup a fancy modeline
     :ensure t
     :init
 
+    ;; Adjust colors to theme
     (set-face-attribute 'mode-line nil :background "#181818")
     (set-face-attribute 'mode-line-inactive nil :background "#212121")
+
+    ;; Expand all files and dir from project
+    (setq doom-modeline-buffer-file-name-style 'relative-from-project)
 
     ;; The maximum displayed length of the branch name of version control.
     (setq doom-modeline-vcs-max-length 25)
