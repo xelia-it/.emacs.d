@@ -834,6 +834,7 @@ Force window positioning for a specified function.
 
     :bind (
            ("M-x"             . helm-M-x)
+           ("C-S-p"           . helm-M-x)
            ("C-o"             . helm-find-files)
            ("C-j"             . helm-imenu)
            ;; Various common ways to switch buffers
