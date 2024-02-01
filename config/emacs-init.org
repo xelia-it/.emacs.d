@@ -645,7 +645,7 @@ Now load the main theme.
            ("S-C-w"    . 'my-kill-other-buffers)
            ("<escape>" . 'keyboard-escape-quit)
            ("C-s"      . 'my-save)
-           ("C-S-s"    . 'my-save-all)
+           ("C-M-s"    . 'my-save-all)
            ("C-S-a"    . 'ff-find-other-file)
            )
     )
@@ -836,7 +836,6 @@ Force window positioning for a specified function.
            ("M-x"             . helm-M-x)
            ("C-S-p"           . helm-M-x)
            ("C-o"             . helm-find-files)
-           ("C-j"             . helm-imenu)
            ;; Various common ways to switch buffers
            ("C-x b"           . helm-buffers-list)
            ("C-x C-b"         . helm-buffers-list)
@@ -923,6 +922,7 @@ Magit is a complete User Interface for Git.
     :ensure t
     :defer t
     :bind (
+           ("C-S-g" . magit-status)
            ("<f5>" . magit-status)
            ("<f6>" . magit-log-all)
            :map magit-mode-map
@@ -1033,10 +1033,10 @@ Enable only needed UI.
     (setq lsp-lens-enable nil)
 
     ;; The headerline shows a breadcrumb over the code buffer
-    (setq lsp-headerline-breadcrumb-enable nil)
+    (setq lsp-headerline-breadcrumb-enable t)
 
     ;; Sideline code actions
-    (setq lsp-ui-sideline-enable nil)            ;; disable whole sideline
+    (setq lsp-ui-sideline-enable t)              ;; disable whole sideline
     (setq lsp-ui-sideline-show-code-actions nil) ;; hide code actions
     (setq lsp-ui-sideline-show-hover nil)        ;; hide only hover symbols
     (setq lsp-ui-sideline-show-symbol t)         ;; show errors
@@ -1065,6 +1065,16 @@ Enable only needed UI.
     (set-face-attribute 'lsp-face-highlight-read nil :underline nil)
     (set-face-attribute 'lsp-face-highlight-textual nil :underline nil)
     (set-face-attribute 'lsp-face-highlight-write nil :underline nil)
+
+    (set-face-attribute 'lsp-ui-peek-selection nil :background "#093d5b")
+
+    (set-face-attribute 'lsp-ui-peek-header nil
+      :foreground "white"
+      :background "#181818"
+      :box '(:line-width (1 . 1)
+             :color "#212121"
+             :style nil)
+      )
     )
 #+END_SRC
 
@@ -1085,9 +1095,9 @@ Enable only needed UI.
     (my-lsp-ui-settings)
 
     :bind (
-           ("<f2>" . lsp-rename)
-           ("C-?" . hs-hide-block) ;; C-S-'
-           ("C-^" . hs-show-block) ;; C-S-ì
+           ("<f2>"      . lsp-rename)
+           ("C-S-'"     . hs-hide-block) ;; C-S-'
+           ("C-S-i"     . hs-show-block) ;; C-S-ì
            )
 
     :hook (
@@ -1117,10 +1127,24 @@ Add lsp-ui package for better user interface.
     :ensure t
     :defer t
     :commands lsp-ui-mode
+
+    :init
+
+    ;; Ctrl-j do not play well with lsp-ui
+    (global-unset-key (kbd "C-j"))
+
     :config
+
+    ;; Use webkit for documentation
     (setq lsp-ui-doc-use-webkit t)
 
     :hook (lsp-mode . lsp-ui-mode)
+
+    :bind (
+           ("C-j"       . lsp-ui-imenu)
+           ("S-<f12>"   . lsp-ui-peek-find-references)
+           ("M-<f12>"   . lsp-ui-peek-find-definitions)
+           )
     )
 #+END_SRC
 
