@@ -448,6 +448,13 @@ Also show an empty scratch when starting.
     :config
     (treemacs-load-theme "nerd-icons")
     )
+
+  (use-package nerd-icons-dired
+     :ensure t
+     :defer t
+     :hook
+     (dired-mode . nerd-icons-dired-mode)
+     )
 #+END_SRC
 
 ** Fonts
@@ -647,6 +654,7 @@ Now load the main theme.
            ("C-s"      . 'my-save)
            ("C-M-s"    . 'my-save-all)
            ("C-S-a"    . 'ff-find-other-file)
+           ("C-S-x"    . 'list-packages)
            )
     )
 #+END_SRC
@@ -1066,15 +1074,15 @@ Enable only needed UI.
     (set-face-attribute 'lsp-face-highlight-textual nil :underline nil)
     (set-face-attribute 'lsp-face-highlight-write nil :underline nil)
 
-    (set-face-attribute 'lsp-ui-peek-selection nil :background "#093d5b")
+    ;; (set-face-attribute 'lsp-ui-peek-selection nil :background "#093d5b")
 
-    (set-face-attribute 'lsp-ui-peek-header nil
-      :foreground "white"
-      :background "#181818"
-      :box '(:line-width (1 . 1)
-             :color "#212121"
-             :style nil)
-      )
+  ;;  (set-face-attribute 'lsp-ui-peek-header nil
+  ;;    :foreground "white"
+  ;;    :background "#181818"
+  ;;    :box '(:line-width (1 . 1)
+  ;;           :color "#212121"
+  ;;           :style nil)
+  ;;    )
     )
 #+END_SRC
 
@@ -1112,6 +1120,7 @@ Enable only needed UI.
            (web-mode . lsp)
            (typescript-mode . lsp)
            (rust-mode . lsp)
+           (go-mode . lsp)
            (json-mode . lsp)
            (sh-mode . lsp)
            (dockerfile-mode . lsp)
@@ -1355,6 +1364,15 @@ Manage nginx configuration files.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package rust-mode
+    :ensure t
+    :defer t
+    )
+#+END_SRC
+
+** Language: Go
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package go-mode
     :ensure t
     :defer t
     )
