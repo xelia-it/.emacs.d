@@ -474,7 +474,7 @@ These fonts should be installed manually.
       )
 
      ((find-font (font-spec :name "Monaco"))
-      (set-frame-font "Monaco 10" nil t)
+      (set-frame-font "Monaco 11" nil t)
       )
 
      ((find-font (font-spec :name "Monospace"))
@@ -843,6 +843,7 @@ Force window positioning for a specified function.
     :bind (
            ("M-x"             . helm-M-x)
            ("C-S-p"           . helm-M-x)
+           ("<f1>"            . helm-M-x)
            ("C-o"             . helm-find-files)
            ;; Various common ways to switch buffers
            ("C-x b"           . helm-buffers-list)
@@ -1068,22 +1069,26 @@ Enable only needed UI.
     (setq lsp-completion-show-detail t)    ;; Show item details
     (setq lsp-completion-show-kind t)      ;; show item kind
 
+    ;; Headerline icon enable
+    (setq lsp-headerline-breadcrumb-icons-enable nil)
+
     ;; Colors
     (set-face-attribute 'highlight nil :background "#093d5b" :underline nil)
     (set-face-attribute 'lsp-face-highlight-read nil :underline nil)
     (set-face-attribute 'lsp-face-highlight-textual nil :underline nil)
     (set-face-attribute 'lsp-face-highlight-write nil :underline nil)
 
+
     ;; (set-face-attribute 'lsp-ui-peek-selection nil :background "#093d5b")
 
-  ;;  (set-face-attribute 'lsp-ui-peek-header nil
-  ;;    :foreground "white"
-  ;;    :background "#181818"
-  ;;    :box '(:line-width (1 . 1)
-  ;;           :color "#212121"
-  ;;           :style nil)
-  ;;    )
-    )
+    ;;  (set-face-attribute 'lsp-ui-peek-header nil
+    ;;    :foreground "white"
+    ;;    :background "#181818"
+    ;;    :box '(:line-width (1 . 1)
+    ;;           :color "#212121"
+    ;;           :style nil)
+    ;;    )
+  )
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp :tangle yes
@@ -1114,6 +1119,7 @@ Enable only needed UI.
            ;; Activate folding when activate LSP
            (lsp-mode . hs-minor-mode)
            ;; Enable languages
+           (js2-mode . lsp)
            (c++-mode . lsp)
            (ruby-mode . lsp)
            (python-mode . lsp)
