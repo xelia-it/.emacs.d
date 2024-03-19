@@ -672,9 +672,9 @@ Now load the main theme.
            ("C-S-x"    . 'list-packages)
            ("C-ò"      . 'term)
            ("C-/"      . 'comment-dwim)
-           ("C-S-m" . flymake-show-buffer-diagnostics)
-           ("<f8>" . flymake-goto-next-error)
-           ("S-<f8>" . flymake-goto-previous-error)
+           ("C-S-m"    . 'flymake-show-buffer-diagnostics)
+           ("<f8>"     . 'flymake-goto-next-error)
+           ("S-<f8>"   . 'flymake-goto-previous-error)
            )
     )
 #+END_SRC
