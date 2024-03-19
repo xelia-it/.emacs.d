@@ -21,7 +21,7 @@ Emacs will be installed in `/opt/emacs` folder.
 ## LSP Configuration
 
 In order to use LSP functionality we need to install Language Server separately.
-The (Emacs LSP Github Project)[https://emacs-lsp.github.io/lsp-mode/] contains
+The [Emacs LSP Github Project](https://emacs-lsp.github.io/lsp-mode/) contains
 detailed information for all the supported Language Servers.
 
 You can install Language Servers for this configuration using:
@@ -35,6 +35,10 @@ $ npm install -g vscode-langservers-extracted                                   
 $ rustup component add rust-analyzer rust-src                                       # Rust
 $ pip install cmake-language-server                                                 # CMake
 ```
+
+## Keybindings
+
+* The [keybindings](docs/keybindings.md) equals to Visual Studio.
 
 ## Licence
 

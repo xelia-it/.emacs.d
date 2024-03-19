@@ -354,7 +354,6 @@ Add the ability to manage multiple cursors.
   (define-key mc/keymap (kbd "<return>") nil)
 
   ;; Basic selection
-  (global-set-key (kbd "C-S-D") 'mc/mark-previous-like-this-word)
   (global-set-key (kbd "C-D") 'mc/mark-next-like-this-word)
   (global-set-key (kbd "M-S-<up>") 'mc/mark-previous-lines)
   (global-set-key (kbd "M-S-<down>") 'mc/mark-next-lines)
@@ -584,6 +583,21 @@ Define the function now. Loading theme triggers this function.
     )
 #+END_SRC
 
+** Dired...
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my-dired-settings()
+    "Beautify and improve dired view."
+    (interactive)
+
+    ;; open file in the same window
+    (eval-after-load "dired"
+      '(progn (define-key dired-mode-map [mouse-2] 'dired-mouse-find-file))
+      )
+
+    )
+#+END_SRC
+
 ** Theme (and activate stuffs)
 
 The main theme is inspired to Visual Studio Code.
@@ -640,6 +654,7 @@ Now load the main theme.
     (my-display-fill-column)
     (my-show-parens)
     (my-search-preferences)
+    (my-dired-settings)
     (my-other-file-settings)
 
     ;; Fine tune
@@ -655,6 +670,11 @@ Now load the main theme.
            ("C-M-s"    . 'my-save-all)
            ("C-S-a"    . 'ff-find-other-file)
            ("C-S-x"    . 'list-packages)
+           ("C-ò"      . 'term)
+           ("C-/"      . 'comment-dwim)
+           ("C-S-m" . flymake-show-buffer-diagnostics)
+           ("<f8>" . flymake-goto-next-error)
+           ("S-<f8>" . flymake-goto-previous-error)
            )
     )
 #+END_SRC
@@ -670,12 +690,6 @@ Setup a fancy modeline
     (set-face-attribute 'mode-line nil :background "#181818")
     (set-face-attribute 'mode-line-inactive nil :background "#212121")
 
-    ;; Expand all files and dir from project
-    (setq doom-modeline-buffer-file-name-style 'relative-from-project)
-
-    ;; The maximum displayed length of the branch name of version control.
-    (setq doom-modeline-vcs-max-length 25)
-
     ;; How tall the mode-line should be. It's only respected in GUI.
     ;; If the actual char height is larger, it respects the actual height.
     (setq doom-modeline-height 28)
@@ -683,8 +697,23 @@ Setup a fancy modeline
     ;; How wide the mode-line bar should be. It's only respected in GUI.
     (setq doom-modeline-bar-width 1)
 
-    ;; I prefer to show buffer name always with the same color
+    ;; Expand all files and dir from project
+    (setq doom-modeline-buffer-file-name-style 'relative-from-project)
+
+    ;; Show buffer name always with the same color
     (setq doom-modeline-highlight-modified-buffer-name nil)
+
+    ;; Show line and column position
+    (setq doom-modeline-position-line-format '("%4l:%c"))
+
+    ;; Hide position within buffer
+    (setq doom-modeline-percent-position '(""))
+
+    ;; Whether display the buffer encoding.
+    (setq doom-modeline-buffer-encoding nil)
+
+    ;; The maximum displayed length of the branch name of version control.
+    (setq doom-modeline-vcs-max-length 25)
 
     ;; Activate modeline everywhere
     (doom-modeline-mode 1)
@@ -768,7 +797,7 @@ Add project tree.
 
     :bind
     (:map global-map
-      ("C-\\"          . treemacs-select-window)
+      ("C-S-e"         . treemacs-select-window)
       ("C-x t 1"       . treemacs-delete-other-windows)
       ("C-x t t"       . treemacs)
       ("C-x t d"       . treemacs-select-directory)
@@ -804,9 +833,10 @@ Force window positioning for a specified function.
     :config
     (setq shackle-rules '(
                           ("\\`\\*[hH]elm.*?\\*\\'" :regexp t :align 'below :size 0.3)
-                          ("\\`\\*bm-bookmarks.*?\\*\\'" :regexp t :align 'below :size 0.2)
-                          ("\\`\\*Flymake.*?\\*\\'" :regexp t :align 'below :size 0.2)
-                          ("\\`\\*Flycheck.*?\\*\\'" :regexp t :align 'below :size 0.2)
+                          ("\\`\\*bm-bookmarks.*?\\*\\'" :regexp t :align 'below :size 0.3)
+                          ("\\`\\*Flymake.*?\\*\\'" :regexp t :align 'below :size 0.3)
+                          ("\\`\\*Flycheck.*?\\*\\'" :regexp t :align 'below :size 0.3)
+                          ("\\`\\*terminal.*?\\*\\'" :regexp t :align 'below :size 0.3)
                           ))
     (shackle-mode 1)
     )
@@ -849,7 +879,7 @@ Force window positioning for a specified function.
            ("C-x b"           . helm-buffers-list)
            ("C-x C-b"         . helm-buffers-list)
            ;; The kill ring is handy
-           ("S-C-v"           . helm-show-kill-ring)
+           ("C-S-v"           . helm-show-kill-ring)
            ("C-f"             . helm-occur)
            :map helm-map
            ;; Use tab to narrow selection
@@ -881,6 +911,7 @@ Projectile package helps discover and remember projects.
 
     :bind (
            ;; Project building and testing
+           ("C-S-d"   . projectile-compile-project)    ;; VS Code keybinding
            ("<f9>"   . projectile-compile-project)
            ("C-<f9>" . projectile-run-project)
            ("S-<f9>" . projectile-configure-project)
@@ -896,7 +927,7 @@ We want to use helm for selecting and narrowing projects.
     :ensure t
     :defer t
     :bind (
-           ("C-M-f" . helm-projectile-grep)
+           ("C-S-f" . helm-projectile-grep)
            ("S-C-o" . helm-projectile-switch-project)
            ("C-t"   . helm-projectile-find-file)
            ;; Switch all buffers
@@ -1027,9 +1058,9 @@ Enable only needed UI.
     (setq lsp-enable-symbol-highlighting t)
 
     ;; Shows a hover dialog with function documentation
-    (setq lsp-ui-doc-enable t)             ;; disable the feature
-    (setq lsp-ui-doc-show-with-cursor t)   ;; disable cursor hover (keep mouse hover)
-    (setq lsp-ui-doc-show-with-mouse t)    ;; disable mouse hover (keep cursor hover)
+    (setq lsp-ui-doc-enable t)             ;; enable documentation
+    (setq lsp-ui-doc-show-with-cursor t)   ;; enable cursor hover (keep mouse hover)
+    (setq lsp-ui-doc-show-with-mouse t)    ;; enable mouse hover (keep cursor hover)
     (setq lsp-ui-doc-use-webkit t)
 
     ;; Try to remove annoying ElDoc in minibuffer
@@ -1199,9 +1230,6 @@ Integrate with treemacs package.
     :ensure t
     :defer t
     :commands lsp-treemacs-error-list
-    :bind (
-           ("<f12>" . lsp-treemacs-errors-list)
-           )
    )
 #+END_SRC
 
