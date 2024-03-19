@@ -1,7 +1,8 @@
-# Kbdbindings
+# Keybinding
 
+Currently supported VSCode Keybindings:
 
-| Kbdbinding                                         | Visual Studio Behaviour         | Bind to
+| Keybinding                                         | Visual Studio Behaviour         | Bind to
 |----------------------------------------------------|---------------------------------|------------------------------------
 | <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>E</kbd>  | Side Bar: Explorer              | `treemacs-select-window`
 | <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd>  | Side Bar: Search                | `helm-projectile-grep`
