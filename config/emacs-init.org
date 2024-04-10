@@ -1162,6 +1162,7 @@ Enable only needed UI.
            (sh-mode . lsp)
            (dockerfile-mode . lsp)
            (php-mode . lsp)
+           (scss-mode . lsp)
            )
     )
 #+END_SRC
@@ -1400,6 +1401,7 @@ Manage nginx configuration files.
   (use-package rust-mode
     :ensure t
     :defer t
+    :mode ("\\.rs\\'" . rust-mode)
     )
 #+END_SRC
 
