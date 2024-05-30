@@ -381,6 +381,24 @@ Add the ability to manage multiple cursors.
     )
 #+END_SRC
 
+** Snippet
+
+"Snippets" are small templates that avoid typing repeating code patterns (like loops or conditional statements).
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package yasnippet
+    :ensure t
+    :defer t
+    )
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package yasnippet-snippets
+    :ensure t
+    :defer t
+    )
+#+END_SRC
+
 * User Interface
 
 All customization are defined inside functions.
@@ -473,7 +491,7 @@ These fonts should be installed manually.
       )
 
      ((find-font (font-spec :name "Monaco"))
-      (set-frame-font "Monaco 11" nil t)
+      (set-frame-font "Monaco 10" nil t)
       )
 
      ((find-font (font-spec :name "Monospace"))
@@ -713,7 +731,7 @@ Setup a fancy modeline
     (setq doom-modeline-buffer-encoding nil)
 
     ;; The maximum displayed length of the branch name of version control.
-    (setq doom-modeline-vcs-max-length 25)
+    (setq doom-modeline-vcs-max-length 30)
 
     ;; Activate modeline everywhere
     (doom-modeline-mode 1)
@@ -1022,6 +1040,9 @@ All the LSP fine tuning are grouped in the following functions.
     "Fine tune LSP for maximum performance."
     (interactive)
 
+    ;; Performance improvements
+    (setq lsp-use-plists t)
+
     ;; I still prefer flymake: it's simple, fast and integrated in core Emacs
     (setq lsp-prefer-flymake t)
     ;; Don't watch the file in the workspace
@@ -1073,7 +1094,8 @@ Enable only needed UI.
     (setq lsp-lens-enable nil)
 
     ;; The headerline shows a breadcrumb over the code buffer
-    (setq lsp-headerline-breadcrumb-enable t)
+    ;; I prefer to disable it
+    (setq lsp-headerline-breadcrumb-enable nil)
 
     ;; Sideline code actions
     (setq lsp-ui-sideline-enable t)              ;; disable whole sideline
@@ -1209,6 +1231,8 @@ Use a fancy box for completion selection.
 
     :bind (
            ("C-SPC" . company-complete)
+           :map company-mode-map
+           ("<escape>" . company-abort)
            )
     )
 

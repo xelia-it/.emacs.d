@@ -58,9 +58,10 @@
 (add-to-list 'package-archives repo-elpa t)
 (add-to-list 'package-archives repo-melpa t)
 
-;; Package compile
+;; Performance improvements
 
-;; (eval-when-compile (require 'use-package))
+;; https://emacs-lsp.github.io/lsp-mode/page/performance/#use-plists-for-deserialization
+(setenv "LSP_USE_PLISTS" "true")
 
 ;; Native compilation
 
