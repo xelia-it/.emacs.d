@@ -1082,7 +1082,7 @@ Enable only needed UI.
     (setq lsp-ui-doc-enable t)             ;; enable documentation
     (setq lsp-ui-doc-show-with-cursor t)   ;; enable cursor hover (keep mouse hover)
     (setq lsp-ui-doc-show-with-mouse t)    ;; enable mouse hover (keep cursor hover)
-    (setq lsp-ui-doc-use-webkit t)
+    (setq lsp-ui-doc-use-webkit t)         ;; display documentation using a webkit
 
     ;; Try to remove annoying ElDoc in minibuffer
     (setq lsp-eldoc-render-all nil)        ;; disable render of docs in minibuffer
@@ -1132,15 +1132,15 @@ Enable only needed UI.
     (set-face-attribute 'lsp-face-highlight-write nil :underline nil)
 
 
-    ;; (set-face-attribute 'lsp-ui-peek-selection nil :background "#093d5b")
+    (set-face-attribute 'lsp-ui-peek-selection nil :background "#093d5b")
 
-    ;;  (set-face-attribute 'lsp-ui-peek-header nil
-    ;;    :foreground "white"
-    ;;    :background "#181818"
-    ;;    :box '(:line-width (1 . 1)
-    ;;           :color "#212121"
-    ;;           :style nil)
-    ;;    )
+      (set-face-attribute 'lsp-ui-peek-header nil
+        :foreground "white"
+        :background "#181818"
+        :box '(:line-width (1 . 1)
+               :color "#212121"
+               :style nil)
+        )
   )
 #+END_SRC
 
@@ -1156,9 +1156,7 @@ Enable only needed UI.
 
     :config
 
-    ;; Performance settings
     (my-lsp-performance-settings)
-    (my-lsp-ui-settings)
 
     :bind (
            ("<f2>"      . lsp-rename)
@@ -1204,8 +1202,7 @@ Add lsp-ui package for better user interface.
 
     :config
 
-    ;; Use webkit for documentation
-    (setq lsp-ui-doc-use-webkit t)
+    (my-lsp-ui-settings)
 
     :hook (lsp-mode . lsp-ui-mode)
 
