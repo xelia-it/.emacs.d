@@ -981,7 +981,6 @@ Magit is a complete User Interface for Git.
     :defer t
     :bind (
            ("C-S-g" . magit-status)
-           ("<f5>" . magit-status)
            ("<f6>" . magit-log-all)
            :map magit-mode-map
            ("<escape>" . quit-window)
@@ -994,9 +993,11 @@ Magit is a complete User Interface for Git.
     :ensure t
     :defer t
     :config
-     (setq git-gutter:added-sign "▐")
-     (setq git-gutter:modified-sign "▐")
-     (setq git-gutter:deleted-sign "▐")
+
+    ;; Set git gutter signs
+    (setq git-gutter:added-sign "▐")
+    (setq git-gutter:modified-sign "▐")
+    (setq git-gutter:deleted-sign "▐")
 
     ;; With this char the whole column is always present in prog-mode
     (setq git-gutter:unchanged-sign " ")
@@ -1004,16 +1005,11 @@ Magit is a complete User Interface for Git.
     ;; Disable background for unchanged text
     (set-face-attribute 'git-gutter:unchanged nil :background nil)
 
-
     :hook (prog-mode . git-gutter-mode)
 
     :bind (
-           ("<f7>" . git-gutter:previous-hunk)
-           ("C-<f7>" . git-gutter:popup-hunk)
-           ("S-C-<f7>" . git-gutter:revert-hunk)
-           ("<f8>" . git-gutter:next-hunk)
-           ("C-<f8>" . git-gutter:popup-hunk)
-           ("S-C-<f8>" . git-gutter:revert-hunk)
+           ("S-M-<f5>" . git-gutter:previous-hunk)
+           ("M-<f5>" . git-gutter:next-hunk)
            )
     )
 #+END_SRC
