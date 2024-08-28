@@ -12,7 +12,7 @@ The environment variables in Emacs looks the same as in user's shell.
     :if (memq window-system '(mac ns x))
     :ensure t
     :config
-    ;; (setq exec-path-from-shell-arguments nil)
+    (setq exec-path-from-shell-arguments nil)
     (setq exec-path-from-shell-check-startup-files nil)
     (exec-path-from-shell-initialize)
     )
@@ -381,24 +381,6 @@ Add the ability to manage multiple cursors.
     )
 #+END_SRC
 
-** Snippet
-
-"Snippets" are small templates that avoid typing repeating code patterns (like loops or conditional statements).
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (use-package yasnippet
-    :ensure t
-    :defer t
-    )
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (use-package yasnippet-snippets
-    :ensure t
-    :defer t
-    )
-#+END_SRC
-
 * User Interface
 
 All customization are defined inside functions.
@@ -486,20 +468,20 @@ These fonts should be installed manually.
     "Set default font"
     (cond
 
+     ((find-font (font-spec :name "Monospace"))
+      (set-frame-font "Monospace 11" nil t)
+      )
+
      ((find-font (font-spec :name "Consolas"))
-      (set-frame-font "Consolas 11" nil t)
+      (set-frame-font "Consolas 12" nil t)
       )
 
      ((find-font (font-spec :name "Monaco"))
-      (set-frame-font "Monaco 10" nil t)
-      )
-
-     ((find-font (font-spec :name "Monospace"))
-      (set-frame-font "Monospace 10" nil t)
+      (set-frame-font "Monaco 11" nil t)
       )
 
      ((find-font (font-spec :name "DejaVu Sans Mono"))
-      (set-frame-font "DejaVu Sans Mono 10" nil t)
+      (set-frame-font "DejaVu Sans Mono 11" nil t)
       )
      )
     )
