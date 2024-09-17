@@ -63,6 +63,15 @@ Both these setup will be performed later.
     )
 #+END_SRC
 
+** Auto reload on change
+
+Some CLI tools (beautifiers, linters, ..) can change the files on disk.
+This preference ensures Emacs reload buffer automatically.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (global-auto-revert-mode t)
+#+END_SRC
+
 ** Backup preferences
 
 #+BEGIN_SRC emacs-lisp :tangle yes
@@ -167,9 +176,16 @@ Show indent guides.
     (setq highlight-indent-guides-bitmap-function 'my-bitmap-line)
 
     ;; This plays well with VSCode Theme
-    (setq highlight-indent-guides-auto-odd-face-perc 5)
-    (setq highlight-indent-guides-auto-even-face-perc 5)
-    (setq highlight-indent-guides-auto-character-face-perc 10)
+    (set-face-foreground 'highlight-indent-guides-odd-face "#404040")
+    (set-face-foreground 'highlight-indent-guides-even-face "#404040")
+    (set-face-foreground 'highlight-indent-guides-character-face "#404040")
+    (set-face-foreground 'highlight-indent-guides-top-odd-face "#707070")
+    (set-face-foreground 'highlight-indent-guides-top-even-face "#707070")
+    (set-face-foreground 'highlight-indent-guides-top-character-face "#707070")
+
+    ;;(setq highlight-indent-guides-auto-odd-face-perc 5)
+    ;;(setq highlight-indent-guides-auto-even-face-perc 5)
+    ;;(setq highlight-indent-guides-auto-character-face-perc 20)
 
     ;; Activate indent guides for all programming languages
     :hook (prog-mode . highlight-indent-guides-mode)
@@ -211,7 +227,7 @@ Setup Cut-Paste like most Windows and MAC editors.
 
     :config
     (set-face-attribute 'vr/match-0 nil
-       :foreground nil
+       :foreground 'unspecified
        :background "#623315"
        :weight 'extra-bold
        :box '(:line-width (-1 . -1)
@@ -219,7 +235,7 @@ Setup Cut-Paste like most Windows and MAC editors.
               :style nil)
       )
     (set-face-attribute 'vr/match-1 nil
-      :foreground nil
+      :foreground 'unspecified
       :background "#623315"
       :weight 'extra-bold
       :box '(:line-width (-1 . -1)
@@ -241,8 +257,8 @@ Setup Cut-Paste like most Windows and MAC editors.
     (interactive)
 
 ;;    (set-face-attribute 'isearch nil
-;;      :foreground nil
-;;      :background nil
+;;      :foreground 'unspecified
+;;      :background 'unspecified
 ;;      :weight 'extra-bold
 ;;      :box '(:line-width (-1 . -1)
 ;;             :color "near-to-white"
@@ -413,10 +429,10 @@ Also show an empty scratch when starting.
 
     ;; Removes *Completions* from buffer after you've opened a file.
     (add-hook 'minibuffer-exit-hook
-              '(lambda ()
-                 (let ((buffer "*Completions*"))
-                   (and (get-buffer buffer)
-                        (kill-buffer buffer)))))
+              #'(lambda ()
+                  (let ((buffer "*Completions*"))
+                    (and (get-buffer buffer)
+                         (kill-buffer buffer)))))
     )
 #+END_SRC
 
@@ -564,8 +580,8 @@ Define the function now. Loading theme triggers this function.
     (show-paren-mode +1)
     (setq show-paren-style 'parenthesis)
     (set-face-attribute 'show-paren-match nil
-                        :foreground nil
-                        :background nil
+                        :foreground 'unspecified
+                        :background 'unspecified
                         :weight 'extra-bold
                         :box '(:line-width (-1 . -1)
                                :color "#666"
@@ -573,8 +589,8 @@ Define the function now. Loading theme triggers this function.
                         )
 
     (set-face-attribute 'show-paren-match nil
-                        :foreground nil
-                        :background nil
+                        :foreground 'unspecified
+                        :background 'unspecified
                         :weight 'extra-bold
                         :box '(:line-width (-1 . -1)
                                :color "#666"
@@ -672,6 +688,8 @@ Now load the main theme.
            ("C-S-x"    . 'list-packages)
            ("C-ò"      . 'term)
            ("C-/"      . 'comment-dwim)
+           ("C-S-["    . 'hs-hide-block)
+           ("C-S-]"    . 'hs-show-block)
            ("C-S-m"    . 'flymake-show-buffer-diagnostics)
            ("<f8>"     . 'flymake-goto-next-error)
            ("S-<f8>"   . 'flymake-goto-previous-error)
@@ -868,7 +886,7 @@ Force window positioning for a specified function.
     ;; Colors
     ;; Set "match" color for searches.
     (set-face-attribute 'helm-match nil
-                        :foreground "#2aaaff" :background nil :weight 'extra-bold)
+                        :foreground "#2aaaff" :background 'unspecified :weight 'extra-bold)
 
     :bind (
            ("M-x"             . helm-M-x)
@@ -985,7 +1003,7 @@ Magit is a complete User Interface for Git.
     (setq git-gutter:unchanged-sign " ")
 
     ;; Disable background for unchanged text
-    (set-face-attribute 'git-gutter:unchanged nil :background nil)
+    (set-face-attribute 'git-gutter:unchanged nil :background 'unspecified)
 
     :hook (prog-mode . git-gutter-mode)
 
@@ -1032,7 +1050,7 @@ All the LSP fine tuning are grouped in the following functions.
     ;;
     (setq gc-cons-threshold 100000000)
     ;; Set a not too small idle for autocompletion
-    (setq lsp-idle-delay 0.400)
+    (setq lsp-idle-delay 0.250)
     ;; Disable lsp log.
     ;; If set to true can cause a performance hit.
     ;; Enable it only for debugging.
@@ -1138,8 +1156,6 @@ Enable only needed UI.
 
     :bind (
            ("<f2>"      . lsp-rename)
-           ("C-S-'"     . hs-hide-block) ;; C-S-'
-           ("C-S-i"     . hs-show-block) ;; C-S-ì
            )
 
     :hook (
@@ -1275,15 +1291,18 @@ The web-mode package is good for HTML and SCSS mode.
     (setq web-mode-markup-indent-offset 2)
 
     ;; Colors
-   ;; (set-face-attribute 'web-mode-block-face nil :background nil)
-   ;; (set-face-attribute 'web-mode-inlay-face nil :background nil)
-   ;; (set-face-attribute 'web-mode-current-column-highlight-face nil
-   ;;                     :foreground near-to-white-color :background nil)
-  ;;  (set-face-attribute 'web-mode-current-element-highlight-face nil
-  ;;                      :foreground near-to-white-color
-  ;;                      :background (face-background 'hl-line)
-  ;;                      :weight 'extra-bold
-  ;;                      :underline nil)
+
+    ;; Use the same background of the rest of the HTML
+    (set-face-attribute 'web-mode-block-face nil :background 'unspecified)
+
+    (set-face-attribute 'web-mode-current-element-highlight-face nil
+                        :foreground 'unspecified
+                        :background "#474747")
+
+    (set-face-attribute 'web-mode-current-column-highlight-face nil
+                        :foreground 'unspecified
+                        :background "#474747")
+
     :mode (
            ("\\.html?\\'" . web-mode)
            ("\\.erb\\'" . web-mode)
