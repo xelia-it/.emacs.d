@@ -19,12 +19,15 @@
       (constant                   "#4ec9b0")
       (type-face                  "#4fc1ff")
       (warning                    "#f44747")
-      (vscode-error                      "#d16969")
+      (vscode-error               "#d16969")
       (success                    "#608b4e")
       (vscode-line-number         "#858585")
       (vscode-line-number-current "#FFFFFF")
-      (vscode-border              "#505050")
+      (vscode-border              "#404040")
       (vscode-shadow              "#707070")
+      (vscode-border-dark         "#282828") ;; Original is #282828
+      (vscode-git-added           "#2ea043")
+      (vscode-git-modified        "#0078d4")
       )
 
   (custom-theme-set-faces
@@ -55,13 +58,16 @@
    ;; Line numbers
    `(line-number ((t (:foreground ,vscode-line-number :background ,vscode-bg-dark))))
    `(line-number-current-line
-     ((t (:background nil
-                      :box (:line-width (-1 . -1) :color ,vscode-border :style 'unspecified)))))
+     ((t (:background unspecified
+          :box (:line-width (-1 . -1) :color ,vscode-border-dark :style 'unspecified)))))
+
+   ;; Current line
    `(hl-line
-     ((t (:background nil
-                      :box (:line-width (-1 . -1) :color ,vscode-border :style 'unspecified)))))
-   ;; Verical line for max size
-   `(fill-column-indicator ((t (:foreground ,vscode-border :background ,vscode-bg-dark))))
+     ((t (:background unspecified
+                      :box (:line-width (-1 . -1) :color ,vscode-border-dark :style 'unspecified)))))
+
+   ;; Vertical line for max size
+   `(fill-column-indicator ((t (:foreground ,vscode-border-dark :background ,vscode-bg-dark))))
 
    ;; Minibuffer
    `(minibuffer-prompt ((t (:foreground ,vscode-line-number :background ,vscode-bg-dark))))
@@ -102,17 +108,23 @@
    `(helm-selection ((t (:foreground ,vscode-fg-light :background ,highlight))))
    `(helm-source-header ((t (:foreground ,vscode-fg-light :background ,vscode-bg-light :weight bold))))
 
-   ;; Highlight indendt guide
+   ;; Highlight indent guide
+   ;; The nprmal color should be "vscode-border" in order to be equal
+   ;; to Visual Studio Code theme.
+   `(highlight-indent-guides-character-face  ((t (:foreground ,vscode-border-dark))))
+   `(highlight-indent-guides-even-face  ((t (:foreground ,vscode-border-dark))))
+   `(highlight-indent-guides-odd-face  ((t (:foreground ,vscode-border-dark))))
+   `(highlight-indent-guides-stack-character-face  ((t (:foreground ,vscode-shadow))))
+   `(highlight-indent-guides-stack-even-face  ((t (:foreground ,vscode-shadow))))
+   `(highlight-indent-guides-stack-odd-face  ((t (:foreground ,vscode-shadow))))
+   `(highlight-indent-guides-top-character-face  ((t (:foreground ,vscode-shadow))))
+   `(highlight-indent-guides-top-even-face  ((t (:foreground ,vscode-shadow))))
+   `(highlight-indent-guides-top-odd-face  ((t (:foreground ,vscode-shadow))))
 
- ;;  `(highlight-indent-guides-character-face  ((t (:foreground ,vscode-border :background ,vscode-bg-light))))
- ;;  `(highlight-indent-guides-even-face  ((t (:foreground ,vscode-border :background ,vscode-bg-light))))
- ;;  `(highlight-indent-guides-odd-face  ((t (:foreground ,vscode-border :background ,vscode-bg-light))))
- ;;  `(highlight-indent-guides-stack-character-face  ((t (:foreground ,vscode-shadow :background ,vscode-bg-light))))
- ;;  `(highlight-indent-guides-stack-even-face  ((t (:foreground ,vscode-shadow :background ,vscode-bg-light))))
- ;;  `(highlight-indent-guides-stack-odd-face  ((t (:foreground ,vscode-shadow :background ,vscode-bg-light))))
- ;;  `(highlight-indent-guides-top-character-face  ((t (:foreground ,vscode-shadow :background ,vscode-bg-light))))
- ;;  `(highlight-indent-guides-top-even-face  ((t (:foreground ,vscode-shadow :background ,vscode-bg-light))))
- ;;  `(highlight-indent-guides-top-odd-face  ((t (:foreground ,vscode-shadow :background ,vscode-bg-light))))
+   ;; Git gutter
+   `(git-gutter:added  ((t (:foreground ,vscode-git-added))))
+   `(git-gutter:deleted  ((t (:foreground ,vscode-error))))
+   `(git-gutter:modified  ((t (:foreground ,vscode-git-modified))))
 
    ;; Matching parenthesis
    `(show-paren-match
