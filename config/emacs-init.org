@@ -1,406 +1,10 @@
 #+AUTHOR: Alessandro Passerini
 #+TITLE: Emacs Configuration
 
-* Base setup
-** Path for executable files
-
-The environment variables in Emacs looks the same as in user's shell.
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (use-package exec-path-from-shell
-    ;; (Works only on Linux/Mac)
-    :if (memq window-system '(mac ns x))
-    :ensure t
-    :config
-    (setq exec-path-from-shell-arguments nil)
-    (setq exec-path-from-shell-check-startup-files nil)
-    (exec-path-from-shell-initialize)
-    )
-#+END_SRC
-
-** Separate customization file
-
-The customize command let's Emacs to configure each aspects of the editor.
-In order to keep clean configuration all customizations are written
-in a separate file.
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-  ;; Use a separate custom file
-  (setq custom-file "~/.emacs.d/custom.el")
-  (cond
-   ((file-exists-p custom-file) (load custom-file t t))
-   )
-#+END_SRC
-
-** Customize saving buffers
-
-Save buffers needs to be performed without confirmation.
-Also we want to refresh magit buffers automatically.
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (defun my-save()
-    "Save current buffer without confirmation."
-    (interactive)
-
-    (save-buffer t)
-    (if (fboundp 'magit-refresh-all)
-      (magit-refresh-all))
-    )
-#+END_SRC
-
-Also we want a keystroke to save all buffers.
-Both these setup will be performed later.
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (defun my-save-all()
-    "Save all buffers without confirmation and refresh magit."
-    (interactive)
-
-    (save-some-buffers t)
-    (if (fboundp 'magit-refresh-all)
-      (magit-refresh-all))
-    (message "Saved all files.")
-    )
-#+END_SRC
-
-** Auto reload on change
-
-Some CLI tools (beautifiers, linters, ..) can change the files on disk.
-This preference ensures Emacs reload buffer automatically.
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (global-auto-revert-mode t)
-#+END_SRC
-
-** Backup preferences
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (defun my-backup-preferences()
-    "Apply my backup preference."
-
-    ;; Temporary .#files interferes with Angular
-    (setq create-lockfiles nil)
-
-    ;; Backup files copying them into a subdirectory
-    (setq backup-directory-alist `(("." . "~/.saves")))
-
-    (setq make-backup-files t               ; backup of a file the first time it is saved.
-          backup-by-copying t               ; don't clobber symlinks
-          version-control t                 ; version numbers for backup files
-          delete-old-versions t             ; delete excess backup files silently
-          delete-by-moving-to-trash t
-          kept-old-versions 6               ; oldest versions to keep when a new numbered backup is made (default: 2)
-          kept-new-versions 9               ; newest versions to keep when a new numbered backup is made (default: 2)
-          auto-save-default t               ; auto-save every buffer that visits a file
-          auto-save-timeout 20              ; number of seconds idle time before auto-save (default: 30)
-          auto-save-interval 200            ; number of keystrokes between auto-saves (default: 300)
-          )
-
-    ;; Save without messages
-    (setq-default save-silently t)
-
-    ;; Delete trailing whitespaces before saving
-    (add-hook 'before-save-hook 'delete-trailing-whitespace)
-
-    ;; No more typing the whole yes or no. Just y or n will do.
-    (fset 'yes-or-no-p 'y-or-n-p)
-    )
-#+END_SRC
-
-* Editing
-** Colors
-
-Define here all colors to be applyed to the user interface. Currently only defines a very light color compatible with atom-one-dark-theme.
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (defvar near-to-white-color "#86e6f2")
-#+END_SRC
-
-** Indent preferences (generic)
-
-First we define a set of default values to be used in every buffer.
-I prefer to avoid tabs for indentation.
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (defun my-indent-preferences()
-    "Setup default indentations."
-    (interactive)
-
-    ;; Do not use tabs by default
-    (setq-default indent-tabs-mode nil)
-
-    ;; Use 4 spaces by default
-    (setq-default tab-width 4)
-    (setq-default ruby-indent-level 2)
-    (setq-default css-indent-offset 4)
-    )
-#+END_SRC
-
-** Indent preferences (per-project)
-
-Add support for EditorConfig files.
-These files apply indentations and editor preferences for each file (per project).
-For more information please read: https://editorconfig.org/
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (use-package editorconfig
-    :ensure t
-    :config
-    (editorconfig-mode 1)
-    )
-#+END_SRC
-
-** Indent Guide
-
-Show indent guides.
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (defun my-bitmap-line (width height crep zrep)
-    "Defines a solid guide line, one pixels wide."
-    (let* ((left (/ (- width 2) 2))
-           (right (- width left 1))
-           (row (append (make-list left zrep) (make-list 1 crep) (make-list right zrep)))
-           rows)
-      (dotimes (i height rows)
-        (setq rows (cons row rows)))))
-
-  (use-package highlight-indent-guides
-    :ensure t
-    :defer t
-    :config
-    ;; Highlight the first level of indentation
-    (setq highlight-indent-guides-responsive 'top)
-    ;; Use a bitmap line ..
-    (setq highlight-indent-guides-method 'bitmap)
-    ;; .. customized with a one pixel with
-    (setq highlight-indent-guides-bitmap-function 'my-bitmap-line)
-
-    ;; This plays well with VSCode Theme
-    (set-face-foreground 'highlight-indent-guides-odd-face "#404040")
-    (set-face-foreground 'highlight-indent-guides-even-face "#404040")
-    (set-face-foreground 'highlight-indent-guides-character-face "#404040")
-    (set-face-foreground 'highlight-indent-guides-top-odd-face "#707070")
-    (set-face-foreground 'highlight-indent-guides-top-even-face "#707070")
-    (set-face-foreground 'highlight-indent-guides-top-character-face "#707070")
-
-    ;;(setq highlight-indent-guides-auto-odd-face-perc 5)
-    ;;(setq highlight-indent-guides-auto-even-face-perc 5)
-    ;;(setq highlight-indent-guides-auto-character-face-perc 20)
-
-    ;; Activate indent guides for all programming languages
-    :hook (prog-mode . highlight-indent-guides-mode)
-    )
-#+END_SRC
-
-** Cut-Paste like Windows
-
-Setup Cut-Paste like most Windows and MAC editors.
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-(defun my-cut-paste-preferences()
-  "Setup cut/paste preferences."
-  (interactive)
-
-  ;; Cut-Paste like Windows
-  (cua-mode t)
-
-  ;; Disable selection after copy.
-  ;; Standard Windows behaviour is to keep region instead.
-  (setq cua-keep-region-after-copy nil)
-
-  ;; Typed text deletes selected text
-  (delete-selection-mode t)
-
-  ;; No region when it is not highlighted
-  (transient-mark-mode 1)
-  )
-#+END_SRC
-
-** Search and Replace
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (use-package visual-regexp
-    :ensure t
-    :defer t
-    :init
-    (setq vr/auto-show-help t)
-
-    :config
-    (set-face-attribute 'vr/match-0 nil
-       :foreground 'unspecified
-       :background "#623315"
-       :weight 'extra-bold
-       :box '(:line-width (-1 . -1)
-              :color "#767676"
-              :style nil)
-      )
-    (set-face-attribute 'vr/match-1 nil
-      :foreground 'unspecified
-      :background "#623315"
-      :weight 'extra-bold
-      :box '(:line-width (-1 . -1)
-             :color "#767676"
-             :style nil)
-      )
-    :bind (
-           ("S-C-r" . vr/mc-mark)
-           ("C-r" . vr/replace)
-           )
-    )
-#+END_SRC
-
-** Search preferences
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (defun my-search-preferences()
-    "Configure search & replace."
-    (interactive)
-
-;;    (set-face-attribute 'isearch nil
-;;      :foreground 'unspecified
-;;      :background 'unspecified
-;;      :weight 'extra-bold
-;;      :box '(:line-width (-1 . -1)
-;;             :color "near-to-white"
-;;             :style nil)
-;;      )
-    )
-#+END_SRC
-
-** Word wrap
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (defun my-word-wrap()
-    "Manage word wrap"
-    (interactive)
-
-    (setq-default truncate-lines t)
-    )
-#+END_SRC
-
-** Move line
-
-Almost all IDE has keystrokes to move and duplicate lines.
-The package move-dup implements the same feature in Emacs.
-This package interferes with org-mode so we
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (defun my-activate-move-dup()
-    "Choose when activate mode-dup"
-    (interactive)
-
-    (if (eq major-mode 'org-mode)
-        (message "move-dup disabled in org-mode")
-        (move-dup-mode)
-        )
-    )
-
-  (use-package move-dup
-    :ensure t
-    :defer t
-    :hook (
-           (after-change-major-mode  . my-activate-move-dup)
-           )
-    :bind (
-           ("M-<up>" . md-move-lines-up)
-           ("M-<down>" . md-move-lines-down)
-           ("M-C-<up>" . md-duplicate-up)
-           ("M-C-<down>" . md-duplicate-down)
-           )
-    )
-#+END_SRC
-
-** Find other files
-
-The *ff-find-other-file* function is used to search for file related to the current buffer.
-An example is switching between files such as C/C++ header files.
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (defun my-other-file-settings()
-    "Redefine search for other files"
-    (interactive)
-
-    (defvar my-other-file-alist
-      '(
-        ("\\.component.html\\'" (".component.ts" ".component.spec.ts" ".component.scss"))
-        ("\\.component.ts\\'" (".component.spec.ts" ".component.scss" ".component.html"))
-        ("\\.component.spec.ts\\'" (".component.scss" ".component.html" ".component.ts"))
-        ("\\.component.scss\\'" (".component.html" ".component.ts" ".component.spec.ts"))
-
-        ("\\.service.ts\\'" (".service.spec.ts"))
-        ("\\.service.spec.ts\\'" (".service.ts"))
-
-        ("\\.guard.ts\\'" (".guard.spec.ts"))
-        ("\\.guard.spec.ts\\'" (".guard.ts"))
-        ))
-
-    (setq-default ff-other-file-alist 'my-other-file-alist)
-    )
-#+END_SRC
-
-** Multiple Cursors
-
-Add the ability to manage multiple cursors.
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (use-package multiple-cursors
-    :ensure t
-    :config
-
-    ;; Needed to configure this package
-  (require 'multiple-cursors)
-
-  ;; Always run commands
-  (setq-default mc/always-run-for-all t)
-  ;; Always run commands
-  (setq-default mc/always-repeat-command t)
-  ;; Safety ceil
-  (setq-default mc/max-cursors 30)
-
-  (set-face-attribute 'mc/cursor-bar-face nil :background "white" :height 1)
-
-  ;; NO NOT USE :bind here
-  ;; It doesn't seems working well with multiple cursor
-
-  ;; Exit using escape
-  (define-key mc/keymap (kbd "<escape>") 'mc/keyboard-quit)
-
-  ;; will make <return> insert a newline; multiple-cursors-mode can still
-  ;; be disabled with C-g / ESC
-  (define-key mc/keymap (kbd "<return>") nil)
-
-  ;; Basic selection
-  (global-set-key (kbd "C-D") 'mc/mark-next-like-this-word)
-  (global-set-key (kbd "M-S-<up>") 'mc/mark-previous-lines)
-  (global-set-key (kbd "M-S-<down>") 'mc/mark-next-lines)
-  )
-#+END_SRC
-
-** Compile Preferences
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (defun my-compiling-preferences()
-    "Configure compiler."
-    (interactive)
-
-    ;; Auto-save before compiling
-    (setq compilation-ask-about-save nil)
-
-    ;; Never prompt to kill a compilation session.
-    (setq-default compilation-always-kill t)
-
-    ;; Always scroll to the bottom.
-    (setq-default compilation-scroll-output t)
-
-    ;; Show ANSI color
-    (add-hook 'compilation-filter-hook 'ansi-color-compilation-filter)
-    )
-#+END_SRC
-
 * User Interface
 
-All customization are defined inside functions.
-We'll activate everything when loading theme.
+Definitions of colors, fonts, icons, windows positions and all other visual stuffs.
+All customization are defined inside functions or within "use-package" callbacks.
 
 ** Remove unwanted buffers
 
@@ -410,7 +14,6 @@ Also show an empty scratch when starting.
 #+BEGIN_SRC emacs-lisp :tangle yes
   (defun my-manage-buffers()
     "Remove unwanted buffers."
-    (interactive)
 
     ;; Empty scratch buffer
     (setq initial-scratch-message nil)
@@ -429,47 +32,13 @@ Also show an empty scratch when starting.
 
     ;; Removes *Completions* from buffer after you've opened a file.
     (add-hook 'minibuffer-exit-hook
-              #'(lambda ()
-                  (let ((buffer "*Completions*"))
-                    (and (get-buffer buffer)
-                         (kill-buffer buffer)))))
-    )
-#+END_SRC
-
-** Icons
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (use-package nerd-icons
-    :ensure t
-    ;; :custom
-    ;; The Nerd Font you want to use in GUI
-    ;; "Symbols Nerd Font Mono" is the default and is recommended
-    ;; but you can use any other Nerd Font if you want
-    ;; (nerd-icons-font-family "Symbols Nerd Font Mono")
+	      #'(lambda ()
+		  (let ((buffer "*Completions*"))
+		    (and (get-buffer buffer)
+			 (kill-buffer buffer)))))
     )
 
-  (use-package nerd-icons-completion
-    :ensure t
-    :defer t
-    :after (:lsp)
-    :config
-    (nerd-icons-completion-mode)
-    )
-
-  (use-package treemacs-nerd-icons
-    :ensure t
-    :defer t
-    :after (:treemacs)
-    :config
-    (treemacs-load-theme "nerd-icons")
-    )
-
-  (use-package nerd-icons-dired
-     :ensure t
-     :defer t
-     :hook
-     (dired-mode . nerd-icons-dired-mode)
-     )
+  (my-manage-buffers)
 #+END_SRC
 
 ** Fonts
@@ -503,210 +72,24 @@ These fonts should be installed manually.
     )
 #+END_SRC
 
-** Kill buffers
+** Load theme
 
-Utility for killing buffers other than current buffer.
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-(defun my-kill-other-buffers ()
-    "Kill all other buffers."
-    (interactive)
-
-    (mapc 'kill-buffer
-          (delq (current-buffer)
-                (remove-if-not 'buffer-file-name (buffer-list))))
-    (message "Killed other buffers")
-    )
-#+END_SRC
-
-** Cursor style
-
-Set default cursor style.
+Load theme as soon as possible setting the base colors for each element.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-  (defun my-setup-cursor()
-    "My setup cursor."
-    (interactive)
-
-    ;; Cursor like a bar
-    (setq-default cursor-type '(bar . 3))
-    ;; Set cursor color
-    (set-cursor-color "white")
-    ;; Blink cursor
-    (blink-cursor-mode)
-    )
+  (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
+  ;;(load-theme 'vscode t)
+  (load-theme 'vscode-dark-modern t)
 #+END_SRC
 
-** Line numbers
+** Mode line
 
-Line numbers are useful in programming mode.
-Define the function now. Loading theme triggers this function.
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (defun my-line-preferences()
-    "Setup line numbers."
-    (interactive)
-
-    ;; Manage line numbers
-    (setq display-line-numbers-width 5)
-    (add-hook 'prog-mode-hook 'display-line-numbers-mode)
-    (add-hook 'json-mode-hook 'display-line-numbers-mode)
-    (add-hook 'yaml-mode-hook 'display-line-numbers-mode)
-
-    ;; Show active line (globally)
-    (global-hl-line-mode)
-    )
-#+END_SRC
-
-** End-of-line vertical ruler
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (defun my-display-fill-column()
-    "Show a vertical line at the end of the line"
-    (interactive)
-
-    (setq-default fill-column 80)
-    (add-hook 'prog-mode-hook 'display-fill-column-indicator-mode)
-    )
-#+END_SRC
-
-** Show parentesis match
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (defun my-show-parens()
-    "Apply style to parenthesis match."
-    (interactive)
-
-    (show-paren-mode +1)
-    (setq show-paren-style 'parenthesis)
-    (set-face-attribute 'show-paren-match nil
-                        :foreground 'unspecified
-                        :background 'unspecified
-                        :weight 'extra-bold
-                        :box '(:line-width (-1 . -1)
-                               :color "#666"
-                               :style nil)
-                        )
-
-    (set-face-attribute 'show-paren-match nil
-                        :foreground 'unspecified
-                        :background 'unspecified
-                        :weight 'extra-bold
-                        :box '(:line-width (-1 . -1)
-                               :color "#666"
-                               :style nil)
-                        )
-    )
-#+END_SRC
-
-** Dired...
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (defun my-dired-settings()
-    "Beautify and improve dired view."
-    (interactive)
-
-    ;; open file in the same window
-    (eval-after-load "dired"
-      '(progn (define-key dired-mode-map [mouse-2] 'dired-mouse-find-file))
-      )
-
-    )
-#+END_SRC
-
-** Theme (and activate stuffs)
-
-The main theme is inspired to Visual Studio Code.
-Solaire helps enhance the current buffer.
-It should be run before the theme.
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (use-package solaire-mode
-    :ensure t
-    :config
-    (solaire-global-mode +1)
-    )
-#+END_SRC
-
-Now load the main theme.
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (use-package vscode-dark-plus-theme
-    :ensure t
-    :init
-
-    ;; Toggle full screen automatically
-    ;; (add-hook 'window-setup-hook 'toggle-frame-maximized t)
-
-    ;; In early stage customize all non-UI stuffs
-    (my-backup-preferences)
-    (my-manage-buffers)
-    (my-indent-preferences)
-    (my-cut-paste-preferences)
-    (my-word-wrap)
-    (my-compiling-preferences)
-
-    :config
-
-    ;; Remove the border around the TODO word on org-mode files
-    (setq vscode-dark-plus-box-org-todo nil)
-
-    ;; Do not set different heights for some org faces
-    (setq vscode-dark-plus-scale-org-faces nil)
-
-    ;; Avoid inverting hl-todo face
-    (setq vscode-dark-plus-invert-hl-todo nil)
-
-    ;; Configure current line highlighting style (works best with Emacs 28 or newer)
-    (setq vscode-dark-plus-render-line-highlight 'line)
-
-    ;; Load default theme
-    (load-theme 'vscode-dark-plus t)
-
-    ;; Customize UI stuffs after loading theme
-    (my-set-default-font)
-    (my-setup-cursor)
-    (my-line-preferences)
-    (my-display-fill-column)
-    (my-show-parens)
-    (my-search-preferences)
-    (my-dired-settings)
-    (my-other-file-settings)
-
-    ;; Fine tune
-    (set-face-attribute 'vertical-border nil :foreground "#252526")
-
-    :bind (
-           ("C-<f4>"   . 'kill-buffer-and-window)
-           ("C-w"      . 'kill-buffer-and-window)
-           ("S-C-<f4>" . 'my-kill-other-buffers)
-           ("S-C-w"    . 'my-kill-other-buffers)
-           ("<escape>" . 'keyboard-escape-quit)
-           ("C-s"      . 'my-save)
-           ("C-M-s"    . 'my-save-all)
-           ("C-S-a"    . 'ff-find-other-file)
-           ("C-S-x"    . 'list-packages)
-           ("C-ò"      . 'term)
-           ("C-/"      . 'comment-dwim)
-           ("C-S-["    . 'hs-hide-block)
-           ("C-S-]"    . 'hs-show-block)
-           ("C-S-m"    . 'flymake-show-buffer-diagnostics)
-           ("<f8>"     . 'flymake-goto-next-error)
-           ("S-<f8>"   . 'flymake-goto-previous-error)
-           )
-    )
-#+END_SRC
-
-Setup a fancy modeline
+Setup a fancy modeline..
 
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package doom-modeline
     :ensure t
     :init
-
-    ;; Adjust colors to theme
-    (set-face-attribute 'mode-line nil :background "#181818")
-    (set-face-attribute 'mode-line-inactive nil :background "#212121")
 
     ;; How tall the mode-line should be. It's only respected in GUI.
     ;; If the actual char height is larger, it respects the actual height.
@@ -738,7 +121,47 @@ Setup a fancy modeline
     )
 #+END_SRC
 
-Add project tree.
+** Initial loading progress bar
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defvar my-loading-dots "" "Dots for loading message.")
+
+  (defun my-update-loading-message (&optional base-message)
+    "Update loading message with increasing dots.
+     BASE-MESSAGE is the default loading message (default: \"Loading\").
+     The dots wraps after reaching 50 dots."
+    (let ((message (or base-message "Loading")))
+      (setq my-loading-dots
+        (if (< (length my-loading-dots) 50)
+        (concat my-loading-dots ".")
+          "")) ;; Resetta dopo 3 puntini
+      (message "%s%s" message my-loading-dots))
+  )
+#+END_SRC
+
+** Cursor style
+
+Set default cursor style.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my-setup-cursor()
+    "My setup cursor."
+
+    ;; Cursor like a bar
+    (setq-default cursor-type '(bar . 3))
+    ;; Set cursor color
+    (set-cursor-color "white")
+    ;; Blink cursor
+    (blink-cursor-mode)
+    )
+
+  (my-setup-cursor)
+  (my-update-loading-message)
+#+END_SRC
+
+** Tree
+
+Setup a sidenav tree.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package treemacs
@@ -828,6 +251,83 @@ Add project tree.
     )
 #+END_SRC
 
+** Icons
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package nerd-icons
+    :ensure t
+    ;; :custom
+    ;; The Nerd Font you want to use in GUI
+    ;; "Symbols Nerd Font Mono" is the default and is recommended
+    ;; but you can use any other Nerd Font if you want
+    ;; (nerd-icons-font-family "Symbols Nerd Font Mono")
+    :init
+      (my-update-loading-message)
+    )
+
+  (use-package nerd-icons-completion
+    :ensure t
+    :defer t
+    :after (:lsp)
+    :config
+    (nerd-icons-completion-mode)
+    )
+
+  (use-package treemacs-nerd-icons
+    :ensure t
+    :defer t
+    :after (:treemacs)
+    :config
+    (treemacs-load-theme "nerd-icons")
+    )
+
+  (use-package nerd-icons-dired
+     :ensure t
+     :defer t
+     :hook
+     (dired-mode . nerd-icons-dired-mode)
+     )
+#+END_SRC
+
+** Line numbers
+
+Line numbers are useful in programming mode.
+Define the function now. Loading theme triggers this function.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my-line-preferences()
+    "Setup line numbers."
+
+    ;; Manage line numbers
+    (setq display-line-numbers-width 5)
+    (add-hook 'prog-mode-hook 'display-line-numbers-mode)
+    (add-hook 'json-mode-hook 'display-line-numbers-mode)
+    (add-hook 'yaml-mode-hook 'display-line-numbers-mode)
+
+    ;; Show active line (globally)
+    (global-hl-line-mode)
+    )
+
+  (my-line-preferences)
+  (my-update-loading-message)
+#+END_SRC
+
+** End-of-line vertical ruler
+
+In programming modes it's useful to have a vertical line that show the right margin.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my-display-fill-column()
+    "Show a vertical line at the end of the line"
+
+    (setq-default fill-column 80)
+    (add-hook 'prog-mode-hook 'display-fill-column-indicator-mode)
+    )
+
+  (my-display-fill-column)
+  (my-update-loading-message)
+#+END_SRC
+
 ** Key Help Screen
 
 Show help for keybindings.
@@ -836,6 +336,7 @@ Show help for keybindings.
   (use-package which-key
     :ensure t
     :init
+    (my-update-loading-message)
     (which-key-setup-side-window-right)
     (which-key-mode)
     )
@@ -848,6 +349,8 @@ Force window positioning for a specified function.
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package shackle
     :ensure t
+    :init
+    (my-update-loading-message)
     :config
     (setq shackle-rules '(
                           ("\\`\\*[hH]elm.*?\\*\\'" :regexp t :align 'below :size 0.3)
@@ -859,6 +362,536 @@ Force window positioning for a specified function.
     (shackle-mode 1)
     )
 #+END_SRC
+
+* Base setup
+** Separate customization file
+
+The customize command let's Emacs to configure each aspects of the editor.
+In order to keep clean configuration all customizations are written
+in a separate file.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my-custom-file()
+    "Use a separate custom file"
+    (setq custom-file "~/.emacs.d/custom.el")
+    (cond
+     ((file-exists-p custom-file) (load custom-file t t))
+     )
+    )
+
+  (my-custom-file)
+  (my-update-loading-message)
+#+END_SRC
+
+** Path for executable files
+
+The environment variables in Emacs looks the same as in user's shell.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package exec-path-from-shell
+    ;; (Works only on Linux/Mac)
+    :if (memq window-system '(mac ns x))
+    :ensure t
+    :init
+    (my-update-loading-message)
+    :config
+    ;;(setq exec-path-from-shell-arguments nil)
+    ;;(setq exec-path-from-shell-check-startup-files nil)
+    (exec-path-from-shell-initialize)
+    )
+#+END_SRC
+
+** Customize saving buffers
+
+Save buffers needs to be performed without confirmation.
+Also we want to refresh magit buffers automatically.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my-save()
+    "Save current buffer without confirmation."
+    (interactive)
+
+    (save-buffer t)
+    (if (fboundp 'magit-refresh-all)
+      (magit-refresh-all))
+    )
+#+END_SRC
+
+Also we want a keystroke to save all buffers.
+Both these setup will be performed later.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my-save-all()
+    "Save all buffers without confirmation and refresh magit."
+    (interactive)
+
+    (save-some-buffers t)
+    (if (fboundp 'magit-refresh-all)
+      (magit-refresh-all))
+    (message "Saved all files.")
+    )
+#+END_SRC
+
+** Auto reload on change
+
+Some CLI tools (beautifiers, linters, ..) can change the files on disk.
+This preference ensures Emacs reload buffer automatically.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my-auto-revert()
+    "Reload when file has changed"
+
+    (global-auto-revert-mode t)
+    )
+
+  (my-auto-revert)
+  (my-update-loading-message)
+#+END_SRC
+
+** Backup preferences
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my-backup-preferences()
+    "Apply my backup preference."
+
+    ;; Temporary .#files interferes with Angular
+    (setq create-lockfiles nil)
+
+    ;; Backup files copying them into a subdirectory
+    (setq backup-directory-alist `(("." . "~/.saves")))
+
+    (setq make-backup-files t               ; backup of a file the first time it is saved.
+          backup-by-copying t               ; don't clobber symlinks
+          version-control t                 ; version numbers for backup files
+          delete-old-versions t             ; delete excess backup files silently
+          delete-by-moving-to-trash t
+          kept-old-versions 6               ; oldest versions to keep when a new numbered backup is made (default: 2)
+          kept-new-versions 9               ; newest versions to keep when a new numbered backup is made (default: 2)
+          auto-save-default t               ; auto-save every buffer that visits a file
+          auto-save-timeout 20              ; number of seconds idle time before auto-save (default: 30)
+          auto-save-interval 200            ; number of keystrokes between auto-saves (default: 300)
+          )
+
+    ;; Save without messages
+    (setq-default save-silently t)
+
+    ;; Delete trailing whitespaces before saving
+    (add-hook 'before-save-hook 'delete-trailing-whitespace)
+
+    ;; No more typing the whole yes or no. Just y or n will do.
+    (fset 'yes-or-no-p 'y-or-n-p)
+    )
+
+  (my-backup-preferences)
+  (my-update-loading-message)
+#+END_SRC
+
+* Editing
+** Indent preferences (generic)
+
+First we define a set of default values to be used in every buffer.
+I prefer to avoid tabs for indentation.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my-indent-preferences()
+    "Setup default indentations."
+
+    ;; Do not use tabs by default
+    (setq-default indent-tabs-mode nil)
+
+    ;; Use 4 spaces by default
+    (setq-default tab-width 4)
+    (setq-default ruby-indent-level 2)
+    (setq-default css-indent-offset 4)
+    )
+
+  (my-indent-preferences)
+  (my-update-loading-message)
+#+END_SRC
+
+** Indent preferences (per-project)
+
+Add support for EditorConfig files.
+These files apply indentations and editor preferences for each file (per project).
+For more information please read: https://editorconfig.org/
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package editorconfig
+    :ensure t
+    :init
+    (my-update-loading-message)
+    :config
+    (editorconfig-mode 1)
+    )
+#+END_SRC
+
+** Indent Guide
+
+Show indent guides.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+       (defun my-bitmap-line (width height crep zrep)
+         "Defines a solid guide line, one pixels wide."
+         (let* ((left (/ (- width 2) 2))
+                (right (- width left 1))
+                (row (append (make-list left zrep) (make-list 1 crep) (make-list right zrep)))
+                rows)
+           (dotimes (i height rows)
+             (setq rows (cons row rows)))))
+
+    ;;   (use-package highlight-indent-guides
+    ;;     :ensure t
+    ;;     :defer t
+    ;;     :config
+    ;;     ;; Highlight the first level of indentation
+    ;;     (setq highlight-indent-guides-responsive 'top)
+    ;;     ;; Use a bitmap line ..
+    ;;     (setq highlight-indent-guides-method 'bitmap)
+    ;;     ;; .. customized with a one pixel with
+    ;;     (setq highlight-indent-guides-bitmap-function 'my-bitmap-line)
+    ;;
+    ;;    ;; ;; This plays well with VSCode Theme
+    ;;    ;; (set-face-foreground 'highlight-indent-guides-odd-face "#404040")
+    ;;    ;; (set-face-foreground 'highlight-indent-guides-even-face "#404040")
+    ;;    ;; (set-face-foreground 'highlight-indent-guides-character-face "#404040")
+    ;;    ;; (set-face-foreground 'highlight-indent-guides-top-odd-face "#707070")
+    ;;    ;; (set-face-foreground 'highlight-indent-guides-top-even-face "#707070")
+    ;;    ;; (;;set-face-foreground 'highlight-indent-guides-top-character-face "#707070")
+    ;;
+    ;;     ;; Activate indent guides for all programming languages
+    ;;     :hook (prog-mode . highlight-indent-guides-mode)
+    ;;     )
+
+     (use-package highlight-indent-guides
+       :ensure t
+       :defer t
+
+       :custom
+        ;; Highlight the first level of indentation
+        (setq highlight-indent-guides-responsive 'top)
+        ;; Use a bitmap line ..
+        (setq highlight-indent-guides-method 'bitmap)
+       ;; .. customized with a one pixel with
+       (setq highlight-indent-guides-bitmap-function 'my-bitmap-line)
+
+
+
+       (setq highlight-indent-guides-auto-enabled nil) ; Usa colori manuali
+       :config
+
+       ;; Definisci i colori
+
+       ;; This plays well with VSCode Theme
+       (set-face-foreground 'highlight-indent-guides-odd-face "#404040")
+       (set-face-foreground 'highlight-indent-guides-even-face "#404040")
+       (set-face-foreground 'highlight-indent-guides-character-face "#404040")
+       (set-face-foreground 'highlight-indent-guides-top-odd-face "#707070")
+       (set-face-foreground 'highlight-indent-guides-top-even-face "#707070")
+       (set-face-foreground 'highlight-indent-guides-top-character-face "#707070")
+       :hook (prog-mode . highlight-indent-guides-mode)
+       )
+#+END_SRC
+
+** Cut-Paste like Windows
+
+Setup Cut-Paste like most Windows and MAC editors.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my-cut-paste-preferences()
+    "Setup cut/paste preferences."
+
+    ;; Cut-Paste like Windows
+    (cua-mode t)
+
+    ;; Disable selection after copy.
+    ;; Standard Windows behaviour is to keep region instead.
+    (setq cua-keep-region-after-copy nil)
+
+    ;; Typed text deletes selected text
+    (delete-selection-mode t)
+
+    ;; No region when it is not highlighted
+    (transient-mark-mode 1)
+    )
+
+  (my-cut-paste-preferences)
+  (my-update-loading-message)
+#+END_SRC
+
+** Search and Replace
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package visual-regexp
+    :ensure t
+    :defer t
+    :init
+    (setq vr/auto-show-help t)
+
+    :config
+    (set-face-attribute 'vr/match-0 nil
+       :foreground 'unspecified
+       :background "#623315"
+       :weight 'extra-bold
+       :box '(:line-width (-1 . -1)
+              :color "#767676"
+              :style nil)
+      )
+    (set-face-attribute 'vr/match-1 nil
+      :foreground 'unspecified
+      :background "#623315"
+      :weight 'extra-bold
+      :box '(:line-width (-1 . -1)
+             :color "#767676"
+             :style nil)
+      )
+    :bind (
+           ("S-C-r" . vr/mc-mark)
+           ("C-r" . vr/replace)
+           )
+    )
+#+END_SRC
+
+** Word wrap
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my-word-wrap()
+    "Manage word wrap"
+    (interactive)
+
+    (setq-default truncate-lines t)
+    )
+#+END_SRC
+
+** Move line
+
+Almost all IDE has keystrokes to move and duplicate lines.
+The package move-dup implements the same feature in Emacs.
+This package interferes with org-mode so we
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my-activate-move-dup()
+    "Choose when activate mode-dup"
+    (interactive)
+
+    (if (eq major-mode 'org-mode)
+        (message "move-dup disabled in org-mode")
+        (move-dup-mode)
+        )
+    )
+
+  (use-package move-dup
+    :ensure t
+    :defer t
+    :hook (
+           (after-change-major-mode  . my-activate-move-dup)
+           )
+    :bind (
+           ("M-<up>" . md-move-lines-up)
+           ("M-<down>" . md-move-lines-down)
+           ("M-C-<up>" . md-duplicate-up)
+           ("M-C-<down>" . md-duplicate-down)
+           )
+    )
+#+END_SRC
+
+** Find other files
+
+The *ff-find-other-file* function is used to search for file related to the current buffer.
+An example is switching between files such as C/C++ header files.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my-other-file-settings()
+    "Redefine search for other files"
+    (interactive)
+
+    (defvar my-other-file-alist
+      '(
+        ("\\.component.html\\'" (".component.ts" ".component.spec.ts" ".component.scss"))
+        ("\\.component.ts\\'" (".component.spec.ts" ".component.scss" ".component.html"))
+        ("\\.component.spec.ts\\'" (".component.scss" ".component.html" ".component.ts"))
+        ("\\.component.scss\\'" (".component.html" ".component.ts" ".component.spec.ts"))
+
+        ("\\.service.ts\\'" (".service.spec.ts"))
+        ("\\.service.spec.ts\\'" (".service.ts"))
+
+        ("\\.guard.ts\\'" (".guard.spec.ts"))
+        ("\\.guard.spec.ts\\'" (".guard.ts"))
+        ))
+
+    (setq-default ff-other-file-alist 'my-other-file-alist)
+    )
+#+END_SRC
+
+** Multiple Cursors
+
+Add the ability to manage multiple cursors.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package multiple-cursors
+    :ensure t
+    :init
+    (my-update-loading-message)
+    :config
+
+    ;; Needed to configure this package
+    (require 'multiple-cursors)
+
+    ;; Always run commands
+    (setq-default mc/always-run-for-all t)
+    ;; Always run commands
+    (setq-default mc/always-repeat-command t)
+    ;; Safety ceil
+    (setq-default mc/max-cursors 30)
+
+    (set-face-attribute 'mc/cursor-bar-face nil :background "white" :height 1)
+
+    ;; NO NOT USE :bind here
+    ;; It doesn't seems working well with multiple cursor
+
+    ;; Exit using escape
+    (define-key mc/keymap (kbd "<escape>") 'mc/keyboard-quit)
+
+    ;; will make <return> insert a newline; multiple-cursors-mode can still
+    ;; be disabled with C-g / ESC
+    (define-key mc/keymap (kbd "<return>") nil)
+
+    ;; Basic selection
+    (global-set-key (kbd "C-D") 'mc/mark-next-like-this-word)
+    (global-set-key (kbd "M-S-<up>") 'mc/mark-previous-lines)
+    (global-set-key (kbd "M-S-<down>") 'mc/mark-next-lines)
+    )
+#+END_SRC
+
+** Compile Preferences
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my-compiling-preferences()
+    "Configure compiler."
+
+    ;; Auto-save before compiling
+    (setq compilation-ask-about-save nil)
+
+    ;; Never prompt to kill a compilation session.
+    (setq-default compilation-always-kill t)
+
+    ;; Always scroll to the bottom.
+    (setq-default compilation-scroll-output t)
+
+    ;; Show ANSI color
+    (add-hook 'compilation-filter-hook 'ansi-color-compilation-filter)
+    )
+
+  (my-compiling-preferences)
+  (my-update-loading-message)
+#+END_SRC
+
+* User Interface
+
+** Kill buffers
+
+Utility for killing buffers other than current buffer.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my-kill-other-buffers ()
+    "Kill all other buffers."
+    (interactive)
+
+    (mapc 'kill-buffer
+          (delq (current-buffer)
+                (remove-if-not 'buffer-file-name (buffer-list))))
+    (message "Killed other buffers")
+    )
+#+END_SRC
+
+
+** Dired...
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my-dired-settings()
+    "Beautify and improve dired view."
+
+    ;; open file in the same window
+    (eval-after-load "dired"
+      '(progn (define-key dired-mode-map [mouse-2] 'dired-mouse-find-file))
+      )
+    )
+#+END_SRC
+
+** Theme (and activate stuffs)
+
+
+Now load the main theme.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+;  (use-package vscode-dark-plus-theme
+;    :ensure t
+;    :init
+;
+;    ;; Toggle full screen automatically
+;    ;; (add-hook 'window-setup-hook 'toggle-frame-maximized t)
+;
+;    ;; In early stage customize all non-UI stuffs
+;    (my-backup-preferences)
+;    (my-manage-buffers)
+;    (my-indent-preferences)
+;    (my-cut-paste-preferences)
+;    (my-word-wrap)
+;    (my-compiling-preferences)
+;
+;    :config
+;
+;    ;; Remove the border around the TODO word on org-mode files
+;    (setq vscode-dark-plus-box-org-todo nil)
+;
+;    ;; Do not set different heights for some org faces
+;    (setq vscode-dark-plus-scale-org-faces nil)
+;
+;    ;; Avoid inverting hl-todo face
+;    (setq vscode-dark-plus-invert-hl-todo nil)
+;
+;    ;; Configure current line highlighting style (works best with Emacs 28 or newer)
+;    (setq vscode-dark-plus-render-line-highlight 'line)
+;
+;    ;; Load default theme
+;    (load-theme 'vscode-dark-plus t)
+;
+;    ;; Customize UI stuffs after loading theme
+;    (my-set-default-font)
+;    (my-setup-cursor)
+;    (my-line-preferences)
+;    (my-display-fill-column)
+;    (my-show-parens)
+;    (my-search-preferences)
+;    (my-dired-settings)
+;    (my-other-file-settings)
+;
+;    ;; Fine tune
+;    (set-face-attribute 'vertical-border nil :foreground "#252526")
+;
+;    :bind (
+;           ("C-<f4>"   . 'kill-buffer-and-window)
+;           ("C-w"      . 'kill-buffer-and-window)
+;           ("S-C-<f4>" . 'my-kill-other-buffers)
+;           ("S-C-w"    . 'my-kill-other-buffers)
+;           ("<escape>" . 'keyboard-escape-quit)
+;           ("C-s"      . 'my-save)
+;           ("C-M-s"    . 'my-save-all)
+;           ("C-S-a"    . 'ff-find-other-file)
+;           ("C-S-x"    . 'list-packages)
+;           ("C-ò"      . 'term)
+;           ("C-/"      . 'comment-dwim)
+;           ("C-S-["    . 'hs-hide-block)
+;           ("C-S-]"    . 'hs-show-block)
+;           ("C-S-m"    . 'flymake-show-buffer-diagnostics)
+;           ("<f8>"     . 'flymake-goto-next-error)
+;           ("S-<f8>"   . 'flymake-goto-previous-error)
+;           )
+;    )
+#+END_SRC
+
+
+
+
 
 * Completion
 ** Install Helm
@@ -949,8 +982,10 @@ We want to use helm for selecting and narrowing projects.
            ("S-C-o" . helm-projectile-switch-project)
            ("C-t"   . helm-projectile-find-file)
            ;; Switch all buffers
-           ("C-<tab>"         . helm-projectile-switch-to-buffer)
-           ("C-<iso-lefttab>" . helm-projectile-switch-to-buffer)
+           ("C-<tab>"         . helm-buffers-list)
+           ("C-<iso-lefttab>" . helm-buffers-list)
+           ("C-S-<tab>"         . helm-projectile-switch-to-buffer)
+           ("C-S-<iso-lefttab>" . helm-projectile-switch-to-buffer)
            :map helm-map
            ;; Use tab to narrow selection
            ("C-<tab>"         . helm-next-line)
@@ -1490,7 +1525,7 @@ Manage nginx configuration files.
 * Misc tools
 ** Impatient Mode
 
-The package imatient mode provides a tool for show HTML page on demand.
+The package "impatient mode" provides a tool for edit HTML page on the fly.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package impatient-mode
