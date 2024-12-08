@@ -70,8 +70,4 @@
 (setq package-native-compile t)
 (setq comp-async-report-warnings-errors nil)
 
-;; Fix compile warnings
-
-;;(setq personal-keybindings ())
-
 ;;; early-init.el ends here
