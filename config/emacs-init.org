@@ -821,10 +821,6 @@ Add the ability to manage multiple cursors.
   (my-update-loading-message)
 #+END_SRC
 
-
-
-
-
 * Completion
 ** Install Helm
 
@@ -1423,7 +1419,6 @@ Manage nginx configuration files.
   (use-package haml-mode
     :ensure t
     :defer t
-
     )
 #+END_SRC
 
@@ -1460,6 +1455,20 @@ Manage nginx configuration files.
   (use-package git-modes
     :ensure t
     :defer t
+    )
+#+END_SRC
+
+** Language: Git
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package systemd
+    :ensure t
+    :defer t
+    :mode ("\\.service\\'" "\\.timer\\'" "\\.target\\'" "\\.socket\\'"
+           "\\.mount\\'" "\\.automount\\'" "\\.swap\\'" "\\.path\\'"
+           "\\.slice\\'" "\\.scope\\'")
+   ;; :config
+   ;; (add-hook 'systemd-mode-hook #'turn-on-font-lock)
     )
 #+END_SRC
 

@@ -17,7 +17,7 @@
   )
 
   (message "Byte-compiling init file ...")
-  (byte-compile-file my-init-file t)
+  (byte-compile-file my-init-file)
 )
 
 ;; Then load it
