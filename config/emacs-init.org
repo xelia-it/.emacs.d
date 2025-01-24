@@ -1182,6 +1182,7 @@ Add lsp-ui package for better user interface.
 
 Use a fancy box for completion selection.
 
+
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package company
     :ensure t
