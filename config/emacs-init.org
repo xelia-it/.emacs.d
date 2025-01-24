@@ -1,162 +1,292 @@
 #+AUTHOR: Alessandro Passerini
 #+TITLE: Emacs Configuration
 
-* Package Management
-** Setup repositories and use-package
-
-Setup repository.
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-;; Setup repository
-;;(require 'package)
-;;(setq package-enable-at-startup nil)
-
-(defvar repo-gnu '("gnu" . "https://elpa.gnu.org/packages/"))
-(defvar repo-melpa '("melpa" . "https://melpa.org/packages/"))
-(defvar repo-melpa-stable '("melpa-stable" . "https://stable.melpa.org/packages/"))
-(defvar repo-org-elpa '("org" . "http://orgmode.org/elpa/"))
-
-(setq package-archives nil)
-(add-to-list 'package-archives repo-gnu t)
-(add-to-list 'package-archives repo-melpa t)
-;; (add-to-list 'package-archives repo-melpa-stable t)
-(add-to-list 'package-archives repo-org-elpa t)
-#+END_SRC
-
-Now we can force Emacs to install use-package if it's not present.
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-;; Downloads new packages in case of a fresh install
-(package-initialize)
-
-;; Install use-package package if not present
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
-
-(eval-when-compile
-  (require 'use-package))
-#+END_SRC
-** Configuration
-
-The environment variables in Emacs looks the same as in user's shell.
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-;; Set the path variable
-;; (Works only on Linux/Mac)
-(use-package exec-path-from-shell
-  :if (memq window-system '(mac ns x))
-  :ensure t
-  :config
-  (setq exec-path-from-shell-check-startup-files nil)
-    (exec-path-from-shell-initialize)
-  )
-#+END_SRC
-
-** Separate customization file
-
-The customize command let's Emacs to configure each aspects of the editor.
-In order to keep clean configuration all customizations are written
-in a separate file.
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-;; Use a separate custom file
-(setq custom-file "~/.emacs.d/custom.el")
-(cond
- ((file-exists-p custom-file) (load custom-file t t))
- )
-#+END_SRC
-
 * User Interface
-** Colors
 
-Define here all colors to be applyed to the user interface.
-Currently only defines a very light color compatible with atom-one-dark-theme.
+Definitions of colors, fonts, icons, windows positions and all other visual stuffs.
+All customization are defined inside functions or within "use-package" callbacks.
+
+** Remove unwanted buffers
+
+Remove all unwanted buffers and limit the amounte of messages shown.
+Also show an empty scratch when starting.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(defvar near-to-white-color "#86e6f2")
+  (defun my-manage-buffers()
+    "Remove unwanted buffers."
+
+    ;; Empty scratch buffer
+    (setq initial-scratch-message nil)
+
+    ;; Scratch buffer without any stuff (simple text)
+    (setq initial-major-mode 'text-mode)
+
+    ;; Empty minibuffer message
+    (defun display-startup-echo-area-message()
+      "Overwrite default startup message."
+      (message ""))
+
+    ;; Increase error level in *Warnings* buffer
+    ;; (default is :warning). Removes many unwanted warnings.
+    (setq warning-minimum-level :error)
+
+    ;; Removes *Completions* from buffer after you've opened a file.
+    (add-hook 'minibuffer-exit-hook
+	      #'(lambda ()
+		  (let ((buffer "*Completions*"))
+		    (and (get-buffer buffer)
+			 (kill-buffer buffer)))))
+    )
+
+  (my-manage-buffers)
 #+END_SRC
 
-** Font
+** Fonts
 
-Setup default fonts and size.
-Add your preferred fonts in this list.
+Set the default font for the editor.
+It tries to use Visual Studio Code fonts first ("Consolas" then "Monaco").
+If these are not installed it fallbacks to "DejaVu Sans Mono" that is pretty common.
+These fonts should be installed manually.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(defun my-setup-font()
-  "Setup default font and size."
-  (interactive)
+  (defun my-set-default-font()
+    "Set default font"
+    (cond
 
-  (cond
-    ((member "Monospace" (font-family-list)) (set-face-font 'default "Monospace"))
-    ((member "DejaVu Sans Mono" (font-family-list)) (set-face-font 'default "DejaVu Sans Mono"))
-    ((member "Source Code Pro" (font-family-list)) (set-face-font 'default "Source Code Pro"))
+     ((find-font (font-spec :name "Monospace"))
+      (set-frame-font "Monospace 11" nil t)
+      )
+
+     ((find-font (font-spec :name "Consolas"))
+      (set-frame-font "Consolas 12" nil t)
+      )
+
+     ((find-font (font-spec :name "Monaco"))
+      (set-frame-font "Monaco 11" nil t)
+      )
+
+     ((find-font (font-spec :name "DejaVu Sans Mono"))
+      (set-frame-font "DejaVu Sans Mono 11" nil t)
+      )
+     )
+    )
+#+END_SRC
+
+** Load theme
+
+Load theme as soon as possible setting the base colors for each element.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
+  ;;(load-theme 'vscode t)
+  (load-theme 'vscode-dark-modern t)
+#+END_SRC
+
+** Mode line
+
+Setup a fancy modeline..
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package doom-modeline
+    :ensure t
+    :init
+
+    ;; How tall the mode-line should be. It's only respected in GUI.
+    ;; If the actual char height is larger, it respects the actual height.
+    (setq doom-modeline-height 28)
+
+    ;; How wide the mode-line bar should be. It's only respected in GUI.
+    (setq doom-modeline-bar-width 1)
+
+    ;; Expand all files and dir from project
+    (setq doom-modeline-buffer-file-name-style 'relative-from-project)
+
+    ;; Show buffer name always with the same color
+    (setq doom-modeline-highlight-modified-buffer-name nil)
+
+    ;; Show line and column position
+    (setq doom-modeline-position-line-format '("%4l:%c"))
+
+    ;; Hide position within buffer
+    (setq doom-modeline-percent-position '(""))
+
+    ;; Whether display the buffer encoding.
+    (setq doom-modeline-buffer-encoding nil)
+
+    ;; The maximum displayed length of the branch name of version control.
+    (setq doom-modeline-vcs-max-length 30)
+
+    ;; Activate modeline everywhere
+    (doom-modeline-mode 1)
+    )
+#+END_SRC
+
+** Initial loading progress bar
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defvar my-loading-dots "" "Dots for loading message.")
+
+  (defun my-update-loading-message (&optional base-message)
+    "Update loading message with increasing dots.
+     BASE-MESSAGE is the default loading message (default: \"Loading\").
+     The dots wraps after reaching 50 dots."
+    (let ((message (or base-message "Loading")))
+      (setq my-loading-dots
+        (if (< (length my-loading-dots) 50)
+        (concat my-loading-dots ".")
+          "")) ;; Resetta dopo 3 puntini
+      (message "%s%s" message my-loading-dots))
   )
-
-  (set-face-attribute 'default nil :height 110)
-)
-#+END_SRC
-
-** Disable unwanted UI stuffs
-
-Scollbars, menu bars, splash screen are distracting and occupies space.
-Remove all unwanted features.
-Please note that we only define a function.
-It'll be called later when the theme is loaded.
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-(defun my-remove-annoying-ui-features()
-  "Remove unwanted UI stuffs."
-  (interactive)
-
-  ;; No more default Emacs splash screen
-  (setq inhibit-splash-screen t)
-
-  ;; Empty scratch buffer
-  (setq initial-scratch-message nil)
-  ;; Scratch buffer without any stuff (simple text)
-  (setq initial-major-mode 'text-mode)
-
-  ;; Empty minibuffer message
-  (defun display-startup-echo-area-message()
-    "Overwrite default startup message."
-    (message ""))
-
-  ;; Disable toolbar on top
-  (tool-bar-mode -1)
-  ;; Disable menu bar on top
-  (menu-bar-mode -1)
-  ;; No more scrollbars
-  (scroll-bar-mode -1)
-
-  ;; Removes *Completions* from buffer after you've opened a file.
-  (add-hook 'minibuffer-exit-hook
-    '(lambda ()
-       (let ((buffer "*Completions*"))
-         (and (get-buffer buffer)
-             (kill-buffer buffer)))))
-)
 #+END_SRC
 
 ** Cursor style
 
-It'll be called later when the theme is loaded.
+Set default cursor style.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(defun my-setup-cursor()
-  "My setup cursor."
-  (interactive)
+  (defun my-setup-cursor()
+    "My setup cursor."
 
-  ;; Set cursor color
-  (set-cursor-color near-to-white-color)
+    ;; Cursor like a bar
+    (setq-default cursor-type '(bar . 3))
+    ;; Set cursor color
+    (set-cursor-color "white")
+    ;; Blink cursor
+    (blink-cursor-mode)
+    )
 
-  ;; Blink cursor
-  (blink-cursor-mode)
+  (my-setup-cursor)
+  (my-update-loading-message)
+#+END_SRC
 
-  ;; Cursor like a bar (works only on Linux/Mac)
-  (if (memq window-system '(mac ns x))
-      (setq-default cursor-type 'bar))
-  )
+** Tree
+
+Setup a sidenav tree.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package treemacs
+    :ensure t
+    :defer t
+    :init
+    (with-eval-after-load 'winum
+      (define-key winum-keymap (kbd "M-0") #'treemacs-select-window))
+    :config
+
+      (setq treemacs-collapse-dirs                   (if treemacs-python-executable 3 0)
+        treemacs-deferred-git-apply-delay        0.5
+        treemacs-directory-name-transformer      #'identity
+        treemacs-display-in-side-window          t
+        treemacs-eldoc-display                   'simple
+        treemacs-file-event-delay                2000
+        treemacs-file-extension-regex            treemacs-last-period-regex-value
+        treemacs-file-follow-delay               0.2
+        treemacs-file-name-transformer           #'identity
+        treemacs-follow-after-init               t
+        treemacs-expand-after-init               t
+        treemacs-find-workspace-method           'find-for-file-or-pick-first
+        treemacs-git-command-pipe                ""
+        treemacs-goto-tag-strategy               'refetch-index
+        treemacs-header-scroll-indicators        '(nil . "^^^^^^")
+        treemacs-hide-dot-git-directory          t
+        treemacs-indentation                     2
+        treemacs-indentation-string              " "
+        treemacs-is-never-other-window           nil
+        treemacs-max-git-entries                 5000
+        treemacs-missing-project-action          'ask
+        treemacs-move-forward-on-expand          nil
+        treemacs-no-png-images                   nil
+        treemacs-no-delete-other-windows         t
+        treemacs-project-follow-cleanup          nil
+        treemacs-persist-file                    (expand-file-name ".cache/treemacs-persist" user-emacs-directory)
+        treemacs-position                        'left
+        treemacs-read-string-input               'from-child-frame
+        treemacs-recenter-distance               0.1
+        treemacs-recenter-after-file-follow      nil
+        treemacs-recenter-after-tag-follow       nil
+        treemacs-recenter-after-project-jump     'always
+        treemacs-recenter-after-project-expand   'on-distance
+        treemacs-litter-directories              '("/node_modules" "/.venv" "/.cask")
+        treemacs-project-follow-into-home        nil
+        treemacs-show-cursor                     nil
+        treemacs-show-hidden-files               t
+        treemacs-silent-filewatch                nil
+        treemacs-silent-refresh                  nil
+        treemacs-sorting                         'alphabetic-asc
+        treemacs-select-when-already-in-treemacs 'move-back
+        treemacs-space-between-root-nodes        t
+        treemacs-tag-follow-cleanup              t
+        treemacs-tag-follow-delay                1.5
+        treemacs-text-scale                      nil
+        treemacs-user-mode-line-format           nil
+        treemacs-user-header-line-format         nil
+        treemacs-wide-toggle-width               70
+        treemacs-width                           50
+        treemacs-width-increment                 1
+        treemacs-width-is-initially-locked       t
+        treemacs-workspace-switch-cleanup        nil)
+
+      ;; The default width and height of the icons is 22 pixels.
+      ;; (treemacs-resize-icons 22)
+
+      ;; Set root folder similar to VSCode theme
+      (set-face-attribute 'treemacs-root-face nil
+              :weight 'bold
+              :height 1.0
+              :underline nil
+              :inherit 'default
+              )
+
+    :bind
+    (:map global-map
+      ("C-S-e"         . treemacs-select-window)
+      ("C-x t 1"       . treemacs-delete-other-windows)
+      ("C-x t t"       . treemacs)
+      ("C-x t d"       . treemacs-select-directory)
+      ("C-x t B"       . treemacs-bookmark)
+      ("C-x t C-t"     . treemacs-find-file)
+      ("C-x t M-t"     . treemacs-find-tag)
+      :map treemacs-mode-map
+      ("<escape>"      . treemacs-kill-buffer)
+      )
+    )
+#+END_SRC
+
+** Icons
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package nerd-icons
+    :ensure t
+    ;; :custom
+    ;; The Nerd Font you want to use in GUI
+    ;; "Symbols Nerd Font Mono" is the default and is recommended
+    ;; but you can use any other Nerd Font if you want
+    ;; (nerd-icons-font-family "Symbols Nerd Font Mono")
+    :init
+      (my-update-loading-message)
+    )
+
+  (use-package nerd-icons-completion
+    :ensure t
+    :defer t
+    :after (:lsp)
+    :config
+    (nerd-icons-completion-mode)
+    )
+
+  (use-package treemacs-nerd-icons
+    :ensure t
+    :defer t
+    :after (:treemacs)
+    :config
+    (treemacs-load-theme "nerd-icons")
+    )
+
+  (use-package nerd-icons-dired
+     :ensure t
+     :defer t
+     :hook
+     (dired-mode . nerd-icons-dired-mode)
+     )
 #+END_SRC
 
 ** Line numbers
@@ -165,46 +295,92 @@ Line numbers are useful in programming mode.
 Define the function now. Loading theme triggers this function.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(defun my-show-line-numbers()
-  "Setup line numbers."
-  (interactive)
+  (defun my-line-preferences()
+    "Setup line numbers."
 
-  (setq display-line-numbers-width 5)
-  (add-hook 'prog-mode-hook 'display-line-numbers-mode)
-  (set-face-foreground 'line-number (face-foreground 'font-lock-comment-face))
-  (set-face-foreground 'line-number-current-line (face-foreground 'font-lock-builtin-face))
-  )
+    ;; Manage line numbers
+    (setq display-line-numbers-width 5)
+    (add-hook 'prog-mode-hook 'display-line-numbers-mode)
+    (add-hook 'json-mode-hook 'display-line-numbers-mode)
+    (add-hook 'yaml-mode-hook 'display-line-numbers-mode)
+
+    ;; Show active line (globally)
+    (global-hl-line-mode)
+    )
+
+  (my-line-preferences)
+  (my-update-loading-message)
 #+END_SRC
 
-** Show parentesis match
+** End-of-line vertical ruler
+
+In programming modes it's useful to have a vertical line that show the right margin.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(defun my-show-parens()
-  "Show parenthesis."
-  (interactive)
+  (defun my-display-fill-column()
+    "Show a vertical line at the end of the line"
 
-  (require 'paren)
-  (set-face-background 'show-paren-match (face-background 'font-lock-builtin-face))
-  (set-face-foreground 'show-paren-match near-to-white-color)
-  (set-face-attribute 'show-paren-match nil :weight 'extra-bold)
-  (set-face-underline 'show-paren-match nil)
-  (defvar match-paren--idle-timer nil)
-  (defvar match-paren--delay 0.5)
-  (setq match-paren--idle-timer
-        (run-with-idle-timer match-paren--delay t #'blink-matching-open))
-  (show-paren-mode 1)
-  )
+    (setq-default fill-column 80)
+    (add-hook 'prog-mode-hook 'display-fill-column-indicator-mode)
+    )
+
+  (my-display-fill-column)
+  (my-update-loading-message)
 #+END_SRC
 
-** Word wrap
+** Parentesis
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(defun my-word-wrap()
-  "Manage word wrap"
-  (interactive)
+  (defun my-highlight-parentheses ()
+    "Hightlight parentesis"
+    (font-lock-add-keywords
+     nil
+     '(("\\([][{}()]\\)"   ;; Regex per parentesi tonde, quadre e graffe
+        (1 'font-lock-parenthesis-face)))))
 
-  (setq-default truncate-lines t)
-  )
+  (defface font-lock-parenthesis-face
+    '((t :foreground "#e7c303" :weight bold)) ;; Colore giallo per il tema scuro
+    "Face per evidenziare tutte le parentesi.")
+
+  (add-hook 'prog-mode-hook 'my-highlight-parentheses)
+  (my-update-loading-message)
+#+END_SRC
+
+** Dired...
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my-dired-settings()
+    "Beautify and improve dired view."
+
+    ;; open file in the same window
+    (eval-after-load "dired"
+      '(progn (define-key dired-mode-map [mouse-2] 'dired-mouse-find-file))
+      )
+    )
+
+  (my-dired-settings)
+  (my-update-loading-message)
+#+END_SRC
+
+** Windows position
+
+Force window positioning for a specified function.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package shackle
+    :ensure t
+    :init
+    (my-update-loading-message)
+    :config
+    (setq shackle-rules '(
+                          ("\\`\\*[hH]elm.*?\\*\\'" :regexp t :align 'below :size 0.4)
+                          ("\\`\\*bm-bookmarks.*?\\*\\'" :regexp t :align 'below :size 0.3)
+                          ("\\`\\*Flymake.*?\\*\\'" :regexp t :align 'below :size 0.3)
+                          ("\\`\\*Flycheck.*?\\*\\'" :regexp t :align 'below :size 0.3)
+                          ("\\`\\*terminal.*?\\*\\'" :regexp t :align 'below :size 0.3)
+                          ))
+    (shackle-mode 1)
+    )
 #+END_SRC
 
 ** Kill buffers
@@ -212,7 +388,7 @@ Define the function now. Loading theme triggers this function.
 Utility for killing buffers other than current buffer.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(defun my-kill-other-buffers ()
+  (defun my-kill-other-buffers ()
     "Kill all other buffers."
     (interactive)
 
@@ -223,103 +399,183 @@ Utility for killing buffers other than current buffer.
     )
 #+END_SRC
 
-** Theme (and activate stuffs)
+** Keybinding Help Screen (and activate all)
 
-The main theme is inspired to Atom One theme.
+Show help for keybindings.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(use-package atom-one-dark-theme
-  :ensure t
-  :init
+  (use-package which-key
+    :ensure t
+    :init
+    (my-update-loading-message)
+    (which-key-setup-side-window-right)
+    (which-key-mode)
 
-  (my-remove-annoying-ui-features)
-
-  :config
-
-  ;; Load default theme
-  (load-theme 'atom-one-dark t)
-
-  ;; Load personal preferences
-  (my-setup-font)
-  (my-setup-cursor)
-  (my-show-line-numbers)
-  (my-show-parens)
-  (my-word-wrap)
-
-  ;; Show current line
-  (global-hl-line-mode)
-
-  ;; Toggle full screen automatically
-  (run-with-idle-timer 0.1 nil 'toggle-frame-fullscreen)
-
-  :bind (
-         ("C-<f4>" . 'kill-buffer-and-window)
-         ("C-w" . 'kill-buffer-and-window)
-         ("S-C-<f4>" . 'my-kill-other-buffers)
-         ("S-C-w" . 'my-kill-other-buffers)
-         ("<escape>" . 'keyboard-escape-quit)
-         )
-  )
+    :bind (
+           ("C-<f4>"   . 'kill-buffer-and-window)
+           ("C-w"      . 'kill-buffer-and-window)
+           ("S-C-<f4>" . 'my-kill-other-buffers)
+           ("S-C-w"    . 'my-kill-other-buffers)
+           ("<escape>" . 'keyboard-escape-quit)
+           ("C-s"      . 'my-save)
+           ("C-M-s"    . 'my-save-all)
+           ("C-S-a"    . 'ff-find-other-file)
+           ("C-S-x"    . 'list-packages)
+           ("C-ò"      . 'term)
+           ("C-/"      . 'comment-dwim)
+           ("C-S-["    . 'hs-hide-block)
+           ("C-S-]"    . 'hs-show-block)
+           ("C-S-m"    . 'flymake-show-buffer-diagnostics)
+           ("<f8>"     . 'flymake-goto-next-error)
+           ("S-<f8>"   . 'flymake-goto-previous-error)
+           )
+    )
 #+END_SRC
 
-** Modeline
+* Base setup
+** Separate customization file
 
-The modeline should be more visible. The doom-modeline package provides a good alternative to the original one.
+The customize command let's Emacs to configure each aspects of the editor.
+In order to keep clean configuration all customizations are written
+in a separate file.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(use-package doom-modeline
-  :ensure t
-  :init
+  (defun my-custom-file()
+    "Use a separate custom file"
+    (setq custom-file "~/.emacs.d/custom.el")
+    (cond
+     ((file-exists-p custom-file) (load custom-file t t))
+     )
+    )
 
-  ;; Don’t compact font caches during GC.
-  (setq inhibit-compacting-font-caches t)
-  ;; Avoid strange name when visiting
-  (setq find-file-visit-truename t)
-  ;; Check VC info
-  (setq-default auto-revert-check-vc-info t)
-
-  (add-hook 'doom-modeline-mode-hook 'column-number-mode)
-
-  :hook (after-init . doom-modeline-mode)
-  )
+  (my-custom-file)
+  (my-update-loading-message)
 #+END_SRC
 
-** Windows position
+** Path for executable files
+
+The environment variables in Emacs looks the same as in user's shell.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-;;                         ("\\`\\*Flycheck.*?\\*\\'" :regexp t :align 'below :size 0.15)
-(use-package shackle
-  :ensure t
-  :config
-  (setq shackle-rules '(
-                        ("\\`\\*[hH]elm.*?\\*\\'" :regexp t :align 'below :size 0.3)
-                        ("\\`\\*bm-bookmarks.*?\\*\\'" :regexp t :align 'below :size 0.2)
-                        ("\\`\\*Flymake.*?\\*\\'" :regexp t :align 'below :size 0.2)
-                        ("\\`\\*Flycheck.*?\\*\\'" :regexp t :align 'below :size 0.2)
-                        ))
-  (shackle-mode 1)
-  )
+  (use-package exec-path-from-shell
+    ;; (Works only on Linux/Mac)
+    :if (memq window-system '(mac ns x))
+    :ensure t
+    :init
+    (my-update-loading-message)
+    :config
+    ;;(setq exec-path-from-shell-arguments nil)
+    ;;(setq exec-path-from-shell-check-startup-files nil)
+    (exec-path-from-shell-initialize)
+    )
+#+END_SRC
+
+** Customize saving buffers
+
+Save buffers needs to be performed without confirmation.
+Also we want to refresh magit buffers automatically.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my-save()
+    "Save current buffer without confirmation."
+    (interactive)
+
+    (save-buffer t)
+    (if (fboundp 'magit-refresh-all)
+      (magit-refresh-all))
+    )
+#+END_SRC
+
+Also we want a keystroke to save all buffers.
+Both these setup will be performed later.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my-save-all()
+    "Save all buffers without confirmation and refresh magit."
+    (interactive)
+
+    (save-some-buffers t)
+    (if (fboundp 'magit-refresh-all)
+      (magit-refresh-all))
+    (message "Saved all files.")
+    )
+#+END_SRC
+
+** Auto reload on change
+
+Some CLI tools (beautifiers, linters, ..) can change the files on disk.
+This preference ensures Emacs reload buffer automatically.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my-auto-revert()
+    "Reload when file has changed"
+
+    (global-auto-revert-mode t)
+    )
+
+  (my-auto-revert)
+  (my-update-loading-message)
+#+END_SRC
+
+** Backup preferences
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my-backup-preferences()
+    "Apply my backup preference."
+
+    ;; Temporary .#files interferes with Angular
+    (setq create-lockfiles nil)
+
+    ;; Backup files copying them into a subdirectory
+    (setq backup-directory-alist `(("." . "~/.saves")))
+
+    (setq make-backup-files t               ; backup of a file the first time it is saved.
+          backup-by-copying t               ; don't clobber symlinks
+          version-control t                 ; version numbers for backup files
+          delete-old-versions t             ; delete excess backup files silently
+          delete-by-moving-to-trash t
+          kept-old-versions 6               ; oldest versions to keep when a new numbered backup is made (default: 2)
+          kept-new-versions 9               ; newest versions to keep when a new numbered backup is made (default: 2)
+          auto-save-default t               ; auto-save every buffer that visits a file
+          auto-save-timeout 20              ; number of seconds idle time before auto-save (default: 30)
+          auto-save-interval 200            ; number of keystrokes between auto-saves (default: 300)
+          )
+
+    ;; Save without messages
+    (setq-default save-silently t)
+
+    ;; Delete trailing whitespaces before saving
+    (add-hook 'before-save-hook 'delete-trailing-whitespace)
+
+    ;; No more typing the whole yes or no. Just y or n will do.
+    (fset 'yes-or-no-p 'y-or-n-p)
+    )
+
+  (my-backup-preferences)
+  (my-update-loading-message)
 #+END_SRC
 
 * Editing
 ** Indent preferences (generic)
 
 First we define a set of default values to be used in every buffer.
-I prefert o avoid tabs for indentation.
+I prefer to avoid tabs for indentation.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(defun my-indent-preferences ()
-  "Setup default indentations."
-  (interactive)
+  (defun my-indent-preferences()
+    "Setup default indentations."
 
-  ;; Do not use tabs by default
-  (setq-default indent-tabs-mode nil)
+    ;; Do not use tabs by default
+    (setq-default indent-tabs-mode nil)
 
-  ;; Use 4 spaces by default
-  (setq-default tab-width 4)
-  (setq-default ruby-indent-level 2)
-  (setq-default css-indent-offset 4)
-  )
+    ;; Use 4 spaces by default
+    (setq-default tab-width 4)
+    (setq-default ruby-indent-level 2)
+    (setq-default css-indent-offset 4)
+    )
+
+  (my-indent-preferences)
+  (my-update-loading-message)
 #+END_SRC
 
 ** Indent preferences (per-project)
@@ -329,12 +585,13 @@ These files apply indentations and editor preferences for each file (per project
 For more information please read: https://editorconfig.org/
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(use-package editorconfig
-  :ensure t
-  :config
-  (my-indent-preferences)
-  (editorconfig-mode 1)
-  )
+  (use-package editorconfig
+    :ensure t
+    :init
+    (my-update-loading-message)
+    :config
+    (editorconfig-mode 1)
+    )
 #+END_SRC
 
 ** Indent Guide
@@ -342,400 +599,273 @@ For more information please read: https://editorconfig.org/
 Show indent guides.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(use-package highlight-indent-guides
-  :ensure t
-  :defer t
-  :config
-  (setq-default highlight-indent-guides-method 'character)
-  (setq-default highlight-indent-guides-character ?\|)
-  (set-face-attribute 'highlight-indent-guides-character-face
-                      (face-attribute 'font-lock-comment-face :foreground))
+  (defun my-bitmap-line (width height crep zrep)
+    "Defines a solid guide line, one pixels wide."
+    (let* ((left (/ (- width 2) 2))
+           (right (- width left 1))
+           (row (append (make-list left zrep) (make-list 1 crep) (make-list right zrep)))
+           rows)
+      (dotimes (i height rows)
+        (setq rows (cons row rows)))))
 
-  ;; Activate indent guides for all programming languages
-  :hook (prog-mode . highlight-indent-guides-mode)
-  )
+  (use-package highlight-indent-guides
+    :ensure t
+    :defer t
+    :config
+    ;; Highlight the first level of indentation
+    (setq highlight-indent-guides-responsive 'top)
+    ;; Use a bitmap line ..
+    (setq highlight-indent-guides-method 'bitmap)
+    ;; .. customized with a one pixel with
+    (setq highlight-indent-guides-bitmap-function 'my-bitmap-line)
+    ;; Use manual defined colors
+    (setq highlight-indent-guides-auto-enabled nil)
+
+    ;; Activate indent guides for all programming languages
+    :hook (prog-mode . highlight-indent-guides-mode)
+    )
 #+END_SRC
+
 ** Cut-Paste like Windows
 
 Setup Cut-Paste like most Windows and MAC editors.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(defun my-cut-paste-preferences()
-  "Setup cut/paste preferences."
-  (interactive)
+  (defun my-cut-paste-preferences()
+    "Setup cut/paste preferences."
 
-  ;; Cut-Paste like Windows
-  (cua-mode t)
+    ;; Cut-Paste like Windows
+    (cua-mode t)
 
-  ;; Disable selection after copy.
-  ;; Standard Windows behaviour is to keep region instead.
-  (setq cua-keep-region-after-copy nil)
+    ;; Disable selection after copy.
+    ;; Standard Windows behaviour is to keep region instead.
+    (setq cua-keep-region-after-copy nil)
 
-  ;; Typed text deletes selected text
-  (delete-selection-mode t)
+    ;; Typed text deletes selected text
+    (delete-selection-mode t)
 
-  ;; No region when it is not highlighted
-  (transient-mark-mode 1)
-  )
+    ;; No region when it is not highlighted
+    (transient-mark-mode 1)
+    )
+
+  (my-cut-paste-preferences)
+  (my-update-loading-message)
 #+END_SRC
 
-** Backup Preferences (TO BE FINISHED)
+** Search and Replace
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(defun my-backup-preferences ()
-  "Apply my backup preference."
+  (use-package visual-regexp
+    :ensure t
+    :defer t
+    :init
+    (setq vr/auto-show-help t)
 
-  ;; Temporary .#files interferes with Angular
-  (setq create-lockfiles nil)
-
-  ;; Backup files copying them into a subdirectory
-  (setq backup-directory-alist `(("." . "~/.saves")))
-
-  (setq make-backup-files t               ; backup of a file the first time it is saved.
-        backup-by-copying t               ; don't clobber symlinks
-        version-control t                 ; version numbers for backup files
-        delete-old-versions t             ; delete excess backup files silently
-        delete-by-moving-to-trash t
-        kept-old-versions 6               ; oldest versions to keep when a new numbered backup is made (default: 2)
-        kept-new-versions 9               ; newest versions to keep when a new numbered backup is made (default: 2)
-        auto-save-default t               ; auto-save every buffer that visits a file
-        auto-save-timeout 20              ; number of seconds idle time before auto-save (default: 30)
-        auto-save-interval 200            ; number of keystrokes between auto-saves (default: 300)
-        )
-
-  ;; Save without messages
-  (setq-default save-silently t)
-
-  ;; Delete trailing whitespaces before saving
-  (add-hook 'before-save-hook 'delete-trailing-whitespace)
-
-  ;; No more typing the whole yes or no. Just y or n will do.
-  (fset 'yes-or-no-p 'y-or-n-p)
-  )
+    :config
+    (set-face-attribute 'vr/match-0 nil
+       :foreground 'unspecified
+       :background "#623315"
+       :weight 'extra-bold
+       :box '(:line-width (-1 . -1)
+              :color "#767676"
+              :style nil)
+      )
+    (set-face-attribute 'vr/match-1 nil
+      :foreground 'unspecified
+      :background "#623315"
+      :weight 'extra-bold
+      :box '(:line-width (-1 . -1)
+             :color "#767676"
+             :style nil)
+      )
+    :bind (
+           ("S-C-r" . vr/mc-mark)
+           ("C-r" . vr/replace)
+           )
+    )
 #+END_SRC
 
-** Compile Preferences (TO BE FINISHED)
+** Word wrap
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(defun my-compiling-preferences()
-  "Configure compiler."
+  (defun my-word-wrap()
+    "Manage word wrap"
 
-  ;; Auto-save before compiling
-  (setq compilation-ask-about-save nil)
+    (setq-default truncate-lines t)
+    )
 
-  ;; Never prompt to kill a compilation session.
-  (setq-default compilation-always-kill t)
-
-  ;; Always scroll to the bottom.
-  (setq-default compilation-scroll-output t)
-  )
+  (my-word-wrap)
+  (my-update-loading-message)
 #+END_SRC
 
-** Select region
-
-Add ability to easily select regions.
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-(use-package expand-region
-  :ensure t
-  :defer t
-  :bind (
-         ("C-l" . er/expand-region)
-         )
-  )
-#+END_SRC
-
-** Kill lines and words
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-(defun my-kill-start-of-line()
-  "Kill from point to start of line."
-  (interactive)
-  (kill-line 0)
-)
-
-(defun my-kill-end-of-line()
-  "Kill from point to end of line."
-  (interactive)
-  (kill-line nil)
-)
-
-(defun my-kill-word()
-  """
-  Kill spaces until next word (if any).
-  If there are no space kill word.
-  """
-  (interactive)
-  (if (looking-at "[ \t\n]")
-    ;; Delete forward all spaces
-    (let ((pos (point)))
-      (re-search-forward "[^ \t\n]" nil t)
-      (backward-char)
-      (kill-region pos (point)))
-
-    (kill-word 1))
-)
-
-(defun my-backward-kill-word()
-  """
-  Kill spaces until next word (if any).
-  If there are no space kill word.
-  """
-  (interactive)
-  (if (looking-back "[ \t\n]" 1)
-    (delete-horizontal-space t)
-    (backward-kill-word 1))
-)
-#+END_SRC
-
-** Moving lines
+** Move line
 
 Almost all IDE has keystrokes to move and duplicate lines.
 The package move-dup implements the same feature in Emacs.
+This package interferes with org-mode so we
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(use-package move-dup
-  :ensure t
-  :defer t
-  :config
-  (global-set-key (kbd "M-<up>") 'md-move-lines-up)
-  (global-set-key (kbd "M-<down>") 'md-move-lines-down)
-  (global-set-key (kbd "M-C-<up>") 'md-duplicate-up)
-  (global-set-key (kbd "M-C-<down>") 'md-duplicate-down)
+  (defun my-activate-move-dup()
+    "Choose when activate mode-dup"
+    (interactive)
 
-  ;; move-dup is not activated in all modes: it interferes with org-mode
-  ;; Do not activate for text-mode
-  :hook (
-        (prog-mode . move-dup-mode)
-        (yaml-mode . move-dup-mode)
-        (web-mode . move-dup-mode)
-        (scss-mode . move-dup-mode)
-        (kivy-mode . move-dup-mode)
-        (cmake-mode . move-dup-mode)
-        (editorconfig-mode . move-dup-mode)
+    (if (eq major-mode 'org-mode)
+        (message "move-dup disabled in org-mode")
+        (move-dup-mode)
         )
-  )
+    )
+
+  (use-package move-dup
+    :ensure t
+    :defer t
+    :hook (
+           (after-change-major-mode  . my-activate-move-dup)
+           )
+    :bind (
+           ("M-<up>" . md-move-lines-up)
+           ("M-<down>" . md-move-lines-down)
+           ("M-C-<up>" . md-duplicate-up)
+           ("M-C-<down>" . md-duplicate-down)
+           )
+    )
 #+END_SRC
 
-** Save buffers
+** Find other files
 
-Save buffers needs to be performed without confirmation.
-Also we want to refresh magin buffers automatically.
+The *ff-find-other-file* function is used to search for file related to the current buffer.
+An example is switching between files such as C/C++ header files.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(defun my-save()
-  "Save current buffer without confirmation."
-  (interactive)
+  (defun my-other-file-settings()
+    "Redefine search for other files"
+    (interactive)
 
-  (save-buffer t)
-  (if (fboundp 'magit-refresh-all)
-    (magit-refresh-all))
-  )
+    (defvar my-other-file-alist
+      '(
+        ("\\.component.html\\'" (".component.ts" ".component.spec.ts" ".component.scss"))
+        ("\\.component.ts\\'" (".component.spec.ts" ".component.scss" ".component.html"))
+        ("\\.component.spec.ts\\'" (".component.scss" ".component.html" ".component.ts"))
+        ("\\.component.scss\\'" (".component.html" ".component.ts" ".component.spec.ts"))
+
+        ("\\.service.ts\\'" (".service.spec.ts"))
+        ("\\.service.spec.ts\\'" (".service.ts"))
+
+        ("\\.guard.ts\\'" (".guard.spec.ts"))
+        ("\\.guard.spec.ts\\'" (".guard.ts"))
+        ))
+
+    (setq-default ff-other-file-alist 'my-other-file-alist)
+    )
 #+END_SRC
 
-Also we want a keystroke to save all buffers.
-Both these setup will be performed later.
+** Multiple Cursors
+
+Add the ability to manage multiple cursors.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(defun my-save-all()
-  "Save all buffers without confirmation and refresh magit."
-  (interactive)
+  (use-package multiple-cursors
+    :ensure t
+    :init
+    (my-update-loading-message)
+    :config
 
-  (save-some-buffers t)
-  (if (fboundp 'magit-refresh-all)
-    (magit-refresh-all))
-  )
+    ;; Needed to configure this package
+    (require 'multiple-cursors)
+
+    ;; Always run commands
+    (setq-default mc/always-run-for-all t)
+    ;; Always run commands
+    (setq-default mc/always-repeat-command t)
+    ;; Safety ceil
+    (setq-default mc/max-cursors 30)
+
+    (set-face-attribute 'mc/cursor-bar-face nil :background "white" :height 1)
+
+    ;; NO NOT USE :bind here
+    ;; It doesn't seems working well with multiple cursor
+
+    ;; Exit using escape
+    (define-key mc/keymap (kbd "<escape>") 'mc/keyboard-quit)
+
+    ;; will make <return> insert a newline; multiple-cursors-mode can still
+    ;; be disabled with C-g / ESC
+    (define-key mc/keymap (kbd "<return>") nil)
+
+    ;; Basic selection
+    (global-set-key (kbd "C-D") 'mc/mark-next-like-this-word)
+    (global-set-key (kbd "M-S-<up>") 'mc/mark-previous-lines)
+    (global-set-key (kbd "M-S-<down>") 'mc/mark-next-lines)
+    )
 #+END_SRC
 
-** Find Other Files
-
-A useful feature is switching automatically between different related files.
-For example switch between headers and source in a C++ Project.
+** Compile Preferences
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(defun my-file-alist()
-  (defvar my-file-alist
-    '(("\\.cpp\\'" (".hpp" ".ipp"))
-      ("\\.ipp\\'" (".hpp" ".cpp"))
-      ("\\.hpp\\'" (".ipp" ".cpp"))
-      ("\\.cxx\\'" (".hxx" ".ixx"))
-      ("\\.ixx\\'" (".cxx" ".hxx"))
-      ("\\.hxx\\'" (".ixx" ".cxx"))
-      ("\\.c\\'" (".h"))
-      ("\\.h\\'" (".c"))
+  (defun my-compiling-preferences()
+    "Configure compiler."
 
-      ("\\.component.html\\'" (".component.scss"))
-      ("\\.component.scss\\'" (".component.ts"))
-      ("\\.component.ts\\'" (".component.spec.ts"))
-      ("\\.component.spec.ts\\'" (".component.html"))
-      ))
+    ;; Auto-save before compiling
+    (setq compilation-ask-about-save nil)
 
-  (setq-default ff-other-file-alist 'my-file-alist)
-)
-#+END_SRC
+    ;; Never prompt to kill a compilation session.
+    (setq-default compilation-always-kill t)
 
-** Multiple Cursors (and activate all)
+    ;; Always scroll to the bottom.
+    (setq-default compilation-scroll-output t)
 
-Multiple cursors let Emacs use more cursors like modern editors (Atom, VS Code, and so on).
-This package also triggers all previous functions.
+    ;; Show ANSI color
+    (add-hook 'compilation-filter-hook 'ansi-color-compilation-filter)
+    )
 
-#+BEGIN_SRC emacs-lisp :tangle yes
-(use-package multiple-cursors
-  :ensure t
-  :config
-  ;; Preferences
-  (my-cut-paste-preferences)
-  (my-backup-preferences)
   (my-compiling-preferences)
-  (my-file-alist)
-
-  (require 'multiple-cursors)
-
-  ;; Always run commands
-  (setq-default mc/always-run-for-all t)
-  ;; Always run commands
-  (setq-default mc/always-repeat-command t)
-  ;; Safety ceil
-  (setq-default mc/max-cursors 30)
-
-  ;; Disable annoying minor modes when editing with multiple cursor
-  (add-to-list 'mc/unsupported-minor-modes 'company-mode)
-  (add-to-list 'mc/unsupported-minor-modes 'flycheck-mode)
-
-  ;; NO NOT USE :bind here
-  ;; It doesn't seems working well with multiple cursor
-
-  ;; Exit using escape
-  (define-key mc/keymap (kbd "<escape>") 'mc/keyboard-quit)
-
-  ;; will make <return> insert a newline; multiple-cursors-mode can still
-  ;; be disabled with C-g / ESC
-  (define-key mc/keymap (kbd "<return>") nil)
-
-  ;; Basic selection
-  (global-set-key (kbd "C-<") 'mc/mark-previous-like-this-word)
-  (global-set-key (kbd "C->") 'mc/mark-next-like-this-word)
-
-  ;; Movement
-  (global-set-key (kbd "M-<left>") 'start-of-line)
-  (global-set-key (kbd "M-<right>") 'end-of-line)
-
-  ;; Kill word and lines
-  (global-set-key (kbd "S-C-<delete>") 'kill-whole-line)
-  (global-set-key (kbd "S-C-<backspace>") 'kill-whole-line)
-  (global-set-key (kbd "M-<backspace>") 'my-kill-start-of-line)
-  (global-set-key (kbd "M-<delete>") 'my-kill-end-of-line)
-  (global-set-key (kbd "C-<backspace>") 'my-backward-kill-word)
-  (global-set-key (kbd "C-<delete>") 'my-kill-word)
-
-  ;; Movements
-  (global-set-key (kbd "M-<left>") 'beginning-of-line)
-  (global-set-key (kbd "M-<right>") 'end-of-line)
-
-  (global-set-key (kbd "C-s") 'save-buffer)
-  (global-set-key (kbd "S-C-s") 'my-save-all)
-
-  (global-set-key (kbd "S-C-a") 'ff-get-other-file)
-
-  ;; Atom like buffer movements
-  (global-unset-key (kbd "C-<prior>"))
-  (global-set-key (kbd "C-<prior>") 'previous-buffer)
-  (global-unset-key (kbd "C-<next>"))
-  (global-set-key (kbd "C-<next>") 'next-buffer)
-  )
+  (my-update-loading-message)
 #+END_SRC
 
-* Completion System
-** Search
-
-Search is based on Helm package. Put everything in a function.
+* Completion
+** Install Helm
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(defun my-search-preferences()
-  "Configure search & replace."
-  (interactive)
+  (use-package helm
+    :ensure t
+    :defer t
+    :config
 
-  ;;(set-face-foreground 'isearch near-to-white-color)
-  ;;(set-face-background 'isearch nil)
-  (set-face-attribute 'isearch nil
-    :foreground near-to-white-color
-    :background nil
-    :weight 'extra-bold
-    :box '(:line-width -1
-           :color "near-to-white-color"
-           :style nil)
+    (setq helm-split-window-in-side-p           t   ;; Open helm buffer inside current window, not occupy whole other window
+          helm-move-to-line-cycle-in-source     t   ;; move to end or beginning of source when reaching top or bottom of source.
+          helm-ff-search-library-in-sexp        t   ;; search for library in `require' and `declare-function' sexp.
+          helm-scroll-amount                    10  ;; scroll 8 lines other window using M-<next>/M-<prior>
+          helm-ff-file-name-history-use-recentf t
+          helm-display-header-line              nil ;; Hide header line
+          helm-echo-input-in-header-line        nil ;; Do not echo in header line
+
+          helm-autoresize-max-height            0   ;;
+          helm-autoresize-min-height            20  ;;
+          )
+
+    (helm-autoresize-mode 1)
+
+    ;; Colors
+    ;; Set "match" color for searches.
+    (set-face-attribute 'helm-match nil
+                        :foreground "#2aaaff" :background 'unspecified :weight 'extra-bold)
+
+    :bind (
+           ("M-x"             . helm-M-x)
+           ("C-S-p"           . helm-M-x)
+           ("<f1>"            . helm-M-x)
+           ("C-o"             . helm-find-files)
+           ;; Various common ways to switch buffers
+           ("C-x b"           . helm-buffers-list)
+           ("C-x C-b"         . helm-buffers-list)
+           ;; The kill ring is handy
+           ("C-S-v"           . helm-show-kill-ring)
+           ("C-f"             . helm-occur)
+           :map helm-map
+           ;; Use tab to narrow selection
+           ("<escape>"        . helm-keyboard-quit)
+           ("<tab>"           . helm-execute-persistent-action)
+           )
     )
-  )
-#+END_SRC
-** Replace
-#+BEGIN_SRC emacs-lisp :tangle yes
-(use-package visual-regexp
-  :ensure t
-  :defer t
-  :init
-  (setq vr/auto-show-help t)
-
-  :config
-  (set-face-attribute 'vr/match-0 nil
-     :foreground near-to-white-color
-     :background nil
-     :weight 'extra-bold
-     :box '(:line-width -1
-            :color "near-to-white-color"
-            :style nil)
-    )
-  (set-face-attribute 'vr/match-1 nil
-    :foreground near-to-white-color
-    :background nil
-    :weight 'extra-bold
-    :box '(:line-width -1
-           :color "near-to-white-color"
-           :style nil)
-    )
-  :bind (
-    ("S-C-r" . vr/mc-mark)
-    ("C-r" . vr/replace)
-    )
-  )
-#+END_SRC
-** Install Helm (and activate all)
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-(use-package helm
-  :ensure t
-  :defer t
-  :config
-
-  (my-search-preferences)
-  (setq helm-display-function 'pop-to-buffer)
-  (setq helm-display-header-line nil)
-  (set-face-attribute 'isearch nil
-                      :foreground near-to-white-color :background nil :weight 'extra-bold)
-  (set-face-attribute 'helm-match nil
-                      :foreground near-to-white-color :background nil :weight 'extra-bold)
-
-  :bind (
-         ("M-x" . helm-M-x)
-         ("C-o" . helm-find-files)
-         ("C-j" . helm-imenu)
-	     ;; Various common ways to switch buffers
-         ("C-x b" . helm-buffers-list)
-         ("C-<tab>" . helm-buffers-list)
-         ("C-<iso-lefttab>" . helm-buffers-list)
-         ("C-b" . helm-buffers-list)
-         ("C-x C-b" . helm-buffers-list)
-	     ;; The kill ring is handy
-         ("S-C-v" . helm-show-kill-ring)
-         ("C-f" . helm-occur)
-         :map helm-map
-	     ;; Use tab to narrow selection
-         ("<tab>" . helm-execute-persistent-action)
-         ("C-<tab>" . helm-next-line)
-         ("C-<iso-lefttab>" . helm-previous-line)
-         ("C-f" . helm-next-line)
-         ("S-C-f" . helm-previous-line)
-         )
-  )
 #+END_SRC
 
 * Projects Management
@@ -744,44 +874,64 @@ Search is based on Helm package. Put everything in a function.
 Projectile package helps discover and remember projects.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(use-package projectile
-  :ensure t
-  :defer t
-  :init
-  (setq projectile-completion-system 'helm)
-  ;; TODO: remove if works on Windows Systems
-  ;; (setq projectile-indexing-method 'hybrid)
+  (use-package projectile
+    :ensure t
+    :defer t
+    :init
 
-  (put 'projectile-project-configure-cmd 'safe-local-variable #'stringp)
-  (put 'projectile-project-compilation-cmd 'safe-local-variable #'stringp)
-  (put 'projectile-project-run-cmd 'safe-local-variable #'stringp)
-  (put 'projectile-project-test-cmd 'safe-local-variable #'stringp)
+    (setq projectile-completion-system 'helm)
 
-  (projectile-mode)
-  :bind (
-         ;; Compile Project
-         ("<f9>" . projectile-compile-project)
-         ("C-<f9>" . projectile-run-project)
-         ("S-<f9>" . projectile-configure-project)
-         ("M-<f9>" . projectile-test-project)
-         )
-	 )
+    (put 'projectile-project-configure-cmd 'safe-local-variable #'stringp)
+    (put 'projectile-project-compilation-cmd 'safe-local-variable #'stringp)
+    (put 'projectile-project-run-cmd 'safe-local-variable #'stringp)
+    (put 'projectile-project-test-cmd 'safe-local-variable #'stringp)
+
+    (projectile-mode)
+
+    :bind (
+           ;; Project building and testing
+           ("C-S-d"   . projectile-compile-project)    ;; VS Code keybinding
+           ("<f9>"   . projectile-compile-project)
+           ("C-<f9>" . projectile-run-project)
+           ("S-<f9>" . projectile-configure-project)
+           ("M-<f9>" . projectile-test-project)
+           )
+       )
 #+END_SRC
 
 We want to use helm for selecting and narrowing projects.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(use-package helm-projectile
-  :ensure t
-  :defer t
-  :bind (
-         ("M-f" . helm-projectile-grep)
-         ("S-C-o" . helm-projectile-switch-project)
-         ("C-t" . helm-projectile-find-file)
-         )
-  :config
-  (helm-projectile-on)
-  )
+  (use-package helm-projectile
+    :ensure t
+    :defer t
+    :bind (
+           ("C-S-f" . helm-projectile-grep)
+           ("S-C-o" . helm-projectile-switch-project)
+           ("C-t"   . helm-projectile-find-file)
+           ;; Switch all buffers
+           ("C-<tab>"         . helm-buffers-list)
+           ("C-<iso-lefttab>" . helm-buffers-list)
+           ("C-S-<tab>"         . helm-projectile-switch-to-buffer)
+           ("C-S-<iso-lefttab>" . helm-projectile-switch-to-buffer)
+           :map helm-map
+           ;; Use tab to narrow selection
+           ("C-<tab>"         . helm-next-line)
+           ("C-<iso-lefttab>" . helm-previous-line)
+           )
+
+    :config
+    (helm-projectile-on)
+    )
+#+END_SRC
+
+Let projectile integrate with Treemacs.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package treemacs-projectile
+    :ensure t
+    :defer t
+    )
 #+END_SRC
 
 ** Git support
@@ -789,413 +939,548 @@ We want to use helm for selecting and narrowing projects.
 Magit is a complete User Interface for Git.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(use-package magit
-  :ensure t
-  :defer t
-  :bind (
-         ("<f5>" . magit-status)
-         ("<f6>" . magit-log-all)
-         :map magit-mode-map
-         ("<escape>" . magit-mode-bury-buffer)
-	     )
-  :hook (prog-mope . magit-mode)
-  )
+  (use-package magit
+    :ensure t
+    :defer t
+    :bind (
+           ("C-S-g" . magit-status)
+           ("<f6>" . magit-log-all)
+           :map magit-mode-map
+           ("<escape>" . quit-window)
+           )
+    )
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(use-package git-gutter
-  :ensure t
-  :defer t
-  :config
-  (custom-set-variables
-	'(git-gutter:modified-sign "❚")
-	'(git-gutter:added-sign "❚")
-	'(git-gutter:deleted-sign "❚"))
+  (use-package git-gutter
+    :ensure t
+    :defer t
+    :config
 
-  (custom-set-variables
-	'(git-gutter:update-interval 2))
+    ;; Set git gutter signs
+    (setq git-gutter:added-sign "▐")
+    (setq git-gutter:modified-sign "▐")
+    (setq git-gutter:deleted-sign "▐")
 
-  :hook (prog-mode . git-gutter-mode)
+    ;; With this char the whole column is always present in prog-mode
+    (setq git-gutter:unchanged-sign " ")
 
-  ;; If you want to activate git-gutter globally
-  ;; (global-git-gutter-mode t)
+    ;; Disable background for unchanged text
+    (set-face-attribute 'git-gutter:unchanged nil :background 'unspecified)
 
-  :bind (
-         ("<f7>" . git-gutter:previous-hunk)
-         ("C-<f7>" . git-gutter:popup-hunk)
-         ("S-C-<f7>" . git-gutter:revert-hunk)
-         ("<f8>" . git-gutter:next-hunk)
-         ("C-<f8>" . git-gutter:popup-hunk)
-         ("S-C-<f8>" . git-gutter:revert-hunk)
-         )
-  )
+    :hook (prog-mode . git-gutter-mode)
+
+    :bind (
+           ("S-M-<f5>" . git-gutter:previous-hunk)
+           ("M-<f5>" . git-gutter:next-hunk)
+           )
+    )
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package git-timemachine
+    :ensure t
+    :defer t
+    )
 #+END_SRC
 
 * Language Support
-** Code completion
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-(use-package company
-  :ensure t
-  :defer t
-  :diminish company-mode
-;;  :after (atom-one-dark-theme)
-  :config
-  (setq company-auto-complete nil
-        company-idle-delay 0.05
-        company-minimum-prefix-length 2
-        company-tooltip-limit 10
-        company-selection-wrap-around t
-        )
-  :bind (
-         ("C-SPC" . company-complete)
-         :map company-active-map
-         ("<escape>" . company-abort)
-         )
-  :hook (prog-mode . company-mode)
-  ;; (global-company-mode 1)
-  )
-#+END_SRC
-** On the fly check
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-(use-package flycheck
-  :ensure t
-  :defer t
-  :config
-  ;; Disable ruby-reek checker: it's too verbose
-  ;;(setq-default flycheck-disabled-checkers '(ruby-reek))
-  ;; Change flycheck icons
-  (define-fringe-bitmap 'flycheck-fringe-bitmap-ball
-    (vector #b00000000
-            #b00000000
-            #b00000000
-            #b00000000
-            #b00000000
-            #b00000000
-            #b00000000
-            #b00111000
-            #b01111100
-            #b11111110
-            #b11111110
-            #b01111100
-            #b00111000
-            #b00000000
-            #b00000000
-            #b00000000
-            #b00000000))
-  ;; Apply "ball" icon to errors ..
-  (flycheck-define-error-level 'error
-    :severity 100
-    :compilation-level 2
-    :overlay-category 'flycheck-error-overlay
-    :fringe-bitmap 'flycheck-fringe-bitmap-ball
-    :fringe-face 'flycheck-fringe-error
-    :error-list-face 'flycheck-error-list-error)
-  ;; .. warnings ..
-  (flycheck-define-error-level 'warning
-    :severity 200
-    :compilation-level 1
-    :overlay-category 'flycheck-warning-overlay
-    :fringe-bitmap 'flycheck-fringe-bitmap-ball
-    :fringe-face 'flycheck-fringe-warning
-    :error-list-face 'flycheck-error-list-warning)
-  ;; .. and infos
-  (flycheck-define-error-level 'info
-    :severity 300
-    :compilation-level 0
-    :overlay-category 'flycheck-info-overlay
-    :fringe-bitmap 'flycheck-fringe-bitmap-ball
-    :fringe-face 'flycheck-fringe-info
-    :error-list-face 'flycheck-error-list-info)
-
-  :hook (prog-mode . flycheck-mode)
-  :bind (
-         ("<f10>" . previous-error)
-         ("<f11>" . next-error)
-         ("<f12>" . flycheck-list-errors)
-         )
-  )
-#+END_SRC
-
 ** LSP
 
 Language Service Protocol allows any editor to acquire IDE-like features
 like code completion, find implementation, find references, and so on.
+You still need to install manually all the related servers.
+There is a complete guide for this behaviour here: https://emacs-lsp.github.io/lsp-mode/.
+
+All the LSP fine tuning are grouped in the following functions.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(use-package lsp-mode
-  :ensure t
-  :defer t
-  :commands lsp
-  :config
+  (defun my-lsp-performance-settings()
+    "Fine tune LSP for maximum performance."
+    (interactive)
 
-  (setq lsp-prefer-flymake nil)
-  (setq lsp-ui-doc-use-webkit t)
+    ;; Performance improvements
+    (setq lsp-use-plists t)
 
-  ;; (setq lsp-clients-clangd-args '("-j=4" "-background-index" "-log=error"))
-  ;; (make-lsp-client :new-connection (lsp-stdio-connection '("ccls" "--init={\"cacheDirectory\": \"/tmp/cquery-cache\"}"))
-  (setq lsp-enable-file-watchers t)
-  ;; Set warning only if the file to watch are bigger than 100000
-  (setq lsp-file-watch-threshold 100000)
-  (setq read-process-output-max (* 1024 1024)) ;; 1mb
-  (setq gc-cons-threshold 100000000)
-  ;; (setq lsp-idle-delay 0.500)
+    ;; I still prefer flymake: it's simple, fast and integrated in core Emacs
+    (setq lsp-prefer-flymake t)
+    ;; Don't watch the file in the workspace
+    (setq lsp-enable-file-watchers nil)
+    ;; Set warning only if the file to watch are bigger than 100000
+    (setq lsp-file-watch-threshold 100000)
+    ;; Read process output up to 5 MByte.
+    (setq read-process-output-max 5242880)
+    ;;
+    (setq gc-cons-threshold 100000000)
+    ;; Set a not too small idle for autocompletion
+    (setq lsp-idle-delay 0.250)
+    ;; Disable lsp log.
+    ;; If set to true can cause a performance hit.
+    ;; Enable it only for debugging.
+    (setq lsp-log-io nil)
 
-  ;;(setq-default lsp-prefer-flymake nil)
-  ;;(setq-default lsp-ui-doc-use-webkit t)
-  ;;(setq-default lsp-enable-file-watchers t)
+    ;; Disable automatic server installation suggestions.
+    (setq lsp-enable-suggest-server-download nil)
 
-  ;; Prefer ccls over cland
-  (lsp-register-client
-   (make-lsp-client :new-connection (lsp-stdio-connection '("ccls"))
-                    :major-modes '(c++-mode)
-                    :server-id 'cccls-lsp))
+    ;; Disable "Restart LSP Server" requests
+    (setq lsp-restart 'ignore)
 
-  ;; Point to the correct location
-  ;; Test with: node /usr/local/lib/node_modules/@angular/language-server --ngProbeLocations /usr/local/lib/node_modules --tsProbeLocations /usr/local/lib/node_modules --stdio
-  (setq lsp-clients-angular-language-server-command
-    '("node"
-      "/usr/local/lib/node_modules/@angular/language-server"
-      "--ngProbeLocations"
-      "/usr/local/lib/node_modules"
-      "--tsProbeLocations"
-      "/usr/local/lib/node_modules"
-      "--stdio"))
+    ;; Ignore some folders
+    (setq lsp-file-watch-ignored
+      (append lsp-file-watch-ignored
+              '("[/\\\\]\\.angular$"
+                "[/\\\\]\\.cache$"
+                "[/\\\\]\\build$"
+                "[/\\\\]\\dist$")))
 
-  :hook (
-    (c++-mode . lsp)
-    (ruby-mode . lsp)
-    (python-mode . lsp)
-    (web-mode . lsp)
-    (rust-mode . lsp)
-    (json-mode . lsp)
-    (typescript-mode . lsp)
     )
+#+END_SRC
+
+Enable only needed UI.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my-lsp-ui-settings()
+    "Fine tune LSP user interface features."
+    (interactive)
+
+    ;; Symbol highlighting
+    (setq lsp-enable-symbol-highlighting t)
+
+    ;; Shows a hover dialog with function documentation
+    (setq lsp-ui-doc-enable t)             ;; enable documentation
+    (setq lsp-ui-doc-show-with-cursor t)   ;; enable cursor hover (keep mouse hover)
+    (setq lsp-ui-doc-show-with-mouse t)    ;; enable mouse hover (keep cursor hover)
+    (setq lsp-ui-doc-use-webkit t)         ;; display documentation using a webkit
+
+    ;; Try to remove annoying ElDoc in minibuffer
+    (setq lsp-eldoc-render-all nil)        ;; disable render of docs in minibuffer
+    (setq lsp-eldoc-enable-hover nil)
+    (setq lsp-signature-render-documentation nil)
+    (setq lsp-signature-auto-activate nil)
+
+    ;; Lenses are reference above a method or a variable
+    (setq lsp-lens-enable nil)
+
+    ;; The headerline shows a breadcrumb over the code buffer
+    ;; I prefer to disable it
+    (setq lsp-headerline-breadcrumb-enable nil)
+
+    ;; Sideline code actions
+    (setq lsp-ui-sideline-enable t)              ;; disable whole sideline
+    (setq lsp-ui-sideline-show-code-actions nil) ;; hide code actions
+    (setq lsp-ui-sideline-show-hover nil)        ;; hide only hover symbols
+    (setq lsp-ui-sideline-show-symbol t)         ;; show errors
+    (setq lsp-ui-sideline-show-diagnostics t)    ;; show errors
+
+    ;; Modeline code actions
+    (setq lsp-modeline-code-actions-enable nil)
+
+    ;; Flycheck (or flymake if no flycheck is present)
+    (setq lsp-diagnostics-provider :flymake)
+
+    ;; Eldoc shows information about methods in the modeline
+    (setq lsp-eldoc-enable-hover t)
+
+    ;; Modeline diagnostics statistics
+    ;; shows error information in the modeline
+    (setq lsp-modeline-diagnostics-enable nil)
+
+    ;; Completion (company-mode)
+    (setq lsp-completion-provider :capf)   ;; It can be disabled with :none
+    (setq lsp-completion-show-detail t)    ;; Show item details
+    (setq lsp-completion-show-kind t)      ;; show item kind
+
+    ;; Headerline icon enable
+    (setq lsp-headerline-breadcrumb-icons-enable nil)
+
+    ;; Colors
+    (set-face-attribute 'highlight nil :background "#093d5b" :underline nil)
+    (set-face-attribute 'lsp-face-highlight-read nil :underline nil)
+    (set-face-attribute 'lsp-face-highlight-textual nil :underline nil)
+    (set-face-attribute 'lsp-face-highlight-write nil :underline nil)
+
+
+    (set-face-attribute 'lsp-ui-peek-selection nil :background "#093d5b")
+
+      (set-face-attribute 'lsp-ui-peek-header nil
+        :foreground "white"
+        :background "#181818"
+        :box '(:line-width (1 . 1)
+               :color "#212121"
+               :style nil)
+        )
   )
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package lsp-mode
+    :ensure t
+    :defer t
+    :commands lsp
+    :init
+
+    ;; Set prefix for LSP commands
+    (setq lsp-keymap-prefix "C-l")
+
+    :config
+
+    (my-lsp-performance-settings)
+
+    :bind (
+           ("<f2>"      . lsp-rename)
+           )
+
+    :hook (
+           ;; Integrate with which-key
+           (lsp-mode . lsp-enable-which-key-integration)
+           ;; Activate folding when activate LSP
+           (lsp-mode . hs-minor-mode)
+           ;; Enable languages
+           (js2-mode . lsp)
+           (c++-mode . lsp)
+           (ruby-mode . lsp)
+           (python-mode . lsp)
+           (web-mode . lsp)
+           (typescript-mode . lsp)
+           (rust-mode . lsp)
+           (go-mode . lsp)
+           (json-mode . lsp)
+           (sh-mode . lsp)
+           (dockerfile-mode . lsp)
+           (php-mode . lsp)
+           (scss-mode . lsp)
+           )
+    )
 #+END_SRC
 
 Add lsp-ui package for better user interface.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(use-package lsp-ui
-  :ensure t
-  :defer t
-  :after (lsp-mode)
-  :commands lsp-ui-mode
-  :config
-    (setq lsp-ui-doc-use-webkit t)
+  (use-package lsp-ui
+    :ensure t
+    :defer t
+    :commands lsp-ui-mode
 
-    ;; Customize colors
-    (set-face-attribute 'lsp-ui-peek-header nil
-      :foreground (face-foreground 'mode-line) :weight 'extra-bold :box '(:line-width 1 :color "#181A1F")
-      :background (face-background 'mode-line)
-      )
+    :init
 
-  :hook (lsp-mode . lsp-ui-mode)
-  :bind (
-        ("C-." . lsp-ui-peek-find-definitions)
-        ("C-," . lsp-ui-peek-find-references)
-        ("C--" . lsp-ui-peek-find-implementation)
-        )
-  )
+    ;; Ctrl-j do not play well with lsp-ui
+    (global-unset-key (kbd "C-j"))
+
+    :config
+
+    (my-lsp-ui-settings)
+
+    :hook (lsp-mode . lsp-ui-mode)
+
+    :bind (
+           ("C-j"       . lsp-ui-imenu)
+           ("S-<f12>"   . lsp-ui-peek-find-references)
+           ("M-<f12>"   . lsp-ui-peek-find-definitions)
+           )
+    )
 #+END_SRC
 
-Use company for code completion.
+Use a fancy box for completion selection.
+
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(use-package company-lsp
-  :ensure t
-  :defer t
-  :after (lsp-mode)
-  :commands company-lsp
-  )
+  (use-package company
+    :ensure t
+    :defer t
+    ;;     :init
+    ;;    (global-company-mode)
+
+    :init
+    (setq company-backends '(company-capf))
+
+    :bind (
+           ("C-SPC" . company-complete)
+           :map company-mode-map
+           ("<escape>" . company-abort)
+           )
+    )
+
+  (use-package company-box
+    :ensure t
+    :defer t
+
+    :config
+
+    (setq company-box-enable-icon t)
+
+    :hook (company-mode . company-box-mode)
+    )
 #+END_SRC
 
-Use a fancy box.
+Integrate with treemacs package.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(use-package company-box
-  :ensure t
-  :defer t
-  :config
-  (setq company-box-enable-icon nil)
-  :hook (company-mode . company-box-mode)
-  )
+  (use-package lsp-treemacs
+    :ensure t
+    :defer t
+    :commands lsp-treemacs-error-list
+   )
 #+END_SRC
 
-Integration with treemacs.
+** Language: Angular
+
+For developing Angular Apps we need the support of TypeScript language.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(use-package lsp-treemacs
-  :ensure t
-  :defer t
-  :after (lsp-mode)
-  :bind (
-        ("C-\\" . treemacs)
-        )
-  )
+  (use-package typescript-mode
+    :ensure t
+    :defer t
+    )
 #+END_SRC
 
-** Language: HTML/CSS/Javascript
+** Language: PHP
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(use-package web-mode
-  :ensure t
-  :defer t
-  :mode (
-         ("\\.html?\\'" . web-mode)
-         ("\\.erb\\'" . web-mode)
-         ("\\.handlebars\\'" . web-mode)
-         ("\\.mustache\\'" . web-mode)
-         )
-  :config
-  ;; Configuration
-  (setq web-mode-enable-auto-pairing t)
-  (setq web-mode-enable-css-colorization t)
-  (setq web-mode-enable-block-face t)
-  (setq web-mode-enable-part-face t)
-  (setq web-mode-enable-heredoc-fontification t)
-  (setq web-mode-enable-current-element-highlight t)
-  (setq web-mode-enable-current-column-highlight t)
-  (setq web-mode-markup-indent-offset 2)
-
-  ;; Configure face
-
-
-  (set-face-attribute 'web-mode-current-column-highlight-face nil
-                      :foreground "white" :background nil)
-  (set-face-attribute 'web-mode-current-element-highlight-face nil
-                      :foreground "white" :background nil :weight 'extra-bold)
-
-  (set-face-attribute 'web-mode-block-face nil :background nil)
-  (set-face-attribute 'web-mode-inlay-face nil :background nil)
-  (set-face-attribute 'web-mode-current-column-highlight-face nil
-                      :foreground near-to-white-color :background nil)
-;;  (set-face-attribute 'web-mode-current-column-highlight-face nil
-  ;;                    :foreground nil :background (face-background 'hl-line))
-  (set-face-attribute 'web-mode-current-element-highlight-face nil
-                      :foreground near-to-white-color
-                      :background (face-background 'hl-line)
-                      :weight 'extra-bold
-		      :underline nil)
-  )
+  (use-package php-mode
+    :ensure t
+    :defer t
+    )
 #+END_SRC
 
+** Language: HTML, CSS, JavaScript
+
+Install packages for write web pages.
+The web-mode package is good for HTML and SCSS mode.
+
 #+BEGIN_SRC emacs-lisp :tangle yes
-(use-package js2-mode
-  :ensure t
-  :defer t
-  :mode (
-         ("\\.js?\\'" . js2-mode)
-         )
-  )
+  (use-package web-mode
+    :ensure t
+    :defer t
+    :config
+
+    ;; Configuration
+    (setq web-mode-enable-auto-pairing t)
+    (setq web-mode-enable-css-colorization t)
+    (setq web-mode-enable-block-face t)
+    (setq web-mode-enable-part-face t)
+    (setq web-mode-enable-heredoc-fontification t)
+    (setq web-mode-enable-current-element-highlight t)
+    (setq web-mode-enable-current-column-highlight t)
+    (setq web-mode-markup-indent-offset 2)
+
+    ;; Colors
+
+    ;; Use the same background of the rest of the HTML
+    (set-face-attribute 'web-mode-block-face nil :background 'unspecified)
+
+    (set-face-attribute 'web-mode-current-element-highlight-face nil
+                        :foreground 'unspecified
+                        :background "#474747")
+
+    (set-face-attribute 'web-mode-current-column-highlight-face nil
+                        :foreground 'unspecified
+                        :background "#474747")
+
+    :mode (
+           ("\\.html?\\'" . web-mode)
+           ("\\.erb\\'" . web-mode)
+           ("\\.handlebars\\'" . web-mode)
+           ("\\.mustache\\'" . web-mode)
+           )
+    )
 #+END_SRC
 
-** Language: CMake
+For pure JavaScript code js2-mode is a great package.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(use-package cmake-mode
-  :ensure t
-  :defer t
-  )
-#+END_SRC
-
-** Language: Kivy
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-(use-package kivy-mode
-  :ensure t
-  :defer t
-  :mode ("\\.kv\\'" . kivy-mode)
-  )
-#+END_SRC
-
-** Language: Ruby/Rails
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-(use-package projectile-rails
-  :ensure t
-  :defer t
-  :config
-  (define-key projectile-rails-mode-map (kbd "C-c r") 'projectile-rails-command-map)
-  :hook (ruby-mode . projectile-rails-mode)
-  )
-#+END_SRC
-** Language: YAML
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-(use-package yaml-mode
-  :ensure t
-  :defer t
-  :mode (
-    ("\\.yaml\\'" . yaml-mode)
-    ("\\.yml\\'" . yaml-mode)
-  )
-  )
+  (use-package js2-mode
+    :ensure t
+    :defer t
+    :mode (
+           ("\\.js?\\'" . js2-mode)
+           )
+    )
 #+END_SRC
 
 ** Language: JSON
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(use-package json-mode
-  :ensure t
-  :defer t
-  :mode ("\\.json\\'" . json-mode)
-  )
+  (use-package json-mode
+    :ensure t
+    :defer t
+    :mode (
+           ("\\.json\\'" . json-mode)
+           )
+    )
+#+END_SRC
+
+** Language: YAML
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package yaml-mode
+    :ensure t
+    :defer t
+    :mode (
+      ("\\.yaml\\'" . yaml-mode)
+      ("\\.yml\\'" . yaml-mode)
+    )
+    )
+#+END_SRC
+
+** Language: CMake
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package cmake-mode
+    :ensure t
+    :defer t
+    )
+#+END_SRC
+
+** Language: Kivy
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package kivy-mode
+    :ensure t
+    :defer t
+    :mode ("\\.kv\\'" . kivy-mode)
+    )
+#+END_SRC
+
+** Language: Ruby On Rails
+
+Integrate with projectile package.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package projectile-rails
+    :ensure t
+    :defer t
+    :config
+
+    (define-key projectile-rails-mode-map (kbd "C-c r") 'projectile-rails-command-map)
+
+    :hook (ruby-mode . projectile-rails-mode)
+    )
 #+END_SRC
 
 ** Language: Markdown
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(use-package markdown-mode
-  :ensure t
-  :defer t
-  :commands (markdown-mode gfm-mode)
-  :mode (("README\\.md\\'" . gfm-mode)
-         ("\\.md\\'" . markdown-mode)
-         ("\\.markdown\\'" . markdown-mode))
-  :init
-  (setq markdown-command "multimarkdown")
-  )
+  (use-package markdown-mode
+    :ensure t
+    :defer t
+    :init
+    (setq markdown-command "multimarkdown")
+
+    :commands (markdown-mode gfm-mode)
+
+    :mode (("README\\.md\\'" . gfm-mode)
+           ("\\.md\\'" . markdown-mode)
+           ("\\.markdown\\'" . markdown-mode))
+    )
 #+END_SRC
 
-** Language: Nginx config files
+** Language: Nginx
+
+Manage nginx configuration files.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(use-package nginx-mode
-  :ensure t
-  :defer t
-  :mode ("\\.nginx\\'" . nginx-mode)
-  )
-#+END_SRC
-
-** Language: Kivy files
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-(use-package kivy-mode
-  :ensure t
-  :defer t
-  :mode ("\\.kv\\'" . kivy-mode)
-  )
-#+END_SRC
-
-** Language: Angular
-
-For developing Angular apps support of Typescript language is needed.
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-(use-package typescript-mode
-  :ensure t
-  :defer t
-)
+  (use-package nginx-mode
+    :ensure t
+    :defer t
+    :mode ("\\.nginx\\'" . nginx-mode)
+    )
 #+END_SRC
 
 ** Language: Rust
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-(use-package rust-mode
-  :ensure t
-  :defer t
-  )
+  (use-package rust-mode
+    :ensure t
+    :defer t
+    :mode ("\\.rs\\'" . rust-mode)
+    )
+#+END_SRC
+
+** Language: Go
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package go-mode
+    :ensure t
+    :defer t
+    )
+#+END_SRC
+
+** Language: Vue
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package vue-mode
+    :ensure t
+    :defer t
+    )
+#+END_SRC
+
+** Language: Haml
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package haml-mode
+    :ensure t
+    :defer t
+    )
+#+END_SRC
+
+** Language: Docker
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package dockerfile-mode
+    :ensure t
+    :defer t
+    )
+#+END_SRC
+
+** Language: Groovy
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package groovy-mode
+    :ensure t
+    :defer t
+    )
+#+END_SRC
+
+** Language: PHP
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package php-mode
+    :ensure t
+    :defer t
+    )
+#+END_SRC
+
+** Language: Git
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package git-modes
+    :ensure t
+    :defer t
+    )
+#+END_SRC
+
+** Language: Git
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package systemd
+    :ensure t
+    :defer t
+    :mode ("\\.service\\'" "\\.timer\\'" "\\.target\\'" "\\.socket\\'"
+           "\\.mount\\'" "\\.automount\\'" "\\.swap\\'" "\\.path\\'"
+           "\\.slice\\'" "\\.scope\\'")
+   ;; :config
+   ;; (add-hook 'systemd-mode-hook #'turn-on-font-lock)
+    )
+#+END_SRC
+
+* Misc tools
+** Impatient Mode
+
+The package "impatient mode" provides a tool for edit HTML page on the fly.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package impatient-mode
+    :ensure t
+    :defer t
+    )
 #+END_SRC
