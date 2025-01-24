@@ -373,13 +373,29 @@ Force window positioning for a specified function.
     (my-update-loading-message)
     :config
     (setq shackle-rules '(
-                          ("\\`\\*[hH]elm.*?\\*\\'" :regexp t :align 'below :size 0.3)
+                          ("\\`\\*[hH]elm.*?\\*\\'" :regexp t :align 'below :size 0.4)
                           ("\\`\\*bm-bookmarks.*?\\*\\'" :regexp t :align 'below :size 0.3)
                           ("\\`\\*Flymake.*?\\*\\'" :regexp t :align 'below :size 0.3)
                           ("\\`\\*Flycheck.*?\\*\\'" :regexp t :align 'below :size 0.3)
                           ("\\`\\*terminal.*?\\*\\'" :regexp t :align 'below :size 0.3)
                           ))
     (shackle-mode 1)
+    )
+#+END_SRC
+
+** Kill buffers
+
+Utility for killing buffers other than current buffer.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my-kill-other-buffers ()
+    "Kill all other buffers."
+    (interactive)
+
+    (mapc 'kill-buffer
+          (delq (current-buffer)
+                (remove-if-not 'buffer-file-name (buffer-list))))
+    (message "Killed other buffers")
     )
 #+END_SRC
 
@@ -805,98 +821,6 @@ Add the ability to manage multiple cursors.
   (my-update-loading-message)
 #+END_SRC
 
-* User Interface
-
-** Kill buffers
-
-Utility for killing buffers other than current buffer.
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (defun my-kill-other-buffers ()
-    "Kill all other buffers."
-    (interactive)
-
-    (mapc 'kill-buffer
-          (delq (current-buffer)
-                (remove-if-not 'buffer-file-name (buffer-list))))
-    (message "Killed other buffers")
-    )
-#+END_SRC
-
-
-
-** Theme (and activate stuffs)
-
-
-Now load the main theme.
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-;  (use-package vscode-dark-plus-theme
-;    :ensure t
-;    :init
-;
-;    ;; Toggle full screen automatically
-;    ;; (add-hook 'window-setup-hook 'toggle-frame-maximized t)
-;
-;    ;; In early stage customize all non-UI stuffs
-;    (my-backup-preferences)
-;    (my-manage-buffers)
-;    (my-indent-preferences)
-;    (my-cut-paste-preferences)
-;    (my-word-wrap)
-;    (my-compiling-preferences)
-;
-;    :config
-;
-;    ;; Remove the border around the TODO word on org-mode files
-;    (setq vscode-dark-plus-box-org-todo nil)
-;
-;    ;; Do not set different heights for some org faces
-;    (setq vscode-dark-plus-scale-org-faces nil)
-;
-;    ;; Avoid inverting hl-todo face
-;    (setq vscode-dark-plus-invert-hl-todo nil)
-;
-;    ;; Configure current line highlighting style (works best with Emacs 28 or newer)
-;    (setq vscode-dark-plus-render-line-highlight 'line)
-;
-;    ;; Load default theme
-;    (load-theme 'vscode-dark-plus t)
-;
-;    ;; Customize UI stuffs after loading theme
-;    (my-set-default-font)
-;    (my-setup-cursor)
-;    (my-line-preferences)
-;    (my-display-fill-column)
-;    (my-show-parens)
-;    (my-search-preferences)
-;    (my-dired-settings)
-;    (my-other-file-settings)
-;
-;    ;; Fine tune
-;    (set-face-attribute 'vertical-border nil :foreground "#252526")
-;
-;    :bind (
-;           ("C-<f4>"   . 'kill-buffer-and-window)
-;           ("C-w"      . 'kill-buffer-and-window)
-;           ("S-C-<f4>" . 'my-kill-other-buffers)
-;           ("S-C-w"    . 'my-kill-other-buffers)
-;           ("<escape>" . 'keyboard-escape-quit)
-;           ("C-s"      . 'my-save)
-;           ("C-M-s"    . 'my-save-all)
-;           ("C-S-a"    . 'ff-find-other-file)
-;           ("C-S-x"    . 'list-packages)
-;           ("C-ò"      . 'term)
-;           ("C-/"      . 'comment-dwim)
-;           ("C-S-["    . 'hs-hide-block)
-;           ("C-S-]"    . 'hs-show-block)
-;           ("C-S-m"    . 'flymake-show-buffer-diagnostics)
-;           ("<f8>"     . 'flymake-goto-next-error)
-;           ("S-<f8>"   . 'flymake-goto-previous-error)
-;           )
-;    )
-#+END_SRC
-
 
 
 
@@ -1104,7 +1028,16 @@ All the LSP fine tuning are grouped in the following functions.
 
     ;; Disable "Restart LSP Server" requests
     (setq lsp-restart 'ignore)
-  )
+
+    ;; Ignore some folders
+    (setq lsp-file-watch-ignored
+      (append lsp-file-watch-ignored
+              '("[/\\\\]\\.angular$"
+                "[/\\\\]\\.cache$"
+                "[/\\\\]\\build$"
+                "[/\\\\]\\dist$")))
+
+    )
 #+END_SRC
 
 Enable only needed UI.

@@ -28,6 +28,7 @@
       (vscode-border-dark         "#282828") ;; Original is #282828
       (vscode-git-added           "#2ea043")
       (vscode-git-modified        "#0078d4")
+      (vscode-parenthesis         "#e7c303")
       )
 
   (custom-theme-set-faces
@@ -103,10 +104,22 @@
    `(treemacs-directory-face ((,class (:foreground ,keyword))))
    `(treemacs-file-face ((,class (:foreground ,vscode-fg-light))))
    `(treemacs-tags-face ((,class (:foreground ,constant))))
+   `(treemacs-git-ignored-face ((,class (:foreground ,vscode-shadow))))
 
    ;; Helm
    `(helm-selection ((t (:foreground ,vscode-fg-light :background ,highlight))))
    `(helm-source-header ((t (:foreground ,vscode-fg-light :background ,vscode-bg-light :weight bold))))
+   `(helm-buffer-directory ((,class (:foreground ,keyword :background nil))))
+   `(helm-buffer-file ((,class (:foreground ,vscode-fg-light :background nil))))
+
+   `(helm-ff-directory ((,class (:foreground ,keyword :background nil))))
+   `(helm-ff-dirs ((,class (:foreground ,function-name :background nil))))
+   `(helm-ff-dotted-directory ((,class (:foreground ,vscode-shadow :background nil))))
+   `(helm-ff-file ((,class (:foreground ,vscode-fg-light :background nil))))
+   `(helm-ff-file-extension ((,class (:foreground ,vscode-fg-light :background nil))))
+   `(helm-candidate-number ((,class (:foreground ,vscode-parenthesis :background nil))))
+   `(helm-header-line-left-margin ((,class (:foreground ,vscode-parenthesis :background nil))))
+   `(helm-ff-prefix ((,class (:foreground ,vscode-parenthesis :background nil))))
 
    ;; Highlight indent guide
    ;; The nprmal color should be "vscode-border" in order to be equal
@@ -120,6 +133,7 @@
    `(highlight-indent-guides-top-character-face  ((t (:foreground ,vscode-shadow))))
    `(highlight-indent-guides-top-even-face  ((t (:foreground ,vscode-shadow))))
    `(highlight-indent-guides-top-odd-face  ((t (:foreground ,vscode-shadow))))
+
 
    ;; Git gutter
    `(git-gutter:added  ((t (:foreground ,vscode-git-added))))
