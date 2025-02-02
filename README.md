@@ -6,6 +6,7 @@ An Emacs configuration with theme and keybinding inspired to Visual Studio Code.
 
 This configuration is compatible with *Emacs 28.1+* and
 has test on *Debian 11* and *Debian 12*.
+
 You also require [git](https://git-scm.com/) for cloning the repo.
 
 ## Quick Start
@@ -25,23 +26,10 @@ You also require [git](https://git-scm.com/) for cloning the repo.
 
 ![Editing Markdown](/docs/screenshot-theme.webp "Editing Markdown")
 
-
-## How to compile Emacs
-
-```
-$ sudo apt install build-essential xorg-dev libgtk2.0-dev libjpeg-dev libgif-dev libtiff-dev libncurses5-dev libjansson-dev libgccjit-10-dev
-$ ./configure --prefix=/opt/emacs --with-native-compilation --with-mailutils
-$ make
-$ sudo make install
-```
-
-Emacs will be installed in `/opt/emacs` folder.
-
-
 ## See also
 
 * Details about implemented [keybindings](docs/keybindings.md).
-* Where to download [fonts](docs/keybindings.md) for better experience.
+* Where to download [fonts](docs/fonts.md) for better experience.
 * How to [configure LSP](docs/lsp-configuration.md).
 
 ## License
