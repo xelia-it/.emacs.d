@@ -1,6 +1,8 @@
 # Keybinding
 
-Currently supported VSCode Keybindings:
+Currently supported VSCode Keybindings.
+
+## VSCode sidebar
 
 | Keybinding                                         | Visual Studio Behaviour         | Bind to
 |----------------------------------------------------|---------------------------------|------------------------------------
@@ -9,10 +11,18 @@ Currently supported VSCode Keybindings:
 | <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>G</kbd>  | Side Bar: Source Control        | `magit-status`
 | <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>D</kbd>  | Side Bar: Run                   | `projectile-compile-project`
 | <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>X</kbd>  | Side Bar: Extensions            | `list-packages`
+
+## Error management
+
+| Keybinding                                         | Visual Studio Behaviour         | Bind to
 |----------------------------------------------------|---------------------------------|------------------------------------
 | <kbd>Ctrl</kbd> + <kbd>F8</kbd>                    | Go to next error or warning     | `flymake-goto-next-error`
 | <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>F8</kbd> | Go to previous error or warning | `flymake-goto-previous-error`
 | <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>M</kbd>  | Show Problems panel             | `flymake-show-buffer-diagnostics`
+
+## Editing
+
+| Keybinding                                         | Visual Studio Behaviour         | Bind to
 |----------------------------------------------------|---------------------------------|------------------------------------
 | <kbd>Ctrl</kbd> + <kbd>/</kbd>                     | Toggle line comment             | `comment-dwim`
 | <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>[</kbd>  | Fold innermost block            | `hs-hide-block`

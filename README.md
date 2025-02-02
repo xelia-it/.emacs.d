@@ -1,44 +1,37 @@
 # emacs.d
 
-An Emacs configuration with theme and keybinding similar to Visual Studio Code.
+An Emacs configuration with theme and keybinding inspired to Visual Studio Code.
 
 ## Requirements
 
-Tested on Debian 11 and Debian 12 with Emacs 28.1+.
+This configuration is compatible with *Emacs 28.1+* and
+has test on *Debian 11* and *Debian 12*.
 
-## How to compile EMacs
+You also require [git](https://git-scm.com/) for cloning the repo.
 
-```
-$ sudo apt install build-essential xorg-dev libgtk2.0-dev libjpeg-dev libgif-dev libtiff-dev libncurses5-dev libjansson-dev libgccjit-10-dev
-$ ./configure --prefix=/opt/emacs --with-native-compilation --with-mailutils
-$ make
-$ make install
-```
+## Quick Start
 
-Emacs will be installed in `/opt/emacs` folder.
+* Download Emacs: https://www.gnu.org/software/emacs/
+* Go to your user root.
+  It's `/home/<your username>` in Linux and `C:\Users\<your username>\AppData\Roaming` in Windows.
+* Clone the repo: `git clone https://github.com/xelia-it/.emacs.d.git`
+* Open Emacs. Emacs should show message "Byte-compyling init file..."
+  and should start downloading all the packages.
+  This can take a while. Time for a break :coffee:.
+* At the end the main Emacs window should appear.
+  The first time some compilation *warnings* can appear: you cna ignore them.
+* Close and reopen Emacs. Now the window should open quickly with the new theme applied!
 
-## LSP Configuration
+## Screenshot
 
-In order to use LSP functionality we need to install Language Server separately.
-The [Emacs LSP Github Project](https://emacs-lsp.github.io/lsp-mode/) contains
-detailed information for all the supported Language Servers.
+![Editing Markdown](/docs/screenshot-theme.webp "Editing Markdown")
 
-You can install Language Servers for this configuration using:
-```
-$ npm install -g @angular/language-service@next typescript @angular/language-server # Angular
-$ npm install -g typescript-language-server typescript                              # TypeScript
-$ npm install -g bash-language-server                                               # Bash
-$ npm install -g dockerfile-language-server-nodejs                                  # Docker
-$ npm install -g intelephense                                                       # PHP
-$ npm install -g vscode-langservers-extracted                                       # HTML/Wev
-$ rustup component add rust-analyzer rust-src                                       # Rust
-$ pip install cmake-language-server                                                 # CMake
-```
+## See also
 
-## Keybindings
+* Details about implemented [keybindings](docs/keybindings.md).
+* Where to download [fonts](docs/fonts.md) for better experience.
+* How to [configure LSP](docs/lsp-configuration.md).
 
-* The [keybindings](docs/keybindings.md) equals to Visual Studio.
-
-## Licence
+## License
 
 This configuration is released as Public Domain (Unlicensed).
