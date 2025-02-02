@@ -53,12 +53,16 @@ These fonts should be installed manually.
     "Set default font"
     (cond
 
+     ((find-font (font-spec :name "Droid Sans Mono"))
+      (set-frame-font "Droid Sans Mono 11" nil t)
+      )
+
      ((find-font (font-spec :name "Monospace"))
       (set-frame-font "Monospace 11" nil t)
       )
 
      ((find-font (font-spec :name "Consolas"))
-      (set-frame-font "Consolas 12" nil t)
+      (set-frame-font "Consolas 11" nil t)
       )
 
      ((find-font (font-spec :name "Monaco"))
@@ -70,6 +74,8 @@ These fonts should be installed manually.
       )
      )
     )
+
+  (my-set-default-font)
 #+END_SRC
 
 ** Load theme
