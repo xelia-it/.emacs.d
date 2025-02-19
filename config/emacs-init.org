@@ -50,7 +50,9 @@ These fonts should be installed manually.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
   (defun my-set-default-font()
-    "Set default font"
+    "Set default font for the whole frame"
+
+    ;; Search installed font and apply  the first found
     (cond
 
      ((find-font (font-spec :name "Droid Sans Mono"))
@@ -73,6 +75,9 @@ These fonts should be installed manually.
       (set-frame-font "DejaVu Sans Mono 11" nil t)
       )
      )
+
+    ;; Scale font to 105%
+    (face-remap-add-relative 'default :height 105)
     )
 
   (my-set-default-font)
