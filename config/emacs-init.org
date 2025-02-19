@@ -50,7 +50,9 @@ These fonts should be installed manually.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
   (defun my-set-default-font()
-    "Set default font"
+    "Set default font for the whole frame"
+
+    ;; Search installed font and apply  the first found
     (cond
 
      ((find-font (font-spec :name "Droid Sans Mono"))
@@ -73,6 +75,9 @@ These fonts should be installed manually.
       (set-frame-font "DejaVu Sans Mono 11" nil t)
       )
      )
+
+    ;; Scale font to 105%
+    (face-remap-add-relative 'default :height 105)
     )
 
   (my-set-default-font)
@@ -96,6 +101,8 @@ Setup a fancy modeline..
   (use-package doom-modeline
     :ensure t
     :init
+    ;; Hide modeline bar at startup
+    (setq-default mode-line-format '(" "))
 
     ;; How tall the mode-line should be. It's only respected in GUI.
     ;; If the actual char height is larger, it respects the actual height.
@@ -122,8 +129,11 @@ Setup a fancy modeline..
     ;; The maximum displayed length of the branch name of version control.
     (setq doom-modeline-vcs-max-length 30)
 
-    ;; Activate modeline everywhere
-    (doom-modeline-mode 1)
+    ;; Activate modeline after loading
+    :hook (emacs-startup . (lambda ()
+                 ;;(setq-default mode-line-format doom-modeline-mode-line)
+                 (doom-modeline-mode 1))
+             )
     )
 #+END_SRC
 

@@ -49,7 +49,6 @@ site-lisp/package/
 /.historian
 /.uptimes.el
 /rake.cache
-projectile.cache
 /irony
 /bm-repository
 /transient
@@ -59,3 +58,6 @@ projectile.cache
 /config/emacs-init.el
 /eln-cache/
 lsp-cache
+projectile.cache
+.projectile.cache
+projects
