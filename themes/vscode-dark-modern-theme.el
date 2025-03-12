@@ -25,7 +25,7 @@
       (vscode-line-number-current "#FFFFFF")
       (vscode-border              "#404040")
       (vscode-shadow              "#707070")
-      (vscode-border-dark         "#282828") ;; Original is #282828
+      (vscode-border-dark         "#282828")
       (vscode-git-added           "#2ea043")
       (vscode-git-modified        "#0078d4")
       (vscode-parenthesis         "#e7c303")
@@ -46,6 +46,12 @@
    `(vscode-success ((,class (:foreground ,vscode-success))))
    `(vscode-warning ((,class (:foreground ,vscode-warning))))
    `(error ((,class (:foreground ,vscode-error))))
+
+
+   ;;(set-face-attribute 'highlight nil :background "#093d5b" :underline nil)
+   ;; (set-face-attribute 'lsp-face-highlight-read nil :underline nil)
+   ;; (set-face-attribute 'lsp-face-highlight-textual nil :underline nil)
+   ;; (set-face-attribute 'lsp-face-highlight-write nil :underline nil)
 
    ;; Font lock (syntax highlighting)
    `(font-lock-builtin-face ((,class (:foreground ,vscode-keyword))))
@@ -113,8 +119,9 @@
    `(helm-source-header ((t (:foreground ,vscode-fg-light :background ,vscode-bg-light :weight bold))))
    `(helm-buffer-directory ((,class (:foreground ,vscode-keyword :background unspecified))))
    `(helm-buffer-file ((,class (:foreground ,vscode-fg-light :background unspecified))))
-
    `(helm-ff-directory ((,class (:foreground ,vscode-keyword :background unspecified))))
+   `(helm-ff-executable ((,class (:foreground ,vscode-css-selector))))
+   `(helm-ff-symlink ((,class (:foreground ,vscode-cursor :underline t))))
    `(helm-ff-dirs ((,class (:foreground ,vscode-function-name :background unspecified))))
    `(helm-ff-dotted-directory ((,class (:foreground ,vscode-shadow :background unspecified))))
    `(helm-ff-file ((,class (:foreground ,vscode-fg-light :background unspecified))))
@@ -122,6 +129,8 @@
    `(helm-candidate-number ((,class (:foreground ,vscode-parenthesis :background unspecified))))
    `(helm-header-line-left-margin ((,class (:foreground ,vscode-parenthesis :background unspecified))))
    `(helm-ff-prefix ((,class (:foreground ,vscode-parenthesis :background unspecified))))
+   ;; `(helm-match ((,class (:foreground ,vscode-highlight :weight bold))))
+   `(helm-visible-mark ((,class (:background ,vscode-region :foreground ,vscode-line-number-current))))
 
    ;; Highlight indent guide
    ;; The normal color should be "vscode-border" in order to be equal
@@ -136,6 +145,7 @@
    `(highlight-indent-guides-top-even-face  ((t (:foreground ,vscode-shadow))))
    `(highlight-indent-guides-top-odd-face  ((t (:foreground ,vscode-shadow))))
 
+   ;; Web Mode
    `(web-mode-html-tag-face ((t (:foreground ,vscode-keyword))))   ;; Color for HTML tags
    `(web-mode-html-attr-name-face ((t (:foreground ,vscode-variable)))) ;; HTML attributes
    `(web-mode-html-attr-value-face ((t (:foreground ,vscode-string)))) ;; Values
@@ -150,6 +160,25 @@
    `(git-gutter:added  ((t (:foreground ,vscode-git-added))))
    `(git-gutter:deleted  ((t (:foreground ,vscode-error))))
    `(git-gutter:modified  ((t (:foreground ,vscode-git-modified))))
+
+
+
+   ;; LSP
+   `(lsp-ui-doc-background ((t (:background ,vscode-bg-dark))))
+   `(lsp-ui-doc-header ((t (:background "#264f78" :foreground "#ffffff" :bold t))))
+   `(lsp-ui-doc-text ((t (:foreground ,vscode-fg-light))))
+
+   ;; Company tooltip
+   `(company-box-background ((t (:background "#1e1e1e"))))
+   `(company-box-border ((t (:background "#3c3c3c"))))
+
+   `(company-tooltip ((t (:background "#1e1e1e" :foreground "#d4d4d4"))))
+   `(company-tooltip-selection ((t (:background "#264f78" :foreground "#ffffff"))))
+   `(company-tooltip-annotation ((t (:foreground "#dcdcaa"))))
+   `(company-tooltip-annotation-selection ((t (:foreground "#ffd700"))))
+   `(company-tooltip-scrollbar-thumb ((t (:background "#3e3e3e"))))
+   `(company-tooltip-scrollbar-track ((t (:background "#262626"))))
+   `(company-tooltip-mouse ((t (:background "#569cd6" :foreground "#ffffff"))))
 
    ;; Matching parenthesis
    `(show-paren-match

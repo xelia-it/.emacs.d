@@ -849,21 +849,15 @@ Add the ability to manage multiple cursors.
     (setq helm-split-window-in-side-p           t   ;; Open helm buffer inside current window, not occupy whole other window
           helm-move-to-line-cycle-in-source     t   ;; move to end or beginning of source when reaching top or bottom of source.
           helm-ff-search-library-in-sexp        t   ;; search for library in `require' and `declare-function' sexp.
-          helm-scroll-amount                    10  ;; scroll 8 lines other window using M-<next>/M-<prior>
+          helm-scroll-amount                    8   ;; scroll 8 lines other window using M-<next>/M-<prior>
           helm-ff-file-name-history-use-recentf t
           helm-display-header-line              nil ;; Hide header line
           helm-echo-input-in-header-line        nil ;; Do not echo in header line
-
           helm-autoresize-max-height            0   ;;
           helm-autoresize-min-height            20  ;;
           )
 
     (helm-autoresize-mode 1)
-
-    ;; Colors
-    ;; Set "match" color for searches.
-    (set-face-attribute 'helm-match nil
-                        :foreground "#2aaaff" :background 'unspecified :weight 'extra-bold)
 
     :bind (
            ("M-x"             . helm-M-x)
@@ -1048,7 +1042,6 @@ All the LSP fine tuning are grouped in the following functions.
                 "[/\\\\]\\.cache$"
                 "[/\\\\]\\build$"
                 "[/\\\\]\\dist$")))
-
     )
 #+END_SRC
 
@@ -1110,22 +1103,8 @@ Enable only needed UI.
     (setq lsp-headerline-breadcrumb-icons-enable nil)
 
     ;; Colors
-    (set-face-attribute 'highlight nil :background "#093d5b" :underline nil)
-    (set-face-attribute 'lsp-face-highlight-read nil :underline nil)
-    (set-face-attribute 'lsp-face-highlight-textual nil :underline nil)
-    (set-face-attribute 'lsp-face-highlight-write nil :underline nil)
-
-
-    (set-face-attribute 'lsp-ui-peek-selection nil :background "#093d5b")
-
-      (set-face-attribute 'lsp-ui-peek-header nil
-        :foreground "white"
-        :background "#181818"
-        :box '(:line-width (1 . 1)
-               :color "#212121"
-               :style nil)
-        )
-  )
+    (setq lsp-ui-doc-border "#3c3c3c")  ;; Doc border is not a face
+    )
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp :tangle yes

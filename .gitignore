@@ -61,3 +61,4 @@ lsp-cache
 projectile.cache
 .projectile.cache
 projects
+.projectile-cache.eld
