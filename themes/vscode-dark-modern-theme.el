@@ -41,7 +41,7 @@
    `(fringe ((,class (:background ,vscode-bg-dark))))
    `(cursor ((,class (:background ,vscode-cursor))))
    `(region ((,class (:background ,vscode-region))))
-   `(highlight ((,class (:background ,vscode-highlight))))
+   `(highlight ((,class (:background ,vscode-highlight :underline nil))))
    `(shadow ((,class (:foreground ,vscode-fg-dim))))
    `(vscode-success ((,class (:foreground ,vscode-success))))
    `(vscode-warning ((,class (:foreground ,vscode-warning))))
