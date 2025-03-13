@@ -1102,6 +1102,10 @@ Enable only needed UI.
     ;; Headerline icon enable
     (setq lsp-headerline-breadcrumb-icons-enable nil)
 
+    (setq lsp-signature-auto-activate nil)  ;; Disabilita signature in the minibuffer
+    ;;(setq lsp-signature-render-documentation nil)  ;; Evita che mostri i dettagli nella firma
+    ;;(setq lsp-eldoc-enable-hover nil))  ;; Impedisce che `eldoc` mostri info sulle funzioni
+
     ;; Colors
     (setq lsp-ui-doc-border "#3c3c3c")  ;; Doc border is not a face
     )
