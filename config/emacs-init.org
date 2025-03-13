@@ -758,20 +758,17 @@ An example is switching between files such as C/C++ header files.
 
     (defvar my-other-file-alist
       '(
-        ("\\.component.html\\'" (".component.ts" ".component.spec.ts" ".component.scss"))
-        ("\\.component.ts\\'" (".component.spec.ts" ".component.scss" ".component.html"))
-        ("\\.component.spec.ts\\'" (".component.scss" ".component.html" ".component.ts"))
-        ("\\.component.scss\\'" (".component.html" ".component.ts" ".component.spec.ts"))
-
-        ("\\.service.ts\\'" (".service.spec.ts"))
-        ("\\.service.spec.ts\\'" (".service.ts"))
-
-        ("\\.guard.ts\\'" (".guard.spec.ts"))
-        ("\\.guard.spec.ts\\'" (".guard.ts"))
+        ;; Angular
+        ("\\.spec\\.ts\\'" (".ts" ".html" ".scss"))
+        ("\\.scss\\'" (".spec.ts" ".ts" ".html"))
+        ("\\.ts\\'" (".html" ".scss" ".spec.ts"))
+        ("\\.html\\'" (".scss" ".spec.ts" ".ts"))
         ))
-
     (setq-default ff-other-file-alist 'my-other-file-alist)
     )
+
+  (my-other-file-settings)
+  (my-update-loading-message)
 #+END_SRC
 
 ** Multiple Cursors
