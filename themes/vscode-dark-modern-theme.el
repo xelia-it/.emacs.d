@@ -115,22 +115,46 @@
    `(treemacs-git-ignored-face ((,class (:foreground ,vscode-shadow))))
 
    ;; Helm
-   `(helm-selection ((t (:foreground ,vscode-fg-light :background ,vscode-highlight))))
-   `(helm-source-header ((t (:foreground ,vscode-fg-light :background ,vscode-bg-light :weight bold))))
-   `(helm-buffer-directory ((,class (:foreground ,vscode-keyword :background unspecified))))
-   `(helm-buffer-file ((,class (:foreground ,vscode-fg-light :background unspecified))))
-   `(helm-ff-directory ((,class (:foreground ,vscode-keyword :background unspecified))))
-   `(helm-ff-executable ((,class (:foreground ,vscode-css-selector))))
-   `(helm-ff-symlink ((,class (:foreground ,vscode-cursor :underline t))))
-   `(helm-ff-dirs ((,class (:foreground ,vscode-function-name :background unspecified))))
-   `(helm-ff-dotted-directory ((,class (:foreground ,vscode-shadow :background unspecified))))
-   `(helm-ff-file ((,class (:foreground ,vscode-fg-light :background unspecified))))
-   `(helm-ff-file-extension ((,class (:foreground ,vscode-fg-light :background unspecified))))
-   `(helm-candidate-number ((,class (:foreground ,vscode-parenthesis :background unspecified))))
-   `(helm-header-line-left-margin ((,class (:foreground ,vscode-parenthesis :background unspecified))))
-   `(helm-ff-prefix ((,class (:foreground ,vscode-parenthesis :background unspecified))))
+   ;;`(helm-selection ((t (:foreground ,vscode-fg-light :background ,vscode-highlight))))
+   ;;`(helm-source-header ((t (:foreground ,vscode-fg-light :background ,vscode-bg-light :weight bold))))
+   ;;`(helm-buffer-directory ((,class (:foreground ,vscode-keyword :background unspecified))))
+   ;;`(helm-buffer-file ((,class (:foreground ,vscode-fg-light :background unspecified))))
+   ;;`(helm-ff-directory ((,class (:foreground ,vscode-keyword :background unspecified))))
+   ;;`(helm-ff-executable ((,class (:foreground ,vscode-css-selector))))
+   ;;`(helm-ff-symlink ((,class (:foreground ,vscode-cursor :underline t))))
+   ;;`(helm-ff-dirs ((,class (:foreground ,vscode-function-name :background unspecified))))
+   ;;`(helm-ff-dotted-directory ((,class (:foreground ,vscode-shadow :background unspecified))))
+   ;;`(helm-ff-file ((,class (:foreground ,vscode-fg-light :background unspecified))))
+   ;;`(helm-ff-file-extension ((,class (:foreground ,vscode-fg-light :background unspecified))))
+   ;;`(helm-candidate-number ((,class (:foreground ,vscode-parenthesis :background unspecified))))
+   ;;`(helm-header-line-left-margin ((,class (:foreground ,vscode-parenthesis :background unspecified))))
+   ;;`(helm-ff-prefix ((,class (:foreground ,vscode-parenthesis :background unspecified))))
    ;; `(helm-match ((,class (:foreground ,vscode-highlight :weight bold))))
-   `(helm-visible-mark ((,class (:background ,vscode-region :foreground ,vscode-line-number-current))))
+   ;;`(helm-visible-mark ((,class (:background ,vscode-region :foreground ,vscode-line-number-current))))
+
+   `(helm-selection ((,class (:foreground "#d4d4d4" :background ,vscode-highlight )))) ;; Selezione corrente
+   `(helm-selection-line ((,class (:background ,vscode-highlight))))  ;; Riga selezionata
+
+   `(helm-ff-directory ((,class (:foreground ,vscode-keyword :background unspecified))))
+   `(helm-ff-dirs ((,class (:foreground ,vscode-keyword :background unspecified))))  ;; Funzione per directory
+   `(helm-ff-dotted-directory ((,class (:foreground "#6A9955" :background unspecified))))  ;; Ombre per cartelle nascoste
+   `(helm-ff-file ((,class (:foreground "#D4D4D4" :background "#1E1E1E"))))  ;; Testo principale
+   `(helm-ff-file-extension ((,class (:foreground "#D4D4D4" :background unspecified))))  ;; Estensioni file
+   `(helm-candidate-number ((,class (:foreground "#C586C0" :background unspecified))))  ;; Parentesi/evidenziazione numeri
+   `(helm-source-header ((,class (:foreground "#DCDCAA" :background "#1E1E1E" :weight bold)))) ;; Titolo della fonte
+
+   `(helm-match ((,class (:foreground "#569cd6" :weight bold)))) ;; Testo corrispondente alla ricerca
+   `(helm-M-x-key ((,class (:foreground "#d16969" :weight bold)))) ;; Tasti di comando M-x
+
+
+   `(helm-buffer-directory ((,class (:foreground "#4FC1FF" :background "#1E1E1E"))))  ;; Nome cartella in Helm buffer
+   `(helm-buffer-file ((,class (:foreground "#D4D4D4" :background "#1E1E1E")))) ;; File nei buffer di Helm
+   `(helm-buffer-size ((,class (:foreground "#6A9955" :background "#1E1E1E")))) ;; Dimensione buffer
+   `(helm-projectile-file ((,class (:foreground "#D4D4D4" :background "#1E1E1E"))))
+   `(helm-projectile-dir ((,class (:foreground "#4FC1FF" :background "#1E1E1E"))))
+   `(helm-ff-symlink ((,class (:foreground "#C586C0" :background unspecified)))) ;; Link simbolici
+   `(helm-ff-executable ((,class (:foreground "#4EC9B0" :background unspecified)))) ;; File eseguibili
+   `(helm-ff-invalid-symlink ((,class (:foreground "#F44747" :background unspecified)))) ;; Link simbolici rotti
 
    ;; Highlight indent guide
    ;; The normal color should be "vscode-border" in order to be equal
@@ -161,12 +185,20 @@
    `(git-gutter:deleted  ((t (:foreground ,vscode-error))))
    `(git-gutter:modified  ((t (:foreground ,vscode-git-modified))))
 
-
-
    ;; LSP
    `(lsp-ui-doc-background ((t (:background ,vscode-bg-dark))))
    `(lsp-ui-doc-header ((t (:background "#264f78" :foreground "#ffffff" :bold t))))
    `(lsp-ui-doc-text ((t (:foreground ,vscode-fg-light))))
+
+   ;; Temporary LSP
+   ;; -----------
+   '(lsp-face-highlight-read ((t (:background "#264F78" :foreground "white" :underline nil))))
+   '(lsp-face-highlight-textual ((t (:background "#2D2D2D" :foreground "#DCDCDC" :underline nil))))
+   '(lsp-face-highlight-write ((t (:background "#783A3A" :foreground "white" :underline nil))))
+   '(isearch ((t (:background "#FFD700" :foreground "black" :weight bold))))
+   '(lazy-highlight ((t (:background "#A0A0A0" :foreground "black"))))
+   '(query-replace ((t (:background "#FF4500" :foreground "white" :weight bold))))
+   ;; ----
 
    ;; Company tooltip
    `(company-box-background ((t (:background "#1e1e1e"))))
