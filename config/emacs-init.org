@@ -835,7 +835,22 @@ Add the ability to manage multiple cursors.
 #+END_SRC
 
 * Completion
-** Install Helm
+
+Helm is a great narrowing and completion system.
+It's customized to mimic VS Code behaviour using functions.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my/helm-projectile-imenu ()
+    "In a project, C-t use helm-imenu to search symbols."
+    (interactive)
+
+    (if (projectile-project-p)
+        (helm-imenu)
+      (call-interactively (key-binding (kbd "C-p"))))
+    )
+#+END_SRC
+
+Now we activate Helm. Please note that the loading is deferred in order to speed up startup time.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package helm
@@ -861,6 +876,7 @@ Add the ability to manage multiple cursors.
            ("C-S-p"           . helm-M-x)
            ("<f1>"            . helm-M-x)
            ("C-o"             . helm-find-files)
+           ("C-t"             . my/helm-projectile-imenu)
            ;; Various common ways to switch buffers
            ("C-x b"           . helm-buffers-list)
            ("C-x C-b"         . helm-buffers-list)
@@ -909,13 +925,29 @@ Projectile package helps discover and remember projects.
 We want to use helm for selecting and narrowing projects.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my/helm-projectile-or-find-file ()
+    "In a project, C-p use helm-projectile-find-file."
+    (interactive)
+
+    (if (projectile-project-p)
+        (helm-projectile-find-file)
+      (call-interactively (key-binding (kbd "C-p"))))
+    )
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp :tangle yes
   (use-package helm-projectile
     :ensure t
+    :after projectile
     :defer t
+
+    :config
+    (helm-projectile-on)
+
     :bind (
            ("C-S-f" . helm-projectile-grep)
            ("S-C-o" . helm-projectile-switch-project)
-           ("C-t"   . helm-projectile-find-file)
+           ("C-p" . my/helm-projectile-or-find-file)
            ;; Switch all buffers
            ("C-<tab>"         . helm-buffers-list)
            ("C-<iso-lefttab>" . helm-buffers-list)
@@ -926,9 +958,6 @@ We want to use helm for selecting and narrowing projects.
            ("C-<tab>"         . helm-next-line)
            ("C-<iso-lefttab>" . helm-previous-line)
            )
-
-    :config
-    (helm-projectile-on)
     )
 #+END_SRC
 
@@ -1178,7 +1207,6 @@ Add lsp-ui package for better user interface.
 
 Use a fancy box for completion selection.
 
-
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package company
     :ensure t
@@ -1215,7 +1243,10 @@ Integrate with treemacs package.
     :ensure t
     :defer t
     :commands lsp-treemacs-error-list
-   )
+    :bind (
+            ("C-S-t" . lsp-treemacs-symbols)
+            )
+    )
 #+END_SRC
 
 ** Language: Angular
