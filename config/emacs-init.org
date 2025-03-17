@@ -389,11 +389,11 @@ Force window positioning for a specified function.
     (my-update-loading-message)
     :config
     (setq shackle-rules '(
-                          ("\\`\\*[hH]elm.*?\\*\\'" :regexp t :align 'below :size 0.4)
-                          ("\\`\\*bm-bookmarks.*?\\*\\'" :regexp t :align 'below :size 0.3)
-                          ("\\`\\*Flymake.*?\\*\\'" :regexp t :align 'below :size 0.3)
-                          ("\\`\\*Flycheck.*?\\*\\'" :regexp t :align 'below :size 0.3)
-                          ("\\`\\*terminal.*?\\*\\'" :regexp t :align 'below :size 0.3)
+                          ("\\`\\*[hH]elm.*?\\*\\'" :regexp t :align 'below :size 0.3)
+                          ("\\`\\*bm-bookmarks.*?\\*\\'" :regexp t :align 'below :size 0.25)
+                          ("\\`\\*Flymake.*?\\*\\'" :regexp t :align 'below :size 0.25)
+                          ("\\`\\*Flycheck.*?\\*\\'" :regexp t :align 'below :size 0.25)
+                          ("\\`\\*terminal.*?\\*\\'" :regexp t :align 'below :size 0.25)
                           ))
     (shackle-mode 1)
     )
