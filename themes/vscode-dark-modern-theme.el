@@ -134,7 +134,7 @@
    ;; `(helm-match ((,class (:foreground ,vscode-highlight :weight bold))))
    ;;`(helm-visible-mark ((,class (:background ,vscode-region :foreground ,vscode-line-number-current))))
 
-   `(helm-selection ((,class (:foreground "#d4d4d4" :background ,vscode-highlight )))) ;; Selezione corrente
+   `(helm-selection ((,class (:foreground ,vscode-fg-light :background ,vscode-highlight )))) ;; Selezione corrente
    `(helm-selection-line ((,class (:background ,vscode-highlight))))  ;; Riga selezionata
 
    `(helm-ff-directory ((,class (:foreground ,vscode-keyword :background unspecified))))
