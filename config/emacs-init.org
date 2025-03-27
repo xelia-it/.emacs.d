@@ -354,8 +354,11 @@ In programming modes it's useful to have a vertical line that show the right mar
      '(("\\([][{}()]\\)"   ;; Regex per parentesi tonde, quadre e graffe
         (1 'font-lock-parenthesis-face)))))
 
+;;  (defface font-lock-parenthesis-face
+;;    '((t :foreground "#e7c303" :weight bold)) ;; Colore giallo per il tema scuro
+;;    "Face per evidenziare tutte le parentesi.")
   (defface font-lock-parenthesis-face
-    '((t :foreground "#e7c303" :weight bold)) ;; Colore giallo per il tema scuro
+    '((t :foreground "#f6cf01" :weight bold)) ;; Colore giallo per il tema scuro
     "Face per evidenziare tutte le parentesi.")
 
   (add-hook 'prog-mode-hook 'my-highlight-parentheses)
@@ -390,10 +393,10 @@ Force window positioning for a specified function.
     :config
     (setq shackle-rules '(
                           ("\\`\\*[hH]elm.*?\\*\\'" :regexp t :align 'below :size 0.3)
-                          ("\\`\\*bm-bookmarks.*?\\*\\'" :regexp t :align 'below :size 0.25)
-                          ("\\`\\*Flymake.*?\\*\\'" :regexp t :align 'below :size 0.25)
-                          ("\\`\\*Flycheck.*?\\*\\'" :regexp t :align 'below :size 0.25)
-                          ("\\`\\*terminal.*?\\*\\'" :regexp t :align 'below :size 0.25)
+                          ("\\`\\*bm-bookmarks.*?\\*\\'" :regexp t :align 'below :size 0.3)
+                          ("\\`\\*Flymake.*?\\*\\'" :regexp t :align 'below :size 0.3)
+                          ("\\`\\*Flycheck.*?\\*\\'" :regexp t :align 'below :size 0.3)
+                          ("\\`\\*terminal.*?\\*\\'" :regexp t :align 'below :size 0.3)
                           ))
     (shackle-mode 1)
     )
@@ -606,6 +609,15 @@ For more information please read: https://editorconfig.org/
     :init
     (my-update-loading-message)
     :config
+
+    ;; Workaround for emacs 30
+    (custom-set-variables
+     '(safe-local-variable-values
+       '((web-mode-style-padding . 2)
+         (web-mode-script-padding . 2)
+         (web-mode-block-padding . 2)
+         (web-mode-indent-style . 2))))
+
     (editorconfig-mode 1)
     )
 #+END_SRC
@@ -1274,27 +1286,17 @@ The web-mode package is good for HTML and SCSS mode.
     :config
 
     ;; Configuration
-    (setq web-mode-enable-auto-pairing t)
-    (setq web-mode-enable-css-colorization t)
+    (setq web-mode-enable-auto-pairing t) ;; Keep auto pairing
+    (setq web-mode-enable-css-colorization t) ;; Enable CSS colors
     (setq web-mode-enable-block-face t)
     (setq web-mode-enable-part-face t)
     (setq web-mode-enable-heredoc-fontification t)
     (setq web-mode-enable-current-element-highlight t)
-    (setq web-mode-enable-current-column-highlight t)
-    (setq web-mode-markup-indent-offset 2)
+    (setq web-mode-enable-current-column-highlight nil) ;; Do not "connect" tags with background color
 
     ;; Colors
 
-    ;; Use the same background of the rest of the HTML
-    (set-face-attribute 'web-mode-block-face nil :background 'unspecified)
 
-    (set-face-attribute 'web-mode-current-element-highlight-face nil
-                        :foreground 'unspecified
-                        :background "#474747")
-
-    (set-face-attribute 'web-mode-current-column-highlight-face nil
-                        :foreground 'unspecified
-                        :background "#474747")
 
     :mode (
            ("\\.html?\\'" . web-mode)

@@ -4,7 +4,8 @@
 
 (let ((class '((class color) (min-colors 89)))
       ;; Palette
-      (vscode-bg-dark             "#1e1e1e")
+      (vscode-bg-dark             "#1f1f1f") ;; Dark Background color
+      (vscode-bg-extra-dark       "#181818") ;; Darker background
       (vscode-bg-light            "#252526")
       (vscode-fg-light            "#d4d4d4")
       (vscode-fg-dim              "#a6a6a6")
@@ -12,7 +13,7 @@
       (vscode-highlight           "#264f78")
       (vscode-region              "#3e4451")
       (vscode-comment             "#6a9955")
-      (vscode-keyword             "#569cd6")
+      (vscode-keyword             "#569cd6") ;; Keyword color
       (vscode-string              "#ce9178")
       (vscode-variable            "#9cdcfe")
       (vscode-function-name       "#dcdcaa")
@@ -31,6 +32,7 @@
       (vscode-parenthesis         "#e7c303")
       (vscode-css-selector        "#d7ba7d")
       (vscode-css                 "#b5cea8")
+      (vscode-tag-background      "#474747")
       )
 
   (custom-theme-set-faces
@@ -68,12 +70,12 @@
    `(line-number ((t (:foreground ,vscode-line-number :background ,vscode-bg-dark))))
    `(line-number-current-line
      ((t (:background unspecified
-          :box (:line-width (-1 . -1) :color ,vscode-border-dark :style 'unspecified)))))
+          :box (:line-width (-1 . -1) :color ,vscode-border-dark :style nil)))))
 
    ;; Current line
    `(hl-line
      ((t (:background unspecified
-                      :box (:line-width (-1 . -1) :color ,vscode-border-dark :style 'unspecified)))))
+                      :box (:line-width (-1 . -1) :color ,vscode-border-dark :style nil)))))
 
    ;; Vertical line for max size
    `(fill-column-indicator ((t (:foreground ,vscode-border-dark :background ,vscode-bg-dark))))
@@ -180,6 +182,10 @@
    `(web-mode-css-color-face ((t (:foreground ,vscode-css))))
    `(web-mode-javascript-string-face ((t (:foreground ,vscode-string)))) ;; Orange for string like JS
 
+   `(web-mode-block-face ((t (:background unspecified)))) ;; Use the same background of the rest of the HTML
+   `(web-mode-current-element-highlight-face ((t (:foregrund ,vscode-keyword :background ,vscode-tag-background))))
+   `(web-mode-current-column-highlight-face ((t (:foregrund ,vscode-keyword :background ,vscode-tag-background))))
+
    ;; Git gutter
    `(git-gutter:added  ((t (:foreground ,vscode-git-added))))
    `(git-gutter:deleted  ((t (:foreground ,vscode-error))))
@@ -211,6 +217,12 @@
    `(company-tooltip-scrollbar-thumb ((t (:background "#3e3e3e"))))
    `(company-tooltip-scrollbar-track ((t (:background "#262626"))))
    `(company-tooltip-mouse ((t (:background "#569cd6" :foreground "#ffffff"))))
+
+   ;; Sfondo e colore del testo della modeline attiva
+   `(mode-line ((t (:background ,vscode-bg-extra-dark :foreground "#d4d4d4"))))
+
+   ;; Sfondo e colore del testo della modeline inattiva
+   `(mode-line-inactive ((t (:background ,vscode-bg-light :foreground "#858585" :box nil))))
 
    ;; Matching parenthesis
    `(show-paren-match
