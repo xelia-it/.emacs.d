@@ -663,7 +663,8 @@ Setup Cut-Paste like most Windows and MAC editors.
     "Setup cut/paste preferences."
 
     ;; Cut-Paste like Windows
-    (cua-mode t)
+    (setq cua-enable-cua-keys t)  ;; Enable CUA keys (Ctrl-C, Ctrl-V, Ctrl-X, Ctrl-Z)
+    (cua-mode 1)                  ;; Activate CUA mode
 
     ;; Disable selection after copy.
     ;; Standard Windows behaviour is to keep region instead.
