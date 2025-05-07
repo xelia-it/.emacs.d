@@ -23,7 +23,9 @@
       (vscode-error               "#d16969")
       (vscode-success             "#608b4e")
       (vscode-line-number         "#858585")
-      (vscode-line-number-current "#FFFFFF")
+;;      (vscode-line-number-current "#FFFFFF")
+      (vscode-white               "#FFFFFF")
+
       (vscode-border              "#404040")
       (vscode-shadow              "#707070")
       (vscode-border-dark         "#282828")
@@ -49,12 +51,6 @@
    `(vscode-warning ((,class (:foreground ,vscode-warning))))
    `(error ((,class (:foreground ,vscode-error))))
 
-
-   ;;(set-face-attribute 'highlight nil :background "#093d5b" :underline nil)
-   ;; (set-face-attribute 'lsp-face-highlight-read nil :underline nil)
-   ;; (set-face-attribute 'lsp-face-highlight-textual nil :underline nil)
-   ;; (set-face-attribute 'lsp-face-highlight-write nil :underline nil)
-
    ;; Font lock (syntax highlighting)
    `(font-lock-builtin-face ((,class (:foreground ,vscode-keyword))))
    `(font-lock-comment-face ((,class (:foreground ,vscode-comment))))
@@ -69,7 +65,7 @@
    ;; Line numbers
    `(line-number ((t (:foreground ,vscode-line-number :background ,vscode-bg-dark))))
    `(line-number-current-line
-     ((t (:background unspecified
+     ((t (:foreground ,vscode-white :background unspecified
           :box (:line-width (-1 . -1) :color ,vscode-border-dark :style nil)))))
 
    ;; Current line
@@ -198,12 +194,29 @@
 
    ;; Temporary LSP
    ;; -----------
-   '(lsp-face-highlight-read ((t (:background "#264F78" :foreground "white" :underline nil))))
-   '(lsp-face-highlight-textual ((t (:background "#2D2D2D" :foreground "#DCDCDC" :underline nil))))
-   '(lsp-face-highlight-write ((t (:background "#783A3A" :foreground "white" :underline nil))))
-   '(isearch ((t (:background "#FFD700" :foreground "black" :weight bold))))
-   '(lazy-highlight ((t (:background "#A0A0A0" :foreground "black"))))
-   '(query-replace ((t (:background "#FF4500" :foreground "white" :weight bold))))
+
+   `(lsp-face-highlight-read ((t (:background "#264F78" :foreground "#ffffff" :underline nil))))
+   `(lsp-face-highlight-textual ((t (:background "#2D2D2D" :foreground "#DCDCDC" :underline nil))))
+   `(lsp-face-highlight-write ((t (:background "#783A3A" :foreground "white" :underline nil))))
+   `(isearch ((t (:background "#FFD700" :foreground "black" :weight bold))))
+   `(lazy-highlight ((t (:background "#A0A0A0" :foreground "black"))))
+   `(query-replace ((t (:background "#FF4500" :foreground "white" :weight bold))))
+
+   `(lsp-ui-peek-peek ((t (:background "#1e1e1e"))))
+   `(lsp-ui-peek-list ((t (:background "#252526"))))
+   `(lsp-ui-peek-selection ((t (:background "#264f78" :foreground "#ffffff"))))
+   `(lsp-ui-peek-highlight ((t (:background "#094771" :foreground "#ffffff"))))
+
+   `(lsp-ui-peek-header
+     ((t (:background "#1e1e1e" :foreground "#ffffff"
+                      :box (:line-width (-1 . -1) :color "#007acc" :style nil)))))
+   `(lsp-ui-peek-footer
+     ((t (:background "#1e1e1e" :foreground "#ffffff"
+                      :box (:line-width (-1 . -1) :color "#007acc" :style nil)))))
+
+   `(lsp-ui-peek-filename ((t (:foreground ,vscode-variable))))
+   `(lsp-ui-peek-line-number ((t (:foreground ,vscode-line-number))))
+
    ;; ----
 
    ;; Company tooltip
@@ -215,7 +228,7 @@
    `(company-tooltip-annotation ((t (:foreground "#dcdcaa"))))
    `(company-tooltip-annotation-selection ((t (:foreground "#ffd700"))))
    `(company-tooltip-scrollbar-thumb ((t (:background "#3e3e3e"))))
-   `(company-tooltip-scrollbar-track ((t (:background "#262626"))))
+   `(company-tooltip-scrollbar-track ((t (:background "#252526"))))
    `(company-tooltip-mouse ((t (:background "#569cd6" :foreground "#ffffff"))))
 
    ;; Sfondo e colore del testo della modeline attiva

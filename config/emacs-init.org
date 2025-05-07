@@ -436,8 +436,8 @@ Show help for keybindings.
            ("S-C-<f4>" . 'my-kill-other-buffers)
            ("S-C-w"    . 'my-kill-other-buffers)
            ("<escape>" . 'keyboard-escape-quit)
-           ("C-s"      . 'my-save)
-           ("C-M-s"    . 'my-save-all)
+           ("C-s"      . 'my/save)
+           ("C-M-s"    . 'my/save-all)
            ("C-S-a"    . 'ff-find-other-file)
            ("C-S-x"    . 'list-packages)
            ("C-ò"      . 'term)
@@ -495,13 +495,13 @@ Save buffers needs to be performed without confirmation.
 Also we want to refresh magit buffers automatically.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-  (defun my-save()
+  (defun my/save()
     "Save current buffer without confirmation."
     (interactive)
 
     (save-buffer t)
     (if (fboundp 'magit-refresh-all)
-      (magit-refresh-all))
+      (magit|-refresh-all))
     )
 #+END_SRC
 
@@ -509,7 +509,7 @@ Also we want a keystroke to save all buffers.
 Both these setup will be performed later.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-  (defun my-save-all()
+  (defun my/save-all()
     "Save all buffers without confirmation and refresh magit."
     (interactive)
 
@@ -935,7 +935,7 @@ We want to use helm for selecting and narrowing projects.
       (let ((orig-command (lookup-key (current-global-map) (kbd "C-p"))))
         (if (and orig-command (not (eq orig-command #'my/helm-projectile-find-file)))
             (call-interactively orig-command)
-          (call-interactively #'previous-line)))
+          (call-interactively #'previous-liney-sa)))
       )
     )
 #+END_SRC
@@ -956,8 +956,8 @@ We want to use helm for selecting and narrowing projects.
            ;; Switch all buffers
            ("C-<tab>"           . helm-buffers-list)
            ("C-<iso-lefttab>"   . helm-buffers-list)
-           ("C-S-<tab>"         . helm-projectile-switch-to-buffer)
-           ("C-S-<iso-lefttab>" . helm-projectile-switch-to-buffer)
+;;           ("C-S-<tab>"         . helm-projectile-switch-to-buffer)
+  ;;         ("C-S-<iso-lefttab>" . helm-projectile-switch-to-buffer)
            :map helm-map
            ;; Use tab to narrow selection
            ("C-<tab>"         . helm-next-line)
@@ -1087,13 +1087,13 @@ Enable only needed UI.
     (setq lsp-enable-symbol-highlighting t)
 
     ;; Shows a hover dialog with function documentation
-    (setq lsp-ui-doc-enable t)             ;; enable documentation
-    (setq lsp-ui-doc-show-with-cursor t)   ;; enable cursor hover (keep mouse hover)
-    (setq lsp-ui-doc-show-with-mouse t)    ;; enable mouse hover (keep cursor hover)
-    (setq lsp-ui-doc-use-webkit t)         ;; display documentation using a webkit
+    (setq lsp-ui-doc-enable t)             ;; Enable documentation
+    (setq lsp-ui-doc-show-with-cursor t)   ;; Enable cursor hover (keep mouse hover)
+    (setq lsp-ui-doc-show-with-mouse t)    ;; Enable mouse hover (keep cursor hover)
+    (setq lsp-ui-doc-use-webkit t)         ;; Display documentation using a webkit
 
     ;; Try to remove annoying ElDoc in minibuffer
-    (setq lsp-eldoc-render-all nil)        ;; disable render of docs in minibuffer
+    (setq lsp-eldoc-render-all nil)        ;; Disable render of docs in minibuffer
     (setq lsp-eldoc-enable-hover nil)
     (setq lsp-signature-render-documentation nil)
     (setq lsp-signature-auto-activate nil)
@@ -1106,11 +1106,11 @@ Enable only needed UI.
     (setq lsp-headerline-breadcrumb-enable nil)
 
     ;; Sideline code actions
-    (setq lsp-ui-sideline-enable t)              ;; disable whole sideline
-    (setq lsp-ui-sideline-show-code-actions nil) ;; hide code actions
-    (setq lsp-ui-sideline-show-hover nil)        ;; hide only hover symbols
-    (setq lsp-ui-sideline-show-symbol t)         ;; show errors
-    (setq lsp-ui-sideline-show-diagnostics t)    ;; show errors
+    (setq lsp-ui-sideline-enable t)              ;; Disable whole sideline
+    (setq lsp-ui-sideline-show-code-actions nil) ;; Hide code actions
+    (setq lsp-ui-sideline-show-hover nil)        ;; Hide only hover symbols
+    (setq lsp-ui-sideline-show-symbol t)         ;; Show errors
+    (setq lsp-ui-sideline-show-diagnostics t)    ;; Show errors
 
     ;; Modeline code actions
     (setq lsp-modeline-code-actions-enable nil)
@@ -1133,9 +1133,9 @@ Enable only needed UI.
     ;; Headerline icon enable
     (setq lsp-headerline-breadcrumb-icons-enable nil)
 
-    (setq lsp-signature-auto-activate nil)  ;; Disabilita signature in the minibuffer
-    ;;(setq lsp-signature-render-documentation nil)  ;; Evita che mostri i dettagli nella firma
-    ;;(setq lsp-eldoc-enable-hover nil))  ;; Impedisce che `eldoc` mostri info sulle funzioni
+    (setq lsp-signature-auto-activate nil)  ;; Disable signature in the minibuffer
+    ;; (setq lsp-signature-render-documentation nil)  ;; Do not show signature details
+    ;; (setq lsp-eldoc-enable-hover nil))  ;; No function info in `eldoc`
 
     ;; Colors
     (setq lsp-ui-doc-border "#3c3c3c")  ;; Doc border is not a face
@@ -1205,8 +1205,9 @@ Add lsp-ui package for better user interface.
 
     :bind (
            ("C-j"       . lsp-ui-imenu)
-           ("S-<f12>"   . lsp-ui-peek-find-references)
-           ("M-<f12>"   . lsp-ui-peek-find-definitions)
+           ("<f12>"     . lsp-ui-peek-find-definitions)
+           ("M-<f12>"   . lsp-ui-peek-find-references)
+           ("C-<f12>"   . lsp-ui-peek-find-implementation)
            )
     )
 #+END_SRC
@@ -1419,6 +1420,19 @@ Manage nginx configuration files.
     )
 #+END_SRC
 
+** Language: Python
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package lsp-pyright
+    :ensure t
+    :defer t
+    :custom (lsp-pyright-langserver-command "pyright")
+    :hook (python-mode . (lambda ()
+                           (require 'lsp-pyright)
+                           (lsp)))
+    )
+#+END_SRC
+
 ** Language: Go
 
 #+BEGIN_SRC emacs-lisp :tangle yes
@@ -1482,7 +1496,7 @@ Manage nginx configuration files.
     )
 #+END_SRC
 
-** Language: Git
+** Language: Systemd
 
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package systemd
