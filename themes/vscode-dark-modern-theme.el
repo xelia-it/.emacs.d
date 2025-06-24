@@ -1,13 +1,53 @@
 ;;; vscode-dark-modern-theme.el --- A Visual Studio Code Dark Modern theme for Emacs -*- lexical-binding: t; -*-
 
-(deftheme vscode-dark-modern "A theme inspired by Visual Studio Code Dark Modern")
+(deftheme vscode-dark-modern
+  "A theme inspired by Visual Studio Code Dark Modern")
+
+;; Colors
+
+;; | Main elements          | Colors                           |
+;; | ---------------------- | -------------------------------- |
+;; | Background editor      | `#1e1e1e` (Dark gray)            |
+;; | Normal Text            | `#d4d4d4` (Light gray)           |
+;; | Gutter (line numbers)  | `#858585` (Medium gray)          |
+;; | Cursor                 | `#aeafad` (Gray)                 |
+;; | Current line highlight | `#2a2d2e` (Dark grayish)         |
+;; | Selezione testo        | `#264f78` (Dark blue trasparent) |
+;;
+;; | Tokens                 | Colors                           |
+;; | ---------------------- | -------------------------------- |
+;; | Keyword                | `#569cd6` (Bright blue)          |
+;; | String                 | `#d69d85` (Light orange)         |
+;; | Number                 | `#b5cea8` (Pastel green)         |
+;; | Function name          | `#dcdcaa` (Light yellow)         |
+;; | Variable               | `#9cdcfe` (Sky blue)             |
+;; | Comment                | `#6a9955` (Opaque green)         |
+;; | Type / class           | `#4ec9b0` (Aqua green)           |
+
+(defconst col-extra-gray "#181818")
+(defconst col-dark-gray "#1e1e1e")
+(defconst col-light-gray "#d4d4d4")
+(defconst col-mid-gray "#858585")
+(defconst col-gray "#aeafad")
+(defconst col-dark-grayish "#aeafad")
+(defconst col-dark-blue "#264f78")
+
+(defconst col-bright-blue "#569cd6")
+(defconst col-light-orange "#d69d85")
+(defconst col-pastel-green "#b5cea8")
+(defconst col-light-yellow "#dcdcaa")
+(defconst col-sky-blue "#9cdcfe")
+(defconst col-opaque-green "#6a9955")
+(defconst col-aqua-green "#4ec9b0")
+
+;; Theme
 
 (let ((class '((class color) (min-colors 89)))
       ;; Palette
-      (vscode-bg-dark             "#1f1f1f") ;; Dark Background color
-      (vscode-bg-extra-dark       "#181818") ;; Darker background
-      (vscode-bg-light            "#252526")
-      (vscode-fg-light            "#d4d4d4")
+      (vscode-bg-dark             "#1e1e1e") ;; Dark Background color
+      (vscode-bg-extra-dark       "#181818") ;; Darker Background
+      (vscode-bg-light            "#252526") ;; Light Background
+      (vscode-fg-light            col-light-gray)
       (vscode-fg-dim              "#a6a6a6")
       (vscode-cursor              "#c586c0")
       (vscode-highlight           "#264f78")
@@ -113,37 +153,28 @@
    `(treemacs-git-ignored-face ((,class (:foreground ,vscode-shadow))))
 
    ;; Helm
-   ;;`(helm-selection ((t (:foreground ,vscode-fg-light :background ,vscode-highlight))))
    ;;`(helm-source-header ((t (:foreground ,vscode-fg-light :background ,vscode-bg-light :weight bold))))
    ;;`(helm-buffer-directory ((,class (:foreground ,vscode-keyword :background unspecified))))
    ;;`(helm-buffer-file ((,class (:foreground ,vscode-fg-light :background unspecified))))
-   ;;`(helm-ff-directory ((,class (:foreground ,vscode-keyword :background unspecified))))
-   ;;`(helm-ff-executable ((,class (:foreground ,vscode-css-selector))))
-   ;;`(helm-ff-symlink ((,class (:foreground ,vscode-cursor :underline t))))
-   ;;`(helm-ff-dirs ((,class (:foreground ,vscode-function-name :background unspecified))))
-   ;;`(helm-ff-dotted-directory ((,class (:foreground ,vscode-shadow :background unspecified))))
-   ;;`(helm-ff-file ((,class (:foreground ,vscode-fg-light :background unspecified))))
-   ;;`(helm-ff-file-extension ((,class (:foreground ,vscode-fg-light :background unspecified))))
    ;;`(helm-candidate-number ((,class (:foreground ,vscode-parenthesis :background unspecified))))
    ;;`(helm-header-line-left-margin ((,class (:foreground ,vscode-parenthesis :background unspecified))))
    ;;`(helm-ff-prefix ((,class (:foreground ,vscode-parenthesis :background unspecified))))
    ;; `(helm-match ((,class (:foreground ,vscode-highlight :weight bold))))
    ;;`(helm-visible-mark ((,class (:background ,vscode-region :foreground ,vscode-line-number-current))))
 
-   `(helm-selection ((,class (:foreground ,vscode-fg-light :background ,vscode-highlight )))) ;; Selezione corrente
+   `(helm-selection ((,class (:foreground ,vscode-fg-light :background ,vscode-highlight )))) ;; Current selection
    `(helm-selection-line ((,class (:background ,vscode-highlight))))  ;; Riga selezionata
 
    `(helm-ff-directory ((,class (:foreground ,vscode-keyword :background unspecified))))
    `(helm-ff-dirs ((,class (:foreground ,vscode-keyword :background unspecified))))  ;; Funzione per directory
    `(helm-ff-dotted-directory ((,class (:foreground "#6A9955" :background unspecified))))  ;; Ombre per cartelle nascoste
-   `(helm-ff-file ((,class (:foreground "#D4D4D4" :background "#1E1E1E"))))  ;; Testo principale
-   `(helm-ff-file-extension ((,class (:foreground "#D4D4D4" :background unspecified))))  ;; Estensioni file
+   `(helm-ff-file ((,class (:foreground ,vscode-fg-light :background unspecified))))  ;; Main text
+   `(helm-ff-file-extension ((,class (:foreground ,vscode-fg-light :background unspecified))))  ;; File extensions
    `(helm-candidate-number ((,class (:foreground "#C586C0" :background unspecified))))  ;; Parentesi/evidenziazione numeri
    `(helm-source-header ((,class (:foreground "#DCDCAA" :background "#1E1E1E" :weight bold)))) ;; Titolo della fonte
 
-   `(helm-match ((,class (:foreground "#569cd6" :weight bold)))) ;; Testo corrispondente alla ricerca
-   `(helm-M-x-key ((,class (:foreground "#d16969" :weight bold)))) ;; Tasti di comando M-x
-
+   `(helm-match ((,class (:foreground ,vscode-keyword :weight bold)))) ;; Text matching the search
+   `(helm-M-x-key ((,class (:foreground "#d16969" :weight bold)))) ;; Keybinding for M-x
 
    `(helm-buffer-directory ((,class (:foreground "#4FC1FF" :background "#1E1E1E"))))  ;; Nome cartella in Helm buffer
    `(helm-buffer-file ((,class (:foreground "#D4D4D4" :background "#1E1E1E")))) ;; File nei buffer di Helm
@@ -177,7 +208,6 @@
    `(web-mode-css-property-name-face ((t (:foreground ,vscode-variable)))) ;; CSS Properties
    `(web-mode-css-color-face ((t (:foreground ,vscode-css))))
    `(web-mode-javascript-string-face ((t (:foreground ,vscode-string)))) ;; Orange for string like JS
-
    `(web-mode-block-face ((t (:background unspecified)))) ;; Use the same background of the rest of the HTML
    `(web-mode-current-element-highlight-face ((t (:foregrund ,vscode-keyword :background ,vscode-tag-background))))
    `(web-mode-current-column-highlight-face ((t (:foregrund ,vscode-keyword :background ,vscode-tag-background))))
@@ -189,7 +219,7 @@
 
    ;; LSP
    `(lsp-ui-doc-background ((t (:background ,vscode-bg-dark))))
-   `(lsp-ui-doc-header ((t (:background "#264f78" :foreground "#ffffff" :bold t))))
+   `(lsp-ui-doc-header ((t (:background ,vscode-highlight :foreground ,vscode-white :bold t))))
    `(lsp-ui-doc-text ((t (:foreground ,vscode-fg-light))))
 
    ;; Temporary LSP
@@ -229,12 +259,12 @@
    `(company-tooltip-annotation-selection ((t (:foreground "#ffd700"))))
    `(company-tooltip-scrollbar-thumb ((t (:background "#3e3e3e"))))
    `(company-tooltip-scrollbar-track ((t (:background "#252526"))))
-   `(company-tooltip-mouse ((t (:background "#569cd6" :foreground "#ffffff"))))
+   ;; `(company-tooltip-mouse ((t (:background "#569cd6" :foreground "#ffffff"))))
 
-   ;; Sfondo e colore del testo della modeline attiva
+
+   ;; Active modeline
    `(mode-line ((t (:background ,vscode-bg-extra-dark :foreground "#d4d4d4"))))
-
-   ;; Sfondo e colore del testo della modeline inattiva
+   ;; Inactive modeline
    `(mode-line-inactive ((t (:background ,vscode-bg-light :foreground "#858585" :box nil))))
 
    ;; Matching parenthesis

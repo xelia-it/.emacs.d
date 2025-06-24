@@ -54,6 +54,9 @@ These fonts should be installed manually.
 
     ;; Search installed font and apply  the first found
     (cond
+     ((find-font (font-spec :name "JetBrains Mono"))
+      (set-frame-font "JetBrains Mono 11" nil t)
+      )
 
      ((find-font (font-spec :name "Droid Sans Mono"))
       (set-frame-font "Droid Sans Mono 11" nil t)
@@ -935,7 +938,7 @@ We want to use helm for selecting and narrowing projects.
       (let ((orig-command (lookup-key (current-global-map) (kbd "C-p"))))
         (if (and orig-command (not (eq orig-command #'my/helm-projectile-find-file)))
             (call-interactively orig-command)
-          (call-interactively #'previous-liney-sa)))
+          (call-interactively #'previous-line)))
       )
     )
 #+END_SRC

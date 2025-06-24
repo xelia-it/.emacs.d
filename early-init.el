@@ -20,6 +20,10 @@
 ;; Start maximized
 (add-hook 'window-setup-hook 'toggle-frame-maximized t)
 
+;; Main colors
+(add-to-list 'default-frame-alist '(background-color . "#1e1e1e"))
+(add-to-list 'default-frame-alist '(foreground-color . "#d4d4d4"))
+
 ;; Set UTF-8 encoding
 (set-language-environment "UTF-8")
 (set-default-coding-systems 'utf-8)
