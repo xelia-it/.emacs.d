@@ -54,28 +54,28 @@ These fonts should be installed manually.
 
     ;; Search installed font and apply  the first found
     (cond
-     ((find-font (font-spec :name "JetBrains Mono"))
-      (set-frame-font "JetBrains Mono 11" nil t)
+     ((find-font (font-spec :name "Droid Sans Mono"))
+      (set-frame-font "Droid Sans Mono 11" t t)
       )
 
-     ((find-font (font-spec :name "Droid Sans Mono"))
-      (set-frame-font "Droid Sans Mono 11" nil t)
+     ((find-font (font-spec :name "JetBrains Mono"))
+      (set-frame-font "JetBrains Mono 11" t t)
       )
 
      ((find-font (font-spec :name "Monospace"))
-      (set-frame-font "Monospace 11" nil t)
+      (set-frame-font "Monospace 11" t t)
       )
 
      ((find-font (font-spec :name "Consolas"))
-      (set-frame-font "Consolas 11" nil t)
+      (set-frame-font "Consolas 11" t t)
       )
 
      ((find-font (font-spec :name "Monaco"))
-      (set-frame-font "Monaco 11" nil t)
+      (set-frame-font "Monaco 11" t t)
       )
 
      ((find-font (font-spec :name "DejaVu Sans Mono"))
-      (set-frame-font "DejaVu Sans Mono 11" nil t)
+      (set-frame-font "DejaVu Sans Mono 11" t t)
       )
      )
 
@@ -245,7 +245,7 @@ Setup a sidenav tree.
         treemacs-workspace-switch-cleanup        nil)
 
       ;; The default width and height of the icons is 22 pixels.
-      ;; (treemacs-resize-icons 22)
+      (treemacs-resize-icons 20)
 
       ;; Set root folder similar to VSCode theme
       (set-face-attribute 'treemacs-root-face nil
@@ -355,13 +355,10 @@ In programming modes it's useful to have a vertical line that show the right mar
     (font-lock-add-keywords
      nil
      '(("\\([][{}()]\\)"   ;; Regex per parentesi tonde, quadre e graffe
-        (1 'font-lock-parenthesis-face)))))
+        (1 'font-lock-bracket-face)))))
 
-;;  (defface font-lock-parenthesis-face
-;;    '((t :foreground "#e7c303" :weight bold)) ;; Colore giallo per il tema scuro
-;;    "Face per evidenziare tutte le parentesi.")
   (defface font-lock-parenthesis-face
-    '((t :foreground "#f6cf01" :weight bold)) ;; Colore giallo per il tema scuro
+    '((t :foreground "#d8b804" :weight bold)) ;; Colore giallo per il tema scuro
     "Face per evidenziare tutte le parentesi.")
 
   (add-hook 'prog-mode-hook 'my-highlight-parentheses)
@@ -394,13 +391,14 @@ Force window positioning for a specified function.
     :init
     (my-update-loading-message)
     :config
-    (setq shackle-rules '(
-                          ("\\`\\*[hH]elm.*?\\*\\'" :regexp t :align 'below :size 0.3)
-                          ("\\`\\*bm-bookmarks.*?\\*\\'" :regexp t :align 'below :size 0.3)
-                          ("\\`\\*Flymake.*?\\*\\'" :regexp t :align 'below :size 0.3)
-                          ("\\`\\*Flycheck.*?\\*\\'" :regexp t :align 'below :size 0.3)
-                          ("\\`\\*terminal.*?\\*\\'" :regexp t :align 'below :size 0.3)
-                          ))
+
+    (setq shackle-rules
+          '(("\\`\\*Flymake diagnostics\\*\\'" :regexp t :align 'below :size 12 :select t)
+            ("\\`\\*Flycheck errors\\*\\'" :regexp t :align 'below :size 12 :select t)
+            ("\\`\\*[hH]elm.*?\\*\\'" :regexp t :align 'below :size 0.3)
+            ("\\`\\*bm-bookmarks.*?\\*\\'" :regexp t :align 'below :size 0.3)
+            ("\\`\\*terminal.*?\\*\\'" :regexp t :align 'below :size 0.3)))
+
     (shackle-mode 1)
     )
 #+END_SRC
@@ -421,7 +419,35 @@ Utility for killing buffers other than current buffer.
     )
 #+END_SRC
 
-** Keybinding Help Screen (and activate all)
+** Diagnostic and errors
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my/flymake-focus-window()
+    "Show Flymake diagnostic buffer and focus it."
+    (interactive)
+    (flymake-show-buffer-diagnostics)
+    (let ((win (seq-find
+                (lambda (window)
+                  (with-current-buffer (window-buffer window)
+                    (derived-mode-p 'flymake-diagnostics-buffer-mode)))
+                (window-list))))
+      (when win
+        (select-window win)))
+    )
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package flymake
+    :defer t
+    :bind (
+           ("C-S-m"    . 'my/flymake-focus-window)
+           ("<f8>"     . 'flymake-goto-next-error)
+           ("S-<f8>"   . 'flymake-goto-previous-error)
+           )
+    )
+#+END_SRC
+
+** Keybinding Help Screen
 
 Show help for keybindings.
 
