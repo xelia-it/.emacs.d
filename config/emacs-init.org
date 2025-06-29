@@ -954,7 +954,7 @@ Projectile package helps discover and remember projects.
 We want to use helm for selecting and narrowing projects.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-  (defun my/helm-projectile-find-file ()
+  (defun my-helm-projectile-find-file ()
     "In a project, C-p use helm-projectile-find-file."
     (interactive)
 
@@ -962,7 +962,7 @@ We want to use helm for selecting and narrowing projects.
         (helm-projectile-find-file)
 
       (let ((orig-command (lookup-key (current-global-map) (kbd "C-p"))))
-        (if (and orig-command (not (eq orig-command #'my/helm-projectile-find-file)))
+        (if (and orig-command (not (eq orig-command #'my-helm-projectile-find-file)))
             (call-interactively orig-command)
           (call-interactively #'previous-line)))
       )
@@ -981,7 +981,7 @@ We want to use helm for selecting and narrowing projects.
     :bind (
            ("C-S-f" . helm-projectile-grep)
            ("S-C-o" . helm-projectile-switch-project)
-           ("C-p"   . my/helm-projectile-find-file)
+           ("C-p"   . my-helm-projectile-find-file)
            ;; Switch all buffers
            ("C-<tab>"           . helm-buffers-list)
            ("C-<iso-lefttab>"   . helm-buffers-list)
@@ -1065,6 +1065,58 @@ There is a complete guide for this behaviour here: https://emacs-lsp.github.io/l
 All the LSP fine tuning are grouped in the following functions.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my-lsp-settings()
+    "Activate/deactivate LSP functionality."
+    (interactive)
+
+    ;; Flycheck (or flymake if no flycheck is present)
+    (setq lsp-diagnostics-provider :flymake)
+
+    ;; Completion (company-mode)
+    (setq lsp-completion-provider :capf)   ;; It can be disabled with :none
+    (setq lsp-completion-show-detail t)    ;; Show item details
+    (setq lsp-completion-show-kind t)      ;; show item kind
+
+    ;; Modeline code actions
+    (setq lsp-modeline-code-actions-enable nil)
+
+    ;; Eldoc shows information about methods in the modeline
+    (setq lsp-modeline-diagnostics-enable t)
+    (setq lsp-signature-auto-activate nil)
+    (setq lsp-signature-render-documentation nil) ;; Do not show signature documentation
+
+    ;;(setq lsp-eldoc-enable-hover nil)
+    ;;(setq lsp-eldoc-enable nil)
+    ;;(setq lsp-signature-auto-activate nil)  ;; Disable signature in the minibuffer
+    ;; (setq lsp-signature-render-documentation nil)
+    ;; (setq lsp-eldoc-enable-hover nil)  ;; No function info in `eldoc`
+
+    ;;(add-hook 'lsp-mode-hook (lambda () (eldoc-mode -1)))
+
+    ;; Try to remove annoying ElDoc in minibuffer
+   ;; (setq lsp-eldoc-render-all nil)        ;; Disable render of docs in minibuffer
+   ;; (setq lsp-eldoc-enable-hover nil)
+   ;; (setq lsp-signature-render-documentation nil)
+   ;; (setq lsp-signature-auto-activate nil)
+
+    ;; Lenses are reference above a method or a variable
+    (setq lsp-lens-enable nil)
+
+    ;; The headerline shows a breadcrumb over the code buffer
+    ;; I prefer to disable it
+    (setq lsp-headerline-breadcrumb-enable nil)
+
+    ;; Modeline diagnostics statistics
+    ;; shows error information in the modeline
+    (setq lsp-modeline-diagnostics-enable nil)
+
+
+    ;; Headerline icon enable
+    (setq lsp-headerline-breadcrumb-icons-enable nil)
+    )
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp :tangle yes
   (defun my-lsp-performance-settings()
     "Fine tune LSP for maximum performance."
     (interactive)
@@ -1121,50 +1173,12 @@ Enable only needed UI.
     (setq lsp-ui-doc-show-with-mouse t)    ;; Enable mouse hover (keep cursor hover)
     (setq lsp-ui-doc-use-webkit t)         ;; Display documentation using a webkit
 
-    ;; Try to remove annoying ElDoc in minibuffer
-    (setq lsp-eldoc-render-all nil)        ;; Disable render of docs in minibuffer
-    (setq lsp-eldoc-enable-hover nil)
-    (setq lsp-signature-render-documentation nil)
-    (setq lsp-signature-auto-activate nil)
-
-    ;; Lenses are reference above a method or a variable
-    (setq lsp-lens-enable nil)
-
-    ;; The headerline shows a breadcrumb over the code buffer
-    ;; I prefer to disable it
-    (setq lsp-headerline-breadcrumb-enable nil)
-
     ;; Sideline code actions
     (setq lsp-ui-sideline-enable t)              ;; Disable whole sideline
     (setq lsp-ui-sideline-show-code-actions nil) ;; Hide code actions
     (setq lsp-ui-sideline-show-hover nil)        ;; Hide only hover symbols
     (setq lsp-ui-sideline-show-symbol t)         ;; Show errors
     (setq lsp-ui-sideline-show-diagnostics t)    ;; Show errors
-
-    ;; Modeline code actions
-    (setq lsp-modeline-code-actions-enable nil)
-
-    ;; Flycheck (or flymake if no flycheck is present)
-    (setq lsp-diagnostics-provider :flymake)
-
-    ;; Eldoc shows information about methods in the modeline
-    (setq lsp-eldoc-enable-hover t)
-
-    ;; Modeline diagnostics statistics
-    ;; shows error information in the modeline
-    (setq lsp-modeline-diagnostics-enable nil)
-
-    ;; Completion (company-mode)
-    (setq lsp-completion-provider :capf)   ;; It can be disabled with :none
-    (setq lsp-completion-show-detail t)    ;; Show item details
-    (setq lsp-completion-show-kind t)      ;; show item kind
-
-    ;; Headerline icon enable
-    (setq lsp-headerline-breadcrumb-icons-enable nil)
-
-    (setq lsp-signature-auto-activate nil)  ;; Disable signature in the minibuffer
-    ;; (setq lsp-signature-render-documentation nil)  ;; Do not show signature details
-    ;; (setq lsp-eldoc-enable-hover nil))  ;; No function info in `eldoc`
 
     ;; Colors
     (setq lsp-ui-doc-border "#3c3c3c")  ;; Doc border is not a face
@@ -1183,7 +1197,9 @@ Enable only needed UI.
 
     :config
 
+    (my-lsp-settings)
     (my-lsp-performance-settings)
+
 
     :bind (
            ("<f2>"      . lsp-rename)

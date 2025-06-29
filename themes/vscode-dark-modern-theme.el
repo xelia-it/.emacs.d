@@ -225,10 +225,10 @@
    `(lsp-face-highlight-textual ((,class (:background "#474747" :foreground unspecified :underline nil))))
    `(lsp-face-highlight-write ((,class (:background "#093d5b" :foreground unspecified :underline nil))))
 
-   ;; `(lsp-ui-doc-background ((t (:background ,vscode-bg-dark))))
+   `(lsp-ui-doc-background ((t (:background ,vscode-bg-dark))))
    ;; `(lsp-ui-doc-header ((t (:background ,vscode-highlight :foreground ,vscode-white :bold t))))
-   ;; `(lsp-ui-doc-text ((t (:foreground ,vscode-fg-light))))
-   ;; `(lsp-ui-peek-peek ((t (:background ,vs-code-bg-dark))))
+   `(lsp-ui-doc-text ((,class (:foreground ,vscode-fg-light))))
+   `(lsp-ui-peek-peek ((,class (:background ,vscode-bg-dark))))
    ;; `(lsp-ui-peek-list ((t (:background "#252526"))))
    ;; `(lsp-ui-peek-selection ((t (:background "#264f78" :foreground "#ffffff"))))
    ;; `(lsp-ui-peek-highlight ((t (:background "#094771" :foreground "#ffffff"))))
@@ -244,15 +244,14 @@
    ;; ;; ----
 
    ;; ;; Company tooltip
-   `(company-box-background ((,class (:background ,vscode-bg-dark))))
-   `(company-box-border ((,class (:background ,vscode-border-dark))))
-   `(company-tooltip ((,class (:background ,vscode-bg-dark :foreground ,vscode-fg-light))))
+   `(company-box-background ((,class (:background ,vscode-bg-extra-dark))))
+   `(company-tooltip ((,class (:background ,vscode-bg-extra-dark :foreground ,vscode-fg-light))))
    `(company-tooltip-selection ((,class (:background ,vscode-selection-bg))))
    `(company-tooltip-annotation ((t (:foreground ,vscode-function))))
 
    ;; `(company-tooltip-annotation-selection ((t (:foreground "#ffd700"))))
-   `(company-tooltip-scrollbar-thumb ((t (:background "#3e3e3e"))))
-   `(company-tooltip-scrollbar-track ((t (:background "#252526"))))
+;;   `(company-tooltip-scrollbar-thumb ((t (:background "#3e3e3e"))))
+ ;;  `(company-tooltip-scrollbar-track ((t (:background "#252526"))))
    ;; `(company-tooltip-mouse ((t (:background "#569cd6" :foreground "#ffffff"))))
 
 
