@@ -225,9 +225,10 @@
    `(lsp-face-highlight-textual ((,class (:background "#474747" :foreground unspecified :underline nil))))
    `(lsp-face-highlight-write ((,class (:background "#093d5b" :foreground unspecified :underline nil))))
 
-   `(lsp-ui-doc-background ((t (:background ,vscode-bg-dark))))
+   `(lsp-ui-doc-background ((t (:background ,vscode-bg-extra-dark))))
    ;; `(lsp-ui-doc-header ((t (:background ,vscode-highlight :foreground ,vscode-white :bold t))))
    `(lsp-ui-doc-text ((,class (:foreground ,vscode-fg-light))))
+
    `(lsp-ui-peek-peek ((,class (:background ,vscode-bg-dark))))
    ;; `(lsp-ui-peek-list ((t (:background "#252526"))))
    ;; `(lsp-ui-peek-selection ((t (:background "#264f78" :foreground "#ffffff"))))
@@ -258,7 +259,7 @@
    ;; ;; Active modeline
    `(mode-line ((t (:background ,vscode-bg-extra-dark :foreground ,vscode-fg-light))))
    ;; Inactive modeline
-   `(mode-line-inactive ((t (:background ,vscode-bg-light :foreground "#858585" :box nil))))
+   `(mode-line-inactive ((t (:background ,vscode-bg-light :foreground ,vscode-fg-dim :box nil))))
 
    ;; Matching parenthesis
    `(show-paren-match

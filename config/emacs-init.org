@@ -689,21 +689,21 @@ Setup Cut-Paste like most Windows and MAC editors.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
   (defun my-cut-paste-preferences()
-    "Setup cut/paste preferences."
+    "Setup cut/paste preferences like Windows-style editors."
 
-    ;; Cut-Paste like Windows
-    (setq cua-enable-cua-keys t)  ;; Enable CUA keys (Ctrl-C, Ctrl-V, Ctrl-X, Ctrl-Z)
-    (cua-mode 1)                  ;; Activate CUA mode
+    ;; Enable CUA mode (Ctrl-C, Ctrl-V, Ctrl-X, Ctrl-Z)
+    (setq cua-enable-cua-keys t)
+    (setq cua-delete-selection t)          ;; Typed text replaces selection
+    (setq cua-enable-cursor-indications t) ;; Cursor changes when region active
+    (setq cua-keep-region-after-copy nil)  ;; Deselect region after copy (Windows behavior)
+    (cua-mode t)
 
-    ;; Disable selection after copy.
-    ;; Standard Windows behaviour is to keep region instead.
-    (setq cua-keep-region-after-copy nil)
-
-    ;; Typed text deletes selected text
-    (delete-selection-mode t)
-
-    ;; No region when it is not highlighted
+    ;; Ensure selected region is visibly highlighted
     (transient-mark-mode 1)
+
+    ;; NOTE: delete-selection-mode is not needed if using cua-mode properly.
+    ;; (delete-selection-mode t) ; ← redundant with cua-mode
+
     )
 
   (my-cut-paste-preferences)
@@ -985,8 +985,6 @@ We want to use helm for selecting and narrowing projects.
            ;; Switch all buffers
            ("C-<tab>"           . helm-buffers-list)
            ("C-<iso-lefttab>"   . helm-buffers-list)
-;;           ("C-S-<tab>"         . helm-projectile-switch-to-buffer)
-  ;;         ("C-S-<iso-lefttab>" . helm-projectile-switch-to-buffer)
            :map helm-map
            ;; Use tab to narrow selection
            ("C-<tab>"         . helm-next-line)
@@ -1065,55 +1063,53 @@ There is a complete guide for this behaviour here: https://emacs-lsp.github.io/l
 All the LSP fine tuning are grouped in the following functions.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-  (defun my-lsp-settings()
-    "Activate/deactivate LSP functionality."
-    (interactive)
+    (defun my-lsp-settings()
+      "Activate/deactivate LSP functionality."
+      (interactive)
 
-    ;; Flycheck (or flymake if no flycheck is present)
-    (setq lsp-diagnostics-provider :flymake)
+      ;; Flycheck (or flymake if no flycheck is present)
+      (setq lsp-diagnostics-provider :auto)
 
-    ;; Completion (company-mode)
-    (setq lsp-completion-provider :capf)   ;; It can be disabled with :none
-    (setq lsp-completion-show-detail t)    ;; Show item details
-    (setq lsp-completion-show-kind t)      ;; show item kind
+      ;; Completion (company-mode)
+      (setq lsp-completion-provider :capf)   ;; It can be disabled with :none
+      (setq lsp-completion-show-detail t)    ;; Show item details
+      (setq lsp-completion-show-kind t)      ;; show item kind
 
-    ;; Modeline code actions
-    (setq lsp-modeline-code-actions-enable nil)
+      ;; Modeline code actions
+      (setq lsp-modeline-code-actions-enable nil)
+      (setq lsp-modeline-diagnostics-enable t) ;; Modeline diagnostics statistics
 
-    ;; Eldoc shows information about methods in the modeline
-    (setq lsp-modeline-diagnostics-enable t)
-    (setq lsp-signature-auto-activate nil)
-    (setq lsp-signature-render-documentation nil) ;; Do not show signature documentation
+      ;; Eldoc shows information about methods in the modeline
+      ;; Queste configurazioni vengono eseguite dopo che lsp-mode è stato caricato.
+      (setq lsp-signature-auto-activate nil)
+      (setq lsp-signature-render-enabled nil)
+      (setq lsp-eldoc-enable-hover nil)
+      (setq lsp-eldoc-render-all nil)
+      ;; Se le signature appaiono ancora, puoi provare a rimuovere l'hook
+    ;; Attenzione: questo disabilita tutte le informazioni eldoc da lsp-mode.
+      (remove-hook 'eldoc-documentation-functions #'lsp-eldoc-function)
+      (setq eldoc-documentation-strategy 'ignore)
+      (setq eldoc-documentation-functions
+          (delete 'flymake-eldoc-function eldoc-documentation-functions))
 
-    ;;(setq lsp-eldoc-enable-hover nil)
-    ;;(setq lsp-eldoc-enable nil)
-    ;;(setq lsp-signature-auto-activate nil)  ;; Disable signature in the minibuffer
-    ;; (setq lsp-signature-render-documentation nil)
-    ;; (setq lsp-eldoc-enable-hover nil)  ;; No function info in `eldoc`
+      ;;    (setq lsp-eldoc-enable-hover nil)  ;; No function info
+      ;;  (setq lsp-signature-auto-activate nil)
+      ;;(setq lsp-signature-render-documentation nil) ;; Do not show signature documentation
+      ;;(setq lsp-eldoc-enable nil)
+      ;;(add-hook 'lsp-mode-hook (lambda () (eldoc-mode -1)))
+      ;; Try to remove annoying ElDoc in minibuffer
+      ;; (setq lsp-eldoc-render-all nil)        ;; Disable render of docs in minibuffer
 
-    ;;(add-hook 'lsp-mode-hook (lambda () (eldoc-mode -1)))
+      ;; Lenses are reference above a method or a variable
+      (setq lsp-lens-enable nil)
 
-    ;; Try to remove annoying ElDoc in minibuffer
-   ;; (setq lsp-eldoc-render-all nil)        ;; Disable render of docs in minibuffer
-   ;; (setq lsp-eldoc-enable-hover nil)
-   ;; (setq lsp-signature-render-documentation nil)
-   ;; (setq lsp-signature-auto-activate nil)
+      ;; The headerline shows a breadcrumb over the code buffer
+      ;; I prefer to disable it
+      (setq lsp-headerline-breadcrumb-enable nil)
 
-    ;; Lenses are reference above a method or a variable
-    (setq lsp-lens-enable nil)
-
-    ;; The headerline shows a breadcrumb over the code buffer
-    ;; I prefer to disable it
-    (setq lsp-headerline-breadcrumb-enable nil)
-
-    ;; Modeline diagnostics statistics
-    ;; shows error information in the modeline
-    (setq lsp-modeline-diagnostics-enable nil)
-
-
-    ;; Headerline icon enable
-    (setq lsp-headerline-breadcrumb-icons-enable nil)
-    )
+      ;; Headerline icon enable
+      (setq lsp-headerline-breadcrumb-icons-enable nil)
+      )
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp :tangle yes
@@ -1172,6 +1168,10 @@ Enable only needed UI.
     (setq lsp-ui-doc-show-with-cursor t)   ;; Enable cursor hover (keep mouse hover)
     (setq lsp-ui-doc-show-with-mouse t)    ;; Enable mouse hover (keep cursor hover)
     (setq lsp-ui-doc-use-webkit t)         ;; Display documentation using a webkit
+    (setq lsp-ui-doc-delay 0.2)            ;; Setup delay
+    (setq lsp-ui-doc-use-childframe t)     ;; Ensures to show doc in a in a childframe
+    (setq lsp-ui-doc-position 'at-point)   ;; Position doc near the cursor
+
 
     ;; Sideline code actions
     (setq lsp-ui-sideline-enable t)              ;; Disable whole sideline
@@ -1181,7 +1181,7 @@ Enable only needed UI.
     (setq lsp-ui-sideline-show-diagnostics t)    ;; Show errors
 
     ;; Colors
-    (setq lsp-ui-doc-border "#3c3c3c")  ;; Doc border is not a face
+    (setq lsp-ui-doc-border "#2b2b2b")  ;; Doc border is not a face
     )
 #+END_SRC
 
@@ -1263,9 +1263,6 @@ Use a fancy box for completion selection.
   (use-package company
     :ensure t
     :defer t
-    ;;     :init
-    ;;    (global-company-mode)
-
     :init
     (setq company-backends '(company-capf))
 
