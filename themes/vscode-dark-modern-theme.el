@@ -37,7 +37,9 @@
 
       (vscode-brackets            "#c586c0") ;; NEW
       (vscode-brackets-match      "#ffd700") ;; NEW
-      (vscode-search-match        "#623315")
+      (vscode-search-match        "#623315") ;; NEW
+      (vscode-highlight-read      "#474747") ;; Keyword highlight
+      (vscode-highlight-write     "#093d5b") ;; Keyword assignment highlight
       )
 
 
@@ -219,47 +221,45 @@
    ;; `(web-mode-current-element-highlight-face ((t (:foregrund ,vscode-keyword :background ,vscode-tag-background))))
    ;; `(web-mode-current-column-highlight-face ((t (:foregrund ,vscode-keyword :background ,vscode-tag-background))))
 
-
-   ;; ;; LSP
-   `(lsp-face-highlight-read ((,class (:background "#474747" :foreground unspecified :underline nil))))
-   `(lsp-face-highlight-textual ((,class (:background "#474747" :foreground unspecified :underline nil))))
-   `(lsp-face-highlight-write ((,class (:background "#093d5b" :foreground unspecified :underline nil))))
+   ;; LSP
+   `(lsp-face-highlight-read ((,class (:background ,vscode-highlight-read :foreground unspecified :underline nil))))
+   `(lsp-face-highlight-textual ((,class (:background ,vscode-highlight-read :foreground unspecified :underline nil))))
+   `(lsp-face-highlight-write ((,class (:background ,vscode-highlight-write :foreground unspecified :underline nil))))
 
    `(lsp-ui-doc-background ((t (:background ,vscode-bg-extra-dark))))
    ;; `(lsp-ui-doc-header ((t (:background ,vscode-highlight :foreground ,vscode-white :bold t))))
    `(lsp-ui-doc-text ((,class (:foreground ,vscode-fg-light))))
 
-   `(lsp-ui-peek-peek ((,class (:background ,vscode-bg-dark))))
-   ;; `(lsp-ui-peek-list ((t (:background "#252526"))))
-   ;; `(lsp-ui-peek-selection ((t (:background "#264f78" :foreground "#ffffff"))))
-   ;; `(lsp-ui-peek-highlight ((t (:background "#094771" :foreground "#ffffff"))))
-   ;; `(lsp-ui-peek-header
-   ;;   ((t (:background ,vs-code-bg-dark :foreground "#ffffff"
-   ;;                    :box (:line-width (-1 . -1) :color "#007acc" :style nil)))))
-   ;; `(lsp-ui-peek-footer
-   ;;   ((t (:background ,vs-code-bg-dark :foreground "#ffffff"
-   ;;                    :box (:line-width (-1 . -1) :color "#007acc" :style nil)))))
-   ;; `(lsp-ui-peek-filename ((t (:foreground ,vscode-variable))))
-   ;; `(lsp-ui-peek-line-number ((t (:foreground ,vscode-line-number))))
+   `(lsp-ui-peek-peek ((,class (:background ,vscode-bg-extra-dark))))
+   `(lsp-ui-peek-list ((t (:background ,vscode-bg-extra-dark))))
+   `(lsp-ui-peek-selection ((t (:background ,vscode-selection-bg :foreground "#ffffff"))))
+   `(lsp-ui-peek-highlight ((t (:background ,vscode-highlight-write :foreground "#ffffff"))))
+   `(lsp-ui-peek-header
+      ((t (:background ,vscode-bg-extra-dark :foreground "#ffffff"
+                       :box (:line-width (-1 . -1) :color ,vscode-border-accent :style nil)))))
+   `(lsp-ui-peek-footer
+     ((t (:background ,vscode-bg-extra-dark :foreground "#ffffff"
+                      :box (:line-width (-1 . -1) :color ,vscode-border-accent :style nil)))))
+   `(lsp-ui-peek-filename ((t (:foreground ,vscode-variable))))
+   `(lsp-ui-peek-line-number ((t (:foreground ,vscode-fg-dim))))
 
    ;; ;; ----
 
-   ;; ;; Company tooltip
+   ;; Company box
    `(company-box-background ((,class (:background ,vscode-bg-extra-dark))))
    `(company-tooltip ((,class (:background ,vscode-bg-extra-dark :foreground ,vscode-fg-light))))
    `(company-tooltip-selection ((,class (:background ,vscode-selection-bg))))
-   `(company-tooltip-annotation ((t (:foreground ,vscode-function))))
+   `(company-tooltip-annotation ((,class (:foreground ,vscode-function))))
+   `(company-tooltip-scrollbar-thumb ((t (:background ,vscode-bg-light))))
+   `(company-tooltip-scrollbar-track ((t (:background ,vscode-bg-extra-dark))))
 
-   ;; `(company-tooltip-annotation-selection ((t (:foreground "#ffd700"))))
-;;   `(company-tooltip-scrollbar-thumb ((t (:background "#3e3e3e"))))
- ;;  `(company-tooltip-scrollbar-track ((t (:background "#252526"))))
-   ;; `(company-tooltip-mouse ((t (:background "#569cd6" :foreground "#ffffff"))))
-
-
-   ;; ;; Active modeline
+   ;; Active modeline
    `(mode-line ((t (:background ,vscode-bg-extra-dark :foreground ,vscode-fg-light))))
    ;; Inactive modeline
-   `(mode-line-inactive ((t (:background ,vscode-bg-light :foreground ,vscode-fg-dim :box nil))))
+   `(mode-line-inactive ((,class (:background ,vscode-bg-light :foreground ,vscode-fg-dim :box nil))))
+   `(mode-line-hightlight ((,class (:background unspecified :foreground ,vscode-fg-light :box nil))))
+   `(mode-line-buffer-id ((,class (:background unspecified :foreground ,vscode-fg-light :weight normal))))
+   `(mode-line-emphasis ((,class (:background unspecified :foreground ,vscode-fg-light :weight normal))))
 
    ;; Matching parenthesis
    `(show-paren-match
