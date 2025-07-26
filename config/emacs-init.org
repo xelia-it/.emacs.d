@@ -951,23 +951,28 @@ Projectile package helps discover and remember projects.
        )
 #+END_SRC
 
-We want to use helm for selecting and narrowing projects.
+Like Visual Studio Code we want to open a project file using Ctrl-p keybinding.
+Since Ctrl-p is used also to select previous line in vanilla Emacs the
+"Open File" behaviour is activated only when we are inside a project.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
   (defun my-helm-projectile-find-file ()
     "In a project, C-p use helm-projectile-find-file."
-    (interactive)
 
+    (interactive)
     (if (projectile-project-p)
         (helm-projectile-find-file)
-
-      (let ((orig-command (lookup-key (current-global-map) (kbd "C-p"))))
-        (if (and orig-command (not (eq orig-command #'my-helm-projectile-find-file)))
+      (let* ((key (kbd "C-p"))
+             (orig-command (key-binding key)))
+        (if (and orig-command
+                 (not (eq orig-command #'my-helm-projectile-find-file)))
             (call-interactively orig-command)
-          (call-interactively #'previous-line)))
-      )
+          (call-interactively #'previous-line))))
     )
 #+END_SRC
+
+We want to use helm for show the result of projectile.
+This is managed by helm-projectile package.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package helm-projectile
