@@ -909,13 +909,19 @@ Please note that the loading is deferred in order to speed up startup time.
            ;; Various common ways to switch buffers
            ("C-x b"           . helm-buffers-list)
            ("C-x C-b"         . helm-buffers-list)
+           ("C-<tab>"         . helm-buffers-list)
+           ("C-<iso-lefttab>" . helm-buffers-list)
            ;; The kill ring is handy
            ("C-S-v"           . helm-show-kill-ring)
            ("C-f"             . helm-occur)
            :map helm-map
-           ;; Use tab to narrow selection
            ("<escape>"        . helm-keyboard-quit)
+           ;; Use tab to narrow selection
            ("<tab>"           . helm-execute-persistent-action)
+           ;; Use the same keybinding of buffer list in order
+           ;; to make switching buffer easier
+           ("C-<tab>"         . helm-next-line)
+           ("C-<iso-lefttab>" . helm-previous-line)
            )
     )
 #+END_SRC
@@ -924,6 +930,28 @@ Please note that the loading is deferred in order to speed up startup time.
 ** Project list
 
 Projectile package helps discover and remember projects.
+
+Like Visual Studio Code we want to open a project file using Ctrl-p keybinding.
+Since Ctrl-p is used also to select previous line in vanilla Emacs the
+"Open File" behaviour is activated only when we are inside a project.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my-projectile-find-file ()
+    "In a project, C-p use helm-projectile-find-file."
+
+    (interactive)
+    (if (projectile-project-p)
+        (helm-projectile-find-file)
+      (let* ((key (kbd "C-p"))
+             (orig-command (key-binding key)))
+        (if (and orig-command
+                 (not (eq orig-command #'my-projectile-find-file)))
+            (call-interactively orig-command)
+          (call-interactively #'previous-line))))
+    )
+#+END_SRC
+
+Now we can activate "projectile" package.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package projectile
@@ -947,55 +975,11 @@ Projectile package helps discover and remember projects.
            ("C-<f9>" . projectile-run-project)
            ("S-<f9>" . projectile-configure-project)
            ("M-<f9>" . projectile-test-project)
+           ("C-S-f"  . projectile-grep)
+           ("S-C-o"  . projectile-switch-project)
+           ("C-p"    . my-projectile-find-file)
            )
        )
-#+END_SRC
-
-Like Visual Studio Code we want to open a project file using Ctrl-p keybinding.
-Since Ctrl-p is used also to select previous line in vanilla Emacs the
-"Open File" behaviour is activated only when we are inside a project.
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (defun my-helm-projectile-find-file ()
-    "In a project, C-p use helm-projectile-find-file."
-
-    (interactive)
-    (if (projectile-project-p)
-        (helm-projectile-find-file)
-      (let* ((key (kbd "C-p"))
-             (orig-command (key-binding key)))
-        (if (and orig-command
-                 (not (eq orig-command #'my-helm-projectile-find-file)))
-            (call-interactively orig-command)
-          (call-interactively #'previous-line))))
-    )
-#+END_SRC
-
-We want to use helm for show the result of projectile.
-This is managed by helm-projectile package.
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (use-package helm-projectile
-    :ensure t
-    :after projectile
-    :defer t
-
-    :config
-    (helm-projectile-on)
-
-    :bind (
-           ("C-S-f" . helm-projectile-grep)
-           ("S-C-o" . helm-projectile-switch-project)
-           ("C-p"   . my-helm-projectile-find-file)
-           ;; Switch all buffers
-           ("C-<tab>"           . helm-buffers-list)
-           ("C-<iso-lefttab>"   . helm-buffers-list)
-           :map helm-map
-           ;; Use tab to narrow selection
-           ("C-<tab>"         . helm-next-line)
-           ("C-<iso-lefttab>" . helm-previous-line)
-           )
-    )
 #+END_SRC
 
 Let projectile integrate with Treemacs.
