@@ -937,11 +937,11 @@ Since Ctrl-p is used also to select previous line in vanilla Emacs the
 
 #+BEGIN_SRC emacs-lisp :tangle yes
   (defun my-projectile-find-file ()
-    "In a project, C-p use helm-projectile-find-file."
+    "In a project, C-p use projectile-find-file."
 
     (interactive)
     (if (projectile-project-p)
-        (helm-projectile-find-file)
+        (projectile-find-file)
       (let* ((key (kbd "C-p"))
              (orig-command (key-binding key)))
         (if (and orig-command
@@ -957,6 +957,7 @@ Now we can activate "projectile" package.
   (use-package projectile
     :ensure t
     :defer t
+    :after (helm)
     :init
 
     (setq projectile-completion-system 'helm)
