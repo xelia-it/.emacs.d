@@ -55,6 +55,7 @@
    `(highlight ((,class (:background ,vscode-line-highlight))))
    `(minibuffer-prompt ((,class (:foreground ,vscode-keyword :weight bold))))
    `(link ((,class (:foreground ,vscode-info :underline t))))
+   `(italic ((,class (:foreground ,vscode-fg-dim :underline nil))))
 
    ;; Font-lock faces completi (VSCode Dark Modern+)
    `(font-lock-bracket-face ((,class (:foreground ,vscode-brackets))))

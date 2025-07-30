@@ -530,7 +530,7 @@ Also we want to refresh magit buffers automatically.
 
     (save-buffer t)
     (if (fboundp 'magit-refresh-all)
-      (magit|-refresh-all))
+      (magit-refresh-all))
     )
 #+END_SRC
 
@@ -877,52 +877,68 @@ Add the ability to manage multiple cursors.
 #+END_SRC
 
 * Completion
+** Vertico
 
-Helm is a great narrowing and completion system.
-Please note that the loading is deferred in order to speed up startup time.
+The core package is Vertigo.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-  (use-package helm
+  (use-package vertico
+    :ensure t
+    :init
+    (vertico-mode))
+#+END_SRC
+
+For fuzzy completion we use "orderless".
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+
+  (use-package orderless
+    :ensure t
+    :init
+    (setq completion-styles '(orderless)
+          completion-category-defaults nil
+          completion-category-overrides '((file (styles partial-completion)))))
+
+  ;; Extra info accanto ai candidati
+  (use-package marginalia
+    :ensure t
+    :after vertico
+    :init
+    (marginalia-mode))
+
+  ;; Comandi tipo counsel: buffer, file, search, etc.
+  (use-package consult
     :ensure t
     :defer t
-    :config
-
-    (setq helm-split-window-in-side-p           t   ;; Open helm buffer inside current window, not occupy whole other window
-          helm-move-to-line-cycle-in-source     t   ;; move to end or beginning of source when reaching top or bottom of source.
-          helm-ff-search-library-in-sexp        t   ;; search for library in `require' and `declare-function' sexp.
-          helm-scroll-amount                    8   ;; scroll 8 lines other window using M-<next>/M-<prior>
-          helm-ff-file-name-history-use-recentf t
-          helm-display-header-line              nil ;; Hide header line
-          helm-echo-input-in-header-line        nil ;; Do not echo in header line
-          helm-autoresize-max-height            0   ;;
-          helm-autoresize-min-height            20  ;;
-          )
-
-    (helm-autoresize-mode 1)
-
-    :bind (
-           ("M-x"             . helm-M-x)
-           ("C-S-p"           . helm-M-x)
-           ("<f1>"            . helm-M-x)
-           ("C-o"             . helm-find-files)
-           ("C-t"             . helm-imenu)
-           ;; Various common ways to switch buffers
-           ("C-x b"           . helm-buffers-list)
-           ("C-x C-b"         . helm-buffers-list)
-           ("C-<tab>"         . helm-buffers-list)
-           ("C-<iso-lefttab>" . helm-buffers-list)
-           ;; The kill ring is handy
-           ("C-S-v"           . helm-show-kill-ring)
-           ("C-f"             . helm-occur)
-           :map helm-map
-           ("<escape>"        . helm-keyboard-quit)
-           ;; Use tab to narrow selection
-           ("<tab>"           . helm-execute-persistent-action)
-           ;; Use the same keybinding of buffer list in order
-           ;; to make switching buffer easier
-           ("C-<tab>"         . helm-next-line)
-           ("C-<iso-lefttab>" . helm-previous-line)
+    :bind (("C-f" . consult-line)
+           ("C-x b" . consult-buffer)
+           ("C-x C-b" . consult-buffer)
+           ("C-<tab>" . consult-buffer)
+           ("C-S-<tab>" . consult-buffer)
+           ("C-x C-f" . find-file) ;; Open file
+           ("C-o" . find-file)     ;; Open file
+           ("C-t" . consult-imenu) ;; Symbols
            )
+    )
+
+  ;; Integrazione consult + projectile
+  ;;  (use-package consult-projectile
+  ;;    :after (consult projectile))
+
+  (use-package vertico-posframe
+    :ensure t
+    :init
+    (setq vertico-posframe-poshandler 'posframe-poshandler-frame-top-center)
+    (setq vertico-posframe-border-width 1)
+    (setq vertico-posframe-parameters
+          '(
+            (left-fringe . 16)
+            (right-fringe . 16)
+            (vertico-posframe-poshandler . posframe-poshandler-frame-top-center)
+            (vertico-posframe-border-width . 10)
+            )
+          )
+    (vertico-posframe-mode 1)
     )
 #+END_SRC
 
@@ -938,7 +954,6 @@ Since Ctrl-p is used also to select previous line in vanilla Emacs the
 #+BEGIN_SRC emacs-lisp :tangle yes
   (defun my-projectile-find-file ()
     "In a project, C-p use projectile-find-file."
-
     (interactive)
     (if (projectile-project-p)
         (projectile-find-file)
@@ -957,10 +972,9 @@ Now we can activate "projectile" package.
   (use-package projectile
     :ensure t
     :defer t
-    :after (helm)
     :init
 
-    (setq projectile-completion-system 'helm)
+    (setq projectile-completion-system 'default)
 
     (put 'projectile-project-configure-cmd 'safe-local-variable #'stringp)
     (put 'projectile-project-compilation-cmd 'safe-local-variable #'stringp)
@@ -1222,29 +1236,28 @@ Enable only needed UI.
 Add lsp-ui package for better user interface.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-  (use-package lsp-ui
-    :ensure t
-    :defer t
-    :commands lsp-ui-mode
+    (use-package lsp-ui
+      :ensure t
+      :defer t
+      :commands lsp-ui-mode
 
-    :init
+      :init
 
-    ;; Ctrl-j do not play well with lsp-ui
-    (global-unset-key (kbd "C-j"))
+      ;; Ctrl-j do not play well with lsp-ui
+      (global-unset-key (kbd "C-j"))
 
-    :config
+      :config
 
-    (my-lsp-ui-settings)
+      (my-lsp-ui-settings)
 
-    :hook (lsp-mode . lsp-ui-mode)
+      :hook (lsp-mode . lsp-ui-mode)
 
-    :bind (
-           ("C-j"       . lsp-ui-imenu)
-           ("<f12>"     . lsp-ui-peek-find-definitions)
-           ("M-<f12>"   . lsp-ui-peek-find-references)
-           ("C-<f12>"   . lsp-ui-peek-find-implementation)
-           )
-    )
+      :bind (
+             ("<f12>"     . lsp-ui-peek-find-definitions)
+             ("M-<f12>"   . lsp-ui-peek-find-references)
+             ("C-<f12>"   . lsp-ui-peek-find-implementation)
+             )
+      )
 #+END_SRC
 
 Use a fancy box for completion selection.
