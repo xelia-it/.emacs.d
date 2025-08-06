@@ -65,7 +65,7 @@
    `(fringe ((,class (:background ,vscode-bg-dark))))
    `(vertical-border ((,class (:foreground ,vscode-border-dark))))
    `(highlight ((,class (:background ,vscode-line-highlight))))
-   `(minibuffer-prompt ((,class (:foreground ,vscode-keyword :weight bold))))
+   `(minibuffer-prompt ((,class (:foreground ,vscode-keyword :weight normal))))
    `(link ((,class (:foreground ,vscode-info :underline t))))
    `(italic ((,class (:foreground ,vscode-fg-dim :underline nil))))
 
@@ -139,36 +139,14 @@
    `(lazy-highlight ((,class (:background ,vscode-search-match))))
    `(match ((,class (:background ,vscode-search-match))))
 
-   ;; ;; Minibuffer
-   ;; `(minibuffer-prompt ((t (:foreground ,vscode-line-number :background ,vscode-bg-dark))))
-   ;; `(vertical-border ((t (:foreground ,vscode-bg-light :background ,vscode-bg-dark))))
+   ;; Treemacs
+   `(treemacs-window-background-face ((,class (:foreground ,vscode-fg-light :background ,vscode-bg-extra-dark :height 0.95))))
+   `(treemacs-root-face ((,class (:foreground ,vscode-fg-light :weight bold))))
+   `(treemacs-directory-collapsed-face ((,class (:foreground ,vscode-fg-light))))
+   `(treemacs-directory-face ((,class (:foreground ,vscode-fg-light))))
 
-   ;; ;; UI Elements
-   ;; `(mode-line ((,class (:background ,vscode-bg-light :foreground ,vscode-fg-light :box nil))))
-   ;; `(mode-line-inactive ((,class (:background ,vscode-bg-dark :foreground ,vscode-fg-dim :box nil))))
-   ;; `(header-line ((,class (:background ,vscode-bg-light :foreground ,vscode-fg-light :box nil))))
-   ;; `(minibuffer-prompt ((,class (:foreground ,vscode-keyword :weight bold))))
-
-   ;; ;; Org-mode
-   ;; `(org-level-1 ((,class (:foreground ,vscode-keyword :weight bold :height 1.05))))
-   ;; `(org-level-2 ((,class (:foreground ,vscode-function-name :weight bold :height 1.05))))
-   ;; `(org-level-3 ((,class (:foreground ,vscode-variable :weight bold))))
-   ;; `(org-block ((,class (:background ,vscode-bg-light :foreground ,vscode-fg-light))))
-   ;; `(org-code ((,class (:background ,vscode-bg-light :foreground ,vscode-fg-light))))
-   ;; `(org-quote  ((t (:background ,vscode-bg-light))))
-   ;; `(org-todo ((t (:foreground ,vscode-warning :weight bold))))
-   ;; `(org-done ((t (:foreground ,vscode-comment :weight bold))))
-
-   ;; ;; Dired
-   ;; `(dired-directory ((,class (:foreground ,vscode-keyword :weight bold))))
-   ;; `(dired-symlink ((,class (:foreground ,vscode-constant :weight bold))))
-
-   ;; ;; Treemacs
-   ;; `(treemacs-root-face ((,class (:foreground ,vscode-fg-light :weight bold :height 1.2))))
-   ;; `(treemacs-directory-face ((,class (:foreground ,vscode-keyword))))
-   ;; `(treemacs-file-face ((,class (:foreground ,vscode-fg-light))))
-   ;; `(treemacs-tags-face ((,class (:foreground ,vscode-constant))))
-   ;; `(treemacs-git-ignored-face ((,class (:foreground ,vscode-shadow))))
+   `(treemacs-git-ignored-face ((,class (:foreground ,vscode-fg-dim))))
+   `(treemacs-git-ignored-face ((,class (:foreground ,vscode-keyword))))
 
    ;; Vertico
    `(vertico-posframe-border ((,class (:background ,vscode-border-dark))))
@@ -201,14 +179,14 @@
    ;; `(web-mode-current-column-highlight-face ((t (:foregrund ,vscode-keyword :background ,vscode-tag-background))))
 
    ;; LSP
+
+   ;; Generic LSP
    `(lsp-face-highlight-read ((,class (:background ,vscode-highlight-read :foreground unspecified :underline nil))))
    `(lsp-face-highlight-textual ((,class (:background ,vscode-highlight-read :foreground unspecified :underline nil))))
    `(lsp-face-highlight-write ((,class (:background ,vscode-highlight-write :foreground unspecified :underline nil))))
-
+   ;; LSP UI specific settings
    `(lsp-ui-doc-background ((t (:background ,vscode-bg-extra-dark))))
-   ;; `(lsp-ui-doc-header ((t (:background ,vscode-highlight :foreground ,vscode-white :bold t))))
    `(lsp-ui-doc-text ((,class (:foreground ,vscode-fg-light))))
-
    `(lsp-ui-peek-peek ((,class (:background ,vscode-bg-extra-dark))))
    `(lsp-ui-peek-list ((t (:background ,vscode-bg-extra-dark))))
    `(lsp-ui-peek-selection ((t (:background ,vscode-selection-bg :foreground "#ffffff"))))
@@ -221,15 +199,12 @@
                       :box (:line-width (-1 . -1) :color ,vscode-border-accent :style nil)))))
    `(lsp-ui-peek-filename ((t (:foreground ,vscode-variable))))
    `(lsp-ui-peek-line-number ((t (:foreground ,vscode-fg-dim))))
-
+   ;; Semantic highlight (with treesitter)
    `(lsp-face-semhl-namespace      ((,class (:foreground ,vscode-namespace))))
    `(lsp-face-semhl-parameter      ((,class (:foreground ,vscode-parameter))))
    `(lsp-face-semhl-decorator      ((,class (:foreground ,vscode-annotation))))
    `(lsp-face-semhl-enumMember     ((,class (:foreground ,vscode-enum))))
    `(lsp-face-semhl-operator       ((,class (:foreground ,vscode-operator))))
-
-
-   ;; ;; ----
 
    ;; Company box
    `(company-box-background ((,class (:background ,vscode-bg-extra-dark))))
@@ -239,13 +214,20 @@
    `(company-tooltip-scrollbar-thumb ((t (:background ,vscode-bg-light))))
    `(company-tooltip-scrollbar-track ((t (:background ,vscode-bg-extra-dark))))
 
+   ;; Modeline
+
    ;; Active modeline
-   `(mode-line ((t (:background ,vscode-bg-extra-dark :foreground ,vscode-fg-light))))
+   `(mode-line ((t (:background ,vscode-bg-extra-dark :foreground ,vscode-fg-light :height 100 :box nil))))
    ;; Inactive modeline
-   `(mode-line-inactive ((,class (:background ,vscode-bg-light :foreground ,vscode-fg-dim :box nil))))
-   `(mode-line-hightlight ((,class (:background unspecified :foreground ,vscode-fg-light :box nil))))
-   `(mode-line-buffer-id ((,class (:background unspecified :foreground ,vscode-fg-light :weight normal))))
-   `(mode-line-emphasis ((,class (:background unspecified :foreground ,vscode-fg-light :weight normal))))
+   `(mode-line-inactive ((,class (:background ,vscode-bg-extra-dark :foreground ,vscode-fg-dim :height 100 :box nil))))
+   `(mode-line-hightlight ((,class (:background unspecified :foreground ,vscode-fg-light :height 100 :box nil))))
+   `(mode-line-buffer-id ((,class (:background unspecified :foreground ,vscode-fg-light :height 100 :weight normal))))
+   `(mode-line-emphasis ((,class (:background unspecified :foreground ,vscode-fg-light :height 100 :weight normal))))
+   ;; Doom modeline specific faces
+   `(doom-modeline-bar ((,class (:background ,vscode-border-dark :foreground nil :box nil))))
+   `(doom-modeline-bar-inactive ((,class (:background ,vscode-border-dark :foreground nil :box nil))))
+   `(doom-modeline-highlight ((,class (:box nil :weight bold))))
+   `(doom-modeline-info ((,class (:foreground ,vscode-brackets-match :weight normal))))
 
    ;; Matching parenthesis
    `(show-paren-match

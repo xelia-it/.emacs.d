@@ -80,7 +80,7 @@ These fonts should be installed manually.
      )
 
     ;; Scale font to 105%
-    (face-remap-add-relative 'default :height 105)
+    ;;(face-remap-add-relative 'default :height 105)
     )
 
   (my-set-default-font)
@@ -105,7 +105,8 @@ Setup a fancy modeline..
     :ensure t
     :init
     ;; Hide modeline bar at startup
-    (setq-default mode-line-format '(" "))
+    ;; TODO: remove? It seems to not work
+    ;; (setq-default mode-line-format '(" "))
 
     ;; How tall the mode-line should be. It's only respected in GUI.
     ;; If the actual char height is larger, it respects the actual height.
@@ -115,7 +116,7 @@ Setup a fancy modeline..
     (setq doom-modeline-bar-width 1)
 
     ;; Expand all files and dir from project
-    (setq doom-modeline-buffer-file-name-style 'relative-from-project)
+    (setq doom-modeline-buffer-file-name-style 'auto)
 
     ;; Show buffer name always with the same color
     (setq doom-modeline-highlight-modified-buffer-name nil)
@@ -1087,14 +1088,20 @@ Magit is a complete User Interface for Git.
           )
 
     ;; Installa automaticamente le grammatiche mancanti
-    (dolist (lang '(bash c cpp css dockerfile go html javascript json php python ruby rust scss typescript tsx))
+
+    ;; TODO: add (bash c rust) when grammars are compatible with Emacs 30
+
+    (dolist (lang '(cpp css dockerfile go html javascript json php python ruby scss typescript tsx))
       (unless (treesit-language-available-p lang)
         (ignore-errors
           (treesit-install-language-grammar lang))))
 
-    ;; Remap automatico ai nuovi -ts-mode
+    ;; Auto remap to new "-ts-mode"
+    ;; TODO: add (bash c rust) when grammars are compatible with Emacs 30
     (setq major-mode-remap-alist
-          '((c-mode          . c-ts-mode)
+          '(
+            ;; (bash-mode          . bash-ts-mode)
+            ;; (c-mode          . c-ts-mode)
             (c++-mode        . c++-ts-mode)
             (css-mode        . css-ts-mode)
             (dockerfile-mode . dockerfile-ts-mode)
@@ -1106,7 +1113,7 @@ Magit is a complete User Interface for Git.
             (php-mode        . php-ts-mode)
             (python-mode     . python-ts-mode)
             (ruby-mode       . ruby-ts-mode)
-            (rust-mode       . rust-ts-mode)
+            ;; (rust-mode       . rust-ts-mode)
             (scss-mode       . scss-ts-mode)
             (typescript-mode . typescript-ts-mode)
             (tsx-mode        . tsx-ts-mode)
