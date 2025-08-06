@@ -35,9 +35,10 @@
       (vscode-git-added           "#2ea043")
       (vscode-git-modified        "#0078d4")
 
-      (vscode-brackets            "#c586c0") ;; NEW
-      (vscode-brackets-match      "#ffd700") ;; NEW
-      (vscode-search-match        "#623315") ;; NEW
+      (vscode-brackets            "#c586c0")
+      (vscode-brackets-match      "#ffd700")
+      (vscode-search-match        "#623315")
+      (vscode-selection-bg-dark   "#04395e") ;; Vertico completion
       (vscode-highlight-read      "#474747") ;; Keyword highlight
       (vscode-highlight-write     "#093d5b") ;; Keyword assignment highlight
 
@@ -150,6 +151,9 @@
 
    ;; Vertico
    `(vertico-posframe-border ((,class (:background ,vscode-border-dark))))
+   `(vertico-current ((,class (:background ,vscode-selection-bg-dark))))
+   `(vertico-group-separator ((,class (:foreground ,vscode-fg-dim))))
+   `(vertico-group-title ((,class (:foreground ,vscode-fg-dim))))
 
    ;; ;; Highlight indent guide
    ;; ;; The normal color should be "vscode-border" in order to be equal

@@ -116,7 +116,7 @@ Setup a fancy modeline..
     (setq doom-modeline-bar-width 1)
 
     ;; Expand all files and dir from project
-    (setq doom-modeline-buffer-file-name-style 'auto)
+    (setq doom-modeline-buffer-file-name-style 'relative-to-project)
 
     ;; Show buffer name always with the same color
     (setq doom-modeline-highlight-modified-buffer-name nil)
@@ -880,7 +880,7 @@ Add the ability to manage multiple cursors.
 * Completion
 ** Vertico
 
-The core package is Vertigo.
+The core package for narrowing selection is Vertico.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package vertico
@@ -892,21 +892,45 @@ The core package is Vertigo.
 For fuzzy completion we use "orderless".
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-
   (use-package orderless
     :ensure t
     :init
     (setq completion-styles '(orderless)
           completion-category-defaults nil
           completion-category-overrides '((file (styles partial-completion)))))
+#+END_SRC
 
-  ;; Extra info accanto ai candidati
+The "vertico-posframe" package is used to show selection in a popup (like VS Code).
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package vertico-posframe
+    :ensure t
+    :init
+    (setq vertico-count 15) ;; Shows 15 results
+    (setq vertico-posframe-poshandler 'posframe-poshandler-frame-top-center)
+    (setq vertico-posframe-border-width 1)
+    (setq vertico-posframe-min-height 20)
+    (setq vertico-posframe-min-width 120)
+    (setq vertico-posframe-parameters
+          '(
+            (left-fringe . 16)
+            (right-fringe . 16)
+            )
+          )
+    (vertico-posframe-mode 1)
+    )
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp :tangle yes
   (use-package marginalia
     :ensure t
     :after vertico
     :init
-    (marginalia-mode))
 
+    (marginalia-mode))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp :tangle yes
   ;; Comandi tipo counsel: buffer, file, search, etc.
   (use-package consult
     :ensure t
@@ -920,27 +944,6 @@ For fuzzy completion we use "orderless".
            ("C-o" . find-file)     ;; Open file
            ("C-t" . consult-imenu) ;; Symbols
            )
-    )
-
-  ;; Integrazione consult + projectile
-  ;;  (use-package consult-projectile
-  ;;    :after (consult projectile))
-
-  (use-package vertico-posframe
-    :ensure t
-    :init
-    (setq vertico-count 15) ;; Shows 15 results
-    (setq vertico-posframe-poshandler 'posframe-poshandler-frame-top-center)
-    (setq vertico-posframe-border-width 1)
-    (setq vertico-posframe-min-height 16) ;; Take one extra line
-    (setq vertico-posframe-min-width 120)
-    (setq vertico-posframe-parameters
-          '(
-            (left-fringe . 16)
-            (right-fringe . 16)
-            )
-          )
-    (vertico-posframe-mode 1)
     )
 #+END_SRC
 
@@ -999,14 +1002,26 @@ Now we can activate "projectile" package.
        )
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package consult-projectile
+    :ensure t
+    :after (consult projectile)
+    :bind (
+           ("S-C-o"  . consult-projectile-switch-project)
+           )
+    )
+#+END_SRC
+
 Let projectile integrate with Treemacs.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package treemacs-projectile
     :ensure t
     :defer t
+    ;; TODO: add keybindings
     )
 #+END_SRC
+
 
 ** Git support
 
@@ -1294,28 +1309,29 @@ Enable only needed UI.
 Add lsp-ui package for better user interface.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-    (use-package lsp-ui
-      :ensure t
-      :defer t
-      :commands lsp-ui-mode
+  (use-package lsp-ui
+    :ensure t
+    :defer t
+    :commands lsp-ui-mode
 
-      :init
+    :init
 
-      ;; Ctrl-j do not play well with lsp-ui
-      (global-unset-key (kbd "C-j"))
+    ;; Ctrl-j do not play well with lsp-ui
+    (global-unset-key (kbd "C-j"))
 
-      :config
+    :config
 
-      (my-lsp-ui-settings)
+    (my-lsp-ui-settings)
 
-      :hook (lsp-mode . lsp-ui-mode)
+    :hook (lsp-mode . lsp-ui-mode)
 
-      :bind (
-             ("<f12>"     . lsp-ui-peek-find-definitions)
-             ("M-<f12>"   . lsp-ui-peek-find-references)
-             ("C-<f12>"   . lsp-ui-peek-find-implementation)
-             )
-      )
+    :bind (
+           ("<f12>"     . lsp-ui-peek-find-definitions)
+           ("M-<f12>"   . lsp-ui-peek-find-references)
+           ("C-<f12>"   . lsp-ui-peek-find-implementation)
+           ("C-j"   . lsp-ui-imenu)
+           )
+    )
 #+END_SRC
 
 Use a fancy box for completion selection.
