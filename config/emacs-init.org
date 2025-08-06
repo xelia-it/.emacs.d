@@ -928,14 +928,15 @@ For fuzzy completion we use "orderless".
   (use-package vertico-posframe
     :ensure t
     :init
+    (setq vertico-count 15) ;; Shows 15 results
     (setq vertico-posframe-poshandler 'posframe-poshandler-frame-top-center)
     (setq vertico-posframe-border-width 1)
+    (setq vertico-posframe-min-height 16) ;; Take one extra line
+    (setq vertico-posframe-min-width 120)
     (setq vertico-posframe-parameters
           '(
             (left-fringe . 16)
             (right-fringe . 16)
-            (vertico-posframe-poshandler . posframe-poshandler-frame-top-center)
-            (vertico-posframe-border-width . 10)
             )
           )
     (vertico-posframe-mode 1)
@@ -1057,6 +1058,62 @@ Magit is a complete User Interface for Git.
 #+END_SRC
 
 * Language Support
+** Tree Sitter
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package treesit
+    ;; Tree-sitter integrated in Emacs 29+
+    :ensure nil
+    :config
+    ;; Official sources fopr grammars
+    (setq treesit-language-source-alist
+          '(
+            (bash        . ("https://github.com/tree-sitter/tree-sitter-bash"))
+            (c           . ("https://github.com/tree-sitter/tree-sitter-c"))
+            (cpp         . ("https://github.com/tree-sitter/tree-sitter-cpp"))
+            (css         . ("https://github.com/tree-sitter/tree-sitter-css"))
+            (dockerfile  . ("https://github.com/camdencheek/tree-sitter-dockerfile"))
+            (go          . ("https://github.com/tree-sitter/tree-sitter-go"))
+            (html        . ("https://github.com/tree-sitter/tree-sitter-html"))
+            (javascript  . ("https://github.com/tree-sitter/tree-sitter-javascript" "master" "src"))
+            (json        . ("https://github.com/tree-sitter/tree-sitter-json"))
+            (python      . ("https://github.com/tree-sitter/tree-sitter-python"))
+            (ruby        . ("https://github.com/tree-sitter/tree-sitter-ruby"))
+            (rust        . ("https://github.com/tree-sitter/tree-sitter-rust"))
+            (scss        . ("https://github.com/serenadeai/tree-sitter-scss"))
+            (typescript  . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src"))
+            (tsx         . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src"))
+            )
+          )
+
+    ;; Installa automaticamente le grammatiche mancanti
+    (dolist (lang '(bash c cpp css dockerfile go html javascript json php python ruby rust scss typescript tsx))
+      (unless (treesit-language-available-p lang)
+        (ignore-errors
+          (treesit-install-language-grammar lang))))
+
+    ;; Remap automatico ai nuovi -ts-mode
+    (setq major-mode-remap-alist
+          '((c-mode          . c-ts-mode)
+            (c++-mode        . c++-ts-mode)
+            (css-mode        . css-ts-mode)
+            (dockerfile-mode . dockerfile-ts-mode)
+            (go-mode         . go-ts-mode)
+            (html-mode       . html-ts-mode)
+            (js2-mode        . js-ts-mode)
+            (javascript-mode . js-ts-mode)
+            (json-mode       . json-ts-mode)
+            (php-mode        . php-ts-mode)
+            (python-mode     . python-ts-mode)
+            (ruby-mode       . ruby-ts-mode)
+            (rust-mode       . rust-ts-mode)
+            (scss-mode       . scss-ts-mode)
+            (typescript-mode . typescript-ts-mode)
+            (tsx-mode        . tsx-ts-mode)
+            ))
+    )
+#+END_SRC
+
 ** LSP
 
 Language Service Protocol allows any editor to acquire IDE-like features
@@ -1067,53 +1124,42 @@ There is a complete guide for this behaviour here: https://emacs-lsp.github.io/l
 All the LSP fine tuning are grouped in the following functions.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-    (defun my-lsp-settings()
-      "Activate/deactivate LSP functionality."
-      (interactive)
+  (defun my-lsp-settings()
+    "Activate/deactivate LSP functionality."
+    (interactive)
 
-      ;; Flycheck (or flymake if no flycheck is present)
-      (setq lsp-diagnostics-provider :auto)
+    ;; Flycheck (or flymake if no flycheck is present)
+    (setq lsp-diagnostics-provider :auto)
 
-      ;; Completion (company-mode)
-      (setq lsp-completion-provider :capf)   ;; It can be disabled with :none
-      (setq lsp-completion-show-detail t)    ;; Show item details
-      (setq lsp-completion-show-kind t)      ;; show item kind
+    ;; Completion (company-mode)
+    (setq lsp-completion-provider :capf)   ;; It can be disabled with :none
+    (setq lsp-completion-show-detail t)    ;; Show item details
+    (setq lsp-completion-show-kind t)      ;; show item kind
 
-      ;; Modeline code actions
-      (setq lsp-modeline-code-actions-enable nil)
-      (setq lsp-modeline-diagnostics-enable t) ;; Modeline diagnostics statistics
+    ;; Modeline code actions
+    (setq lsp-modeline-code-actions-enable nil)
+    (setq lsp-modeline-diagnostics-enable t) ;; Modeline diagnostics statistics
 
-      ;; Eldoc shows information about methods in the modeline
-      ;; Queste configurazioni vengono eseguite dopo che lsp-mode è stato caricato.
-      (setq lsp-signature-auto-activate nil)
-      (setq lsp-signature-render-enabled nil)
-      (setq lsp-eldoc-enable-hover nil)
-      (setq lsp-eldoc-render-all nil)
-      ;; Se le signature appaiono ancora, puoi provare a rimuovere l'hook
-    ;; Attenzione: questo disabilita tutte le informazioni eldoc da lsp-mode.
-      (remove-hook 'eldoc-documentation-functions #'lsp-eldoc-function)
-      (setq eldoc-documentation-strategy 'ignore)
-      (setq eldoc-documentation-functions
-          (delete 'flymake-eldoc-function eldoc-documentation-functions))
+    ;; Eldoc shows information about methods in the modeline
+    ;; Queste configurazioni vengono eseguite dopo che lsp-mode è stato caricato.
+    (setq lsp-signature-auto-activate nil)
+    (setq lsp-signature-render-enabled nil)
+    (setq lsp-eldoc-enable-hover nil)
+    (setq lsp-eldoc-render-all nil)
 
-      ;;    (setq lsp-eldoc-enable-hover nil)  ;; No function info
-      ;;  (setq lsp-signature-auto-activate nil)
-      ;;(setq lsp-signature-render-documentation nil) ;; Do not show signature documentation
-      ;;(setq lsp-eldoc-enable nil)
-      ;;(add-hook 'lsp-mode-hook (lambda () (eldoc-mode -1)))
-      ;; Try to remove annoying ElDoc in minibuffer
-      ;; (setq lsp-eldoc-render-all nil)        ;; Disable render of docs in minibuffer
+    ;; Lenses are reference above a method or a variable
+    (setq lsp-lens-enable nil)
 
-      ;; Lenses are reference above a method or a variable
-      (setq lsp-lens-enable nil)
+    ;; Semantic tokens provide more meaningful syntax highlight
+    (setq lsp-semantic-tokens-enable t)
 
-      ;; The headerline shows a breadcrumb over the code buffer
-      ;; I prefer to disable it
-      (setq lsp-headerline-breadcrumb-enable nil)
+    ;; The headerline shows a breadcrumb over the code buffer
+    ;; I prefer to disable it
+    (setq lsp-headerline-breadcrumb-enable nil)
 
-      ;; Headerline icon enable
-      (setq lsp-headerline-breadcrumb-icons-enable nil)
-      )
+    ;; Headerline icon enable
+    (setq lsp-headerline-breadcrumb-icons-enable nil)
+    )
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp :tangle yes
@@ -1215,20 +1261,25 @@ Enable only needed UI.
            ;; Activate folding when activate LSP
            (lsp-mode . hs-minor-mode)
            ;; Enable languages
-           (js2-mode . lsp)
-           (c++-mode . lsp)
-           (ruby-mode . lsp)
-           (ruby-ts-mode . lsp)
-           (python-mode . lsp)
-           (web-mode . lsp)
-           (typescript-mode . lsp)
-           (rust-mode . lsp)
-           (go-mode . lsp)
-           (json-mode . lsp)
+           ;;(js2-mode . lsp)
+           (c-ts-mode . lsp)
+           (c++-ts-mode . lsp)
+           (css-ts-mode       . lsp)
+           (dockerfile-ts-mode . lsp)
+           (go-ts-mode        . lsp)
+           (html-ts-mode      . lsp)
+           (js-ts-mode        . lsp)
+           (json-ts-mode      . lsp)
+           (php-ts-mode       . lsp)
+           (python-ts-mode    . lsp)
+           (ruby-ts-mode      . lsp)
+           (rust-ts-mode      . lsp)
+           (scss-ts-mode      . lsp)
+           (typescript-ts-mode . lsp)
+           (tsx-ts-mode       . lsp)
+           ;; No-treesitter modes
            (sh-mode . lsp)
-           (dockerfile-mode . lsp)
-           (php-mode . lsp)
-           (scss-mode . lsp)
+           ;; (web-mode . lsp)
            )
     )
 #+END_SRC

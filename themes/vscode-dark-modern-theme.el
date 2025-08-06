@@ -40,6 +40,18 @@
       (vscode-search-match        "#623315") ;; NEW
       (vscode-highlight-read      "#474747") ;; Keyword highlight
       (vscode-highlight-write     "#093d5b") ;; Keyword assignment highlight
+
+      ;; Palette extra VSCode
+      (vscode-namespace         "#4ec9b0") ;; namespace/import
+      (vscode-parameter         "#9cdcfe") ;; function parameters
+      (vscode-operator          "#d4d4d4") ;; +, -, &&, etc.
+      (vscode-enum              "#b8d7a3") ;; enum values
+      (vscode-annotation        "#d7ba7d") ;; decorators
+      (vscode-markup-heading    "#569cd6") ;; markdown headings
+      (vscode-markup-bold       "#d7ba7d") ;; markdown bold
+      (vscode-markup-italic     "#ce9178") ;; markdown italic
+      (vscode-markup-inlinecode "#dcdcaa") ;; markdown inline code
+      (vscode-highlight-strong  "#ffcc00") ;; very strong highlight
       )
 
 
@@ -86,6 +98,17 @@
    `(font-lock-variable-name-face ((,class (:foreground ,vscode-variable))))
    `(font-lock-variable-use-face ((,class (:foreground ,vscode-variable))))
    `(font-lock-warning-face ((,class (:foreground ,vscode-error :weight bold))))
+
+   ;; Parameters
+   `(font-lock-parameter-name-face ((,class (:foreground ,vscode-parameter))))
+   ;; Namespace / imports
+   `(font-lock-namespace-face ((,class (:foreground ,vscode-namespace))))
+   ;; Enum constants
+   `(font-lock-enum-face ((,class (:foreground ,vscode-enum))))
+   ;; Decorators / annotations
+   `(font-lock-annotation-face ((,class (:foreground ,vscode-annotation :slant italic))))
+   ;; Operators
+   `(font-lock-operator-face ((,class (:foreground ,vscode-operator))))
 
    ;; Line numbers
    `(line-number ((,class (:foreground ,vscode-fg-dim :background ,vscode-bg-dark))))
@@ -147,53 +170,8 @@
    ;; `(treemacs-tags-face ((,class (:foreground ,vscode-constant))))
    ;; `(treemacs-git-ignored-face ((,class (:foreground ,vscode-shadow))))
 
-   ;; Helm
-   `(helm-selection ((,class (:foreground ,vscode-fg-light :background ,vscode-selection-bg)))) ;; Current selection
-   `(helm-source-header ((,class (:foreground ,vscode-fg-light :background ,vscode-bg-light :weight bold))))
-   ;; Text matching the search
-
-   `(helm-match ((,class (:foreground ,vscode-keyword :weight bold :inherit nil))))
-   `(helm-buffer-file ((,class (:foreground ,vscode-fg-light :background unspecified))))
-   `(helm-file ((,class (:foreground ,vscode-fg-light :background unspecified))))   ;; Main text
-   `(helm-ff-file-extension ((,class (:foreground ,vscode-fg-light :background unspecified))))  ;; File extensions
-   `(helm-ff-directory ((,class (:foreground ,vscode-type :background unspecified))))
-   `(helm-ff-dotted-directory ((,class (:foreground ,vscode-fg-dim :background unspecified))))
-   `(helm-ff-executable ((,class (:foreground ,vscode-function :background unspecified))))
-   `(helm-ff-invalid-symlink ((,class (:foreground ,vscode-error :background unspecified))))
-   `(helm-ff-denied ((,class (:foreground ,vscode-error :background unspecified))))
-   `(helm-ff-symlink ((,class (:foreground ,vscode-variable :background unspecified))))
-
-   `(helm-grep-lineno ((,class (:foreground ,vscode-fg-dim :background unspecified))))
-
-   `(helm-header-line-left-margin ((,class (:foreground ,vscode-brackets-match :background unspecified))))
-
-   ;; ;;`(helm-candidate-number ((,class (:foreground ,vscode-parenthesis :background unspecified))))
-   ;; ;;`(helm-ff-prefix ((,class (:foreground ,vscode-parenthesis :background unspecified))))
-   ;; ;; `(helm-match ((,class (:foreground ,vscode-highlight :weight bold))))
-   ;; ;;`(helm-visible-mark ((,class (:background ,vscode-region :foreground ,vscode-white))))
-
-   ;; `(helm-selection ((,class (:foreground ,vscode-fg-light :background ,vscode-highlight ))))
-   ;; `(helm-selection-line ((,class (:background ,vscode-highlight))))  ;; Riga selezionata
-
-
-   ;; `(helm-ff-dirs ((,class (:foreground ,vscode-keyword :background unspecified))))  ;; Funzione per directory
-   ;; `(helm-ff-dotted-directory ((,class (:foreground "#6A9955" :background unspecified))))  ;; Ombre per cartelle nascoste
-   ;; `(helm-ff-file ((,class (:foreground ,vscode-fg-light :background unspecified))))
-   ;; `(helm-ff-file-extension ((,class (:foreground ,vscode-fg-light :background unspecified))))  ;; File extensions
-   ;; `(helm-candidate-number ((,class (:foreground "#C586C0" :background unspecified))))  ;; Parentesi/evidenziazione numeri
-   ;; `(helm-source-header ((,class (:foreground "#DCDCAA" :background ,vs-code-bg-dark :weight bold)))) ;; Titolo della fonte
-
-
-   ;; `(helm-M-x-key ((,class (:foreground "#d16969" :weight bold)))) ;; Keybinding for M-x
-
-   ;; `(helm-buffer-directory ((,class (:foreground "#4FC1FF" :background ,vs-code-bg-dark))))  ;; Nome cartella in Helm buffer
-   ;; `(helm-buffer-file ((,class (:foreground "#D4D4D4" :background ,vs-code-bg-dark)))) ;; File nei buffer di Helm
-   ;; `(helm-buffer-size ((,class (:foreground "#6A9955" :background ,vs-code-bg-dark)))) ;; Dimensione buffer
-   ;; `(helm-projectile-file ((,class (:foreground "#D4D4D4" :background ,vs-code-bg-dark))))
-   ;; `(helm-projectile-dir ((,class (:foreground "#4FC1FF" :background ,vs-code-bg-dark))))
-   ;; `(helm-ff-symlink ((,class (:foreground "#C586C0" :background unspecified)))) ;; Link simbolici
-   ;; `(helm-ff-executable ((,class (:foreground "#4EC9B0" :background unspecified)))) ;; File eseguibili
-   ;; `(helm-ff-invalid-symlink ((,class (:foreground "#F44747" :background unspecified)))) ;; Link simbolici rotti
+   ;; Vertico
+   `(vertico-posframe-border ((,class (:background ,vscode-border-dark))))
 
    ;; ;; Highlight indent guide
    ;; ;; The normal color should be "vscode-border" in order to be equal
@@ -243,6 +221,13 @@
                       :box (:line-width (-1 . -1) :color ,vscode-border-accent :style nil)))))
    `(lsp-ui-peek-filename ((t (:foreground ,vscode-variable))))
    `(lsp-ui-peek-line-number ((t (:foreground ,vscode-fg-dim))))
+
+   `(lsp-face-semhl-namespace      ((,class (:foreground ,vscode-namespace))))
+   `(lsp-face-semhl-parameter      ((,class (:foreground ,vscode-parameter))))
+   `(lsp-face-semhl-decorator      ((,class (:foreground ,vscode-annotation))))
+   `(lsp-face-semhl-enumMember     ((,class (:foreground ,vscode-enum))))
+   `(lsp-face-semhl-operator       ((,class (:foreground ,vscode-operator))))
+
 
    ;; ;; ----
 
