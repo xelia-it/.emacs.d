@@ -155,10 +155,19 @@
    `(vertico-group-separator ((,class (:foreground ,vscode-fg-dim))))
    `(vertico-group-title ((,class (:foreground ,vscode-fg-dim))))
 
-   ;; ;; Highlight indent guide
-   ;; ;; The normal color should be "vscode-border" in order to be equal
+   ;; ndent guide
+   ;; The normal color should be "vscode-border" in order to be equal
    ;; ;; to Visual Studio Code theme.
-   ;; `(highlight-indent-guides-character-face  ((t (:foreground ,vscode-border-dark))))
+;;   `(indent-bars-color  ((t (:foreground ,vscode-highlight-read :blend 1))))
+  ;; `(indent-bars-color-by-depth  ((t (:foreground ,vscode-line-highlight :blend 1))))
+   ;; `(outline-1  ((t (:foreground ,vscode-border-dark))))
+   ;; `(outline-2  ((t (:foreground ,vscode-border-dark))))
+   ;; `(outline-3  ((t (:foreground ,vscode-border-dark))))
+   ;; `(outline-4  ((t (:foreground ,vscode-border-dark))))
+   ;; `(outline-5  ((t (:foreground ,vscode-border-dark))))
+   ;; `(outline-6  ((t (:foreground ,vscode-border-dark))))
+   ;; `(outline-7  ((t (:foreground ,vscode-border-dark))))
+
    ;; `(highlight-indent-guides-even-face  ((t (:foreground ,vscode-border-dark))))
    ;; `(highlight-indent-guides-odd-face  ((t (:foreground ,vscode-border-dark))))
    ;; `(highlight-indent-guides-stack-character-face  ((t (:foreground ,vscode-shadow))))

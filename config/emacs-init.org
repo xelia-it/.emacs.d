@@ -78,9 +78,6 @@ These fonts should be installed manually.
       (set-frame-font "DejaVu Sans Mono 11" t t)
       )
      )
-
-    ;; Scale font to 105%
-    ;;(face-remap-add-relative 'default :height 105)
     )
 
   (my-set-default-font)
@@ -382,28 +379,6 @@ In programming modes it's useful to have a vertical line that show the right mar
   (my-update-loading-message)
 #+END_SRC
 
-** Windows position
-
-Force window positioning for a specified function.
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (use-package shackle
-    :ensure t
-    :init
-    (my-update-loading-message)
-    :config
-
-    (setq shackle-rules
-          '(("\\`\\*Flymake diagnostics\\*\\'" :regexp t :align 'below :size 12 :select t)
-            ("\\`\\*Flycheck errors\\*\\'" :regexp t :align 'below :size 12 :select t)
-            ("\\`\\*[hH]elm.*?\\*\\'" :regexp t :align 'below :size 0.3)
-            ("\\`\\*bm-bookmarks.*?\\*\\'" :regexp t :align 'below :size 0.3)
-            ("\\`\\*terminal.*?\\*\\'" :regexp t :align 'below :size 0.3)))
-
-    (shackle-mode 1)
-    )
-#+END_SRC
-
 ** Kill buffers
 
 Utility for killing buffers other than current buffer.
@@ -423,7 +398,7 @@ Utility for killing buffers other than current buffer.
 ** Diagnostic and errors
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-  (defun my/flymake-focus-window()
+  (defun my-flymake-focus-window()
     "Show Flymake diagnostic buffer and focus it."
     (interactive)
     (flymake-show-buffer-diagnostics)
@@ -441,7 +416,7 @@ Utility for killing buffers other than current buffer.
   (use-package flymake
     :defer t
     :bind (
-           ("C-S-m"    . 'my/flymake-focus-window)
+           ("C-S-m"    . 'my-flymake-focus-window)
            ("<f8>"     . 'flymake-goto-next-error)
            ("S-<f8>"   . 'flymake-goto-previous-error)
            )
@@ -466,8 +441,8 @@ Show help for keybindings.
            ("S-C-<f4>" . 'my-kill-other-buffers)
            ("S-C-w"    . 'my-kill-other-buffers)
            ("<escape>" . 'keyboard-escape-quit)
-           ("C-s"      . 'my/save)
-           ("C-M-s"    . 'my/save-all)
+           ("C-s"      . 'my-save)
+           ("C-M-s"    . 'my-save-all)
            ("C-S-a"    . 'ff-find-other-file)
            ("C-S-x"    . 'list-packages)
            ("C-ò"      . 'term)
@@ -525,7 +500,7 @@ Save buffers needs to be performed without confirmation.
 Also we want to refresh magit buffers automatically.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-  (defun my/save()
+  (defun my-save()
     "Save current buffer without confirmation."
     (interactive)
 
@@ -539,7 +514,7 @@ Also we want a keystroke to save all buffers.
 Both these setup will be performed later.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-  (defun my/save-all()
+  (defun my-save-all()
     "Save all buffers without confirmation and refresh magit."
     (interactive)
 
@@ -657,31 +632,28 @@ For more information please read: https://editorconfig.org/
 Show indent guides.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-  (defun my-bitmap-line (width height crep zrep)
-    "Defines a solid guide line, one pixels wide."
-    (let* ((left (/ (- width 2) 2))
-           (right (- width left 1))
-           (row (append (make-list left zrep) (make-list 1 crep) (make-list right zrep)))
-           rows)
-      (dotimes (i height rows)
-        (setq rows (cons row rows)))))
-
-  (use-package highlight-indent-guides
+  (use-package indent-bars
     :ensure t
     :defer t
     :config
-    ;; Highlight the first level of indentation
-    (setq highlight-indent-guides-responsive 'top)
-    ;; Use a bitmap line ..
-    (setq highlight-indent-guides-method 'bitmap)
-    ;; .. customized with a one pixel with
-    (setq highlight-indent-guides-bitmap-function 'my-bitmap-line)
-    ;; Use manual defined colors
-    (setq highlight-indent-guides-auto-enabled nil)
 
-    ;; Activate indent guides for all programming languages
-    :hook (prog-mode . highlight-indent-guides-mode)
-    )
+    (setq
+     indent-bars-color '(highlight :face-bg t :blend 1)
+     indent-bars-highlight-current-depth '(:face default :blend 0.325)
+     indent-bars-color-by-depth nil
+     indent-bars-pattern "."
+     indent-bars-width-frac 0.1
+     indent-bars-pad-frac 0.1
+     indent-bars-zigzag nil
+     indent-bars-display-on-blank-lines t
+     indent-bars-treesit-support t
+     indent-bars-no-descend-lists t
+     )
+
+    :hook (
+           (prog-mode . indent-bars-mode)
+           )
+  )
 #+END_SRC
 
 ** Cut-Paste like Windows
@@ -906,10 +878,10 @@ The "vertico-posframe" package is used to show selection in a popup (like VS Cod
   (use-package vertico-posframe
     :ensure t
     :init
-    (setq vertico-count 15) ;; Shows 15 results
+    (setq vertico-count 12) ;; Shows 15 results
     (setq vertico-posframe-poshandler 'posframe-poshandler-frame-top-center)
     (setq vertico-posframe-border-width 1)
-    (setq vertico-posframe-min-height 20)
+    (setq vertico-posframe-min-height 13)
     (setq vertico-posframe-min-width 120)
     (setq vertico-posframe-parameters
           '(
@@ -930,12 +902,20 @@ The "vertico-posframe" package is used to show selection in a popup (like VS Cod
     (marginalia-mode))
 #+END_SRC
 
+Consult provides the actual functions for vertico.
+
 #+BEGIN_SRC emacs-lisp :tangle yes
-  ;; Comandi tipo counsel: buffer, file, search, etc.
+  (defun my-consult-line-with-symbol-at-point ()
+    "Search buffer with `consult-line` using symbol at point."
+    (interactive)
+    (consult-line (thing-at-point 'symbol)))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp :tangle yes
   (use-package consult
     :ensure t
     :defer t
-    :bind (("C-f" . consult-line)
+    :bind (("C-f" . my-consult-line-with-symbol-at-point)
            ("C-x b" . consult-buffer)
            ("C-x C-b" . consult-buffer)
            ("C-<tab>" . consult-buffer)
