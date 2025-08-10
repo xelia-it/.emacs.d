@@ -152,7 +152,7 @@
    ;; Vertico
    `(vertico-posframe-border ((,class (:background ,vscode-border-dark))))
    `(vertico-current ((,class (:background ,vscode-selection-bg-dark))))
-   `(vertico-group-separator ((,class (:foreground ,vscode-fg-dim))))
+   `(vertico-group-separator ((,class (:foreground ,vscode-fg-dim :strike-through t))))
    `(vertico-group-title ((,class (:foreground ,vscode-fg-dim))))
 
    ;; ndent guide

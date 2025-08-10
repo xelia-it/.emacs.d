@@ -50,20 +50,21 @@ These fonts should be installed manually.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
   (defun my-set-default-font()
+    (interactive)
     "Set default font for the whole frame"
 
     ;; Search installed font and apply  the first found
     (cond
-     ((find-font (font-spec :name "Droid Sans Mono"))
-      (set-frame-font "Droid Sans Mono 11" t t)
-      )
-
      ((find-font (font-spec :name "JetBrains Mono"))
       (set-frame-font "JetBrains Mono 11" t t)
       )
 
      ((find-font (font-spec :name "Monospace"))
       (set-frame-font "Monospace 11" t t)
+      )
+
+     ((find-font (font-spec :name "Droid Sans Mono"))
+      (set-frame-font "Droid Sans Mono 11" t t)
       )
 
      ((find-font (font-spec :name "Consolas"))
@@ -253,8 +254,7 @@ Setup a sidenav tree.
               :inherit 'default
               )
 
-    :bind
-    (:map global-map
+    :bind (:map global-map
       ("C-S-e"         . treemacs-select-window)
       ("C-x t 1"       . treemacs-delete-other-windows)
       ("C-x t t"       . treemacs)
@@ -1002,7 +1002,6 @@ Let projectile integrate with Treemacs.
     )
 #+END_SRC
 
-
 ** Git support
 
 Magit is a complete User Interface for Git.
@@ -1224,7 +1223,6 @@ Enable only needed UI.
     (setq lsp-ui-doc-use-childframe t)     ;; Ensures to show doc in a in a childframe
     (setq lsp-ui-doc-position 'at-point)   ;; Position doc near the cursor
 
-
     ;; Sideline code actions
     (setq lsp-ui-sideline-enable t)              ;; Disable whole sideline
     (setq lsp-ui-sideline-show-code-actions nil) ;; Hide code actions
@@ -1252,7 +1250,6 @@ Enable only needed UI.
     (my-lsp-settings)
     (my-lsp-performance-settings)
 
-
     :bind (
            ("<f2>"      . lsp-rename)
            )
@@ -1264,23 +1261,23 @@ Enable only needed UI.
            (lsp-mode . hs-minor-mode)
            ;; Enable languages
            ;;(js2-mode . lsp)
-           (c-ts-mode . lsp)
-           (c++-ts-mode . lsp)
-           (css-ts-mode       . lsp)
+           (c-ts-mode          . lsp)
+           (c++-ts-mode        . lsp)
+           (css-ts-mode        . lsp)
            (dockerfile-ts-mode . lsp)
-           (go-ts-mode        . lsp)
-           (html-ts-mode      . lsp)
-           (js-ts-mode        . lsp)
-           (json-ts-mode      . lsp)
-           (php-ts-mode       . lsp)
-           (python-ts-mode    . lsp)
-           (ruby-ts-mode      . lsp)
-           (rust-ts-mode      . lsp)
-           (scss-ts-mode      . lsp)
+           (go-ts-mode         . lsp)
+           (html-ts-mode       . lsp)
+           (js-ts-mode         . lsp)
+           (json-ts-mode       . lsp)
+           (php-ts-mode        . lsp)
+           (python-ts-mode     . lsp)
+           (ruby-ts-mode       . lsp)
+           (rust-ts-mode       . lsp)
+           (scss-ts-mode       . lsp)
            (typescript-ts-mode . lsp)
-           (tsx-ts-mode       . lsp)
+           (tsx-ts-mode        . lsp)
            ;; No-treesitter modes
-           (sh-mode . lsp)
+           (sh-mode            . lsp)
            ;; (web-mode . lsp)
            )
     )
@@ -1306,10 +1303,9 @@ Add lsp-ui package for better user interface.
     :hook (lsp-mode . lsp-ui-mode)
 
     :bind (
-           ("<f12>"     . lsp-ui-peek-find-definitions)
-           ("M-<f12>"   . lsp-ui-peek-find-references)
-           ("C-<f12>"   . lsp-ui-peek-find-implementation)
-           ("C-j"   . lsp-ui-imenu)
+           ("<f12>"     . lsp-find-definition)
+           ("<S-f12>"   . lsp-ui-peek-find-references)
+           ("<C-f12>"   . lsp-find-implementation)
            )
     )
 #+END_SRC
