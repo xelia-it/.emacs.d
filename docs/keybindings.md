@@ -7,7 +7,7 @@ Currently supported VSCode Keybindings.
 | Keybinding                                        | Visual Studio Behaviour  | Bind to                      |
 |---------------------------------------------------|--------------------------|------------------------------|
 | <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>E</kbd> | Side Bar: Explorer       | `treemacs-select-window`     |
-| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd> | Side Bar: Search         | `helm-projectile-grep`       |
+| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd> | Side Bar: Search         | `projectile-grep`            |
 | <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>G</kbd> | Side Bar: Source Control | `magit-status`               |
 | <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>D</kbd> | Side Bar: Run            | `projectile-compile-project` |
 | <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>X</kbd> | Side Bar: Extensions     | `list-packages`              |
@@ -16,12 +16,11 @@ Currently supported VSCode Keybindings.
 
 | Keybinding                                          | Visual Studio Behaviour       | Bind to                            |
 |-----------------------------------------------------|-------------------------------|------------------------------------|
-| <kbd>Ctrl</kbd> + <kbd>P</kbd>                      | Go To File ...                | `my/helm-projectile-find-file` (1) |
-| <kbd>Ctrl</kbd> + <kbd>Tab</kbd>                    | Move to next file             | `helm-buffer-list`                 |
-| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Tab</kbd> | Move to previous file         | `helm-buffer-list`                 |
+| <kbd>Ctrl</kbd> + <kbd>P</kbd>                      | Go To File ...                | `my-projectile-find-file` (1)      |
+| <kbd>Ctrl</kbd> + <kbd>Tab</kbd>                    | Move to next file             | `consult-buffer`                   |
+| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Tab</kbd> | Move to previous file         | `consult-buffer`                   |
 | <kbd>Ctrl</kbd> + <kbd>W</kbd>                      | Close Window                  | `kill-buffer-and-window`           |
 | <kbd>Ctrl</kbd> + <kbd>S</kbd>                      | Save file                     | `my/save`                      (2) |
-
 
 ## Error management
 
@@ -43,11 +42,13 @@ Currently supported VSCode Keybindings.
 
 | Keybinding                                          | Visual Studio Behaviour       | Bind to                            |
 |-----------------------------------------------------|-------------------------------|------------------------------------|
-| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>   | List commands                 | `helm-M-x`                         |
-| <kbd>Ctrl</kbd> + <kbd>T</kbd>                      | Go To Symbol in Workspace ... | `helm-imenu`                       |
+| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>   | List commands                 | `M-x`                              |
+| <kbd>Ctrl</kbd> + <kbd>T</kbd>                      | Go To Symbol in Workspace ... | `consult-imenu`                    |
+| <kbd>F12</kbd>                                      | Go to Definition              | `lsp-ui-peek-find-definitions`     |
+| <kbd>Alt</kbd> + <kbd>F12</kbd>                     | Peek Definition               | `lsp-ui-peek-find-references`      |
 
 ## Notes
 
-1. This custom function that calls `helm-projectile-find-file` when the opened file belongs to a project.
+1. This custom function that calls `projectile-find-file` when the opened file belongs to a project.
    If you press <kbd>Ctrl</kbd> + <kbd>P</kbd> outside a project the default `previous-line` is invoked.
 2. This custom function is used for saving file (without confirmation) and reload git status.
