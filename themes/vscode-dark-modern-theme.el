@@ -155,41 +155,19 @@
    `(vertico-group-separator ((,class (:foreground ,vscode-fg-dim :strike-through t))))
    `(vertico-group-title ((,class (:foreground ,vscode-fg-dim))))
 
-   ;; ndent guide
-   ;; The normal color should be "vscode-border" in order to be equal
-   ;; ;; to Visual Studio Code theme.
-;;   `(indent-bars-color  ((t (:foreground ,vscode-highlight-read :blend 1))))
-  ;; `(indent-bars-color-by-depth  ((t (:foreground ,vscode-line-highlight :blend 1))))
-   ;; `(outline-1  ((t (:foreground ,vscode-border-dark))))
-   ;; `(outline-2  ((t (:foreground ,vscode-border-dark))))
-   ;; `(outline-3  ((t (:foreground ,vscode-border-dark))))
-   ;; `(outline-4  ((t (:foreground ,vscode-border-dark))))
-   ;; `(outline-5  ((t (:foreground ,vscode-border-dark))))
-   ;; `(outline-6  ((t (:foreground ,vscode-border-dark))))
-   ;; `(outline-7  ((t (:foreground ,vscode-border-dark))))
-
-   ;; `(highlight-indent-guides-even-face  ((t (:foreground ,vscode-border-dark))))
-   ;; `(highlight-indent-guides-odd-face  ((t (:foreground ,vscode-border-dark))))
-   ;; `(highlight-indent-guides-stack-character-face  ((t (:foreground ,vscode-shadow))))
-   ;; `(highlight-indent-guides-stack-even-face  ((t (:foreground ,vscode-shadow))))
-   ;; `(highlight-indent-guides-stack-odd-face  ((t (:foreground ,vscode-shadow))))
-   ;; `(highlight-indent-guides-top-character-face  ((t (:foreground ,vscode-shadow))))
-   ;; `(highlight-indent-guides-top-even-face  ((t (:foreground ,vscode-shadow))))
-   ;; `(highlight-indent-guides-top-odd-face  ((t (:foreground ,vscode-shadow))))
-
    ;; ;; Web Mode
-   ;; `(web-mode-html-tag-face ((t (:foreground ,vscode-keyword))))   ;; Color for HTML tags
-   ;; `(web-mode-html-attr-name-face ((t (:foreground ,vscode-variable)))) ;; HTML attributes
-   ;; `(web-mode-html-attr-value-face ((t (:foreground ,vscode-string)))) ;; Values
-   ;; `(web-mode-comment-face ((t (:foreground ,vscode-comment :slant italic)))) ;; Comments
-   ;; `(web-mode-docvscode-type-face ((t (:foreground ,vscode-cursor)))) ;; !DOCTYPE
-   ;; `(web-mode-css-selector-face ((t (:foreground ,vscode-css-selector)))) ;; CSS selectors
-   ;; `(web-mode-css-property-name-face ((t (:foreground ,vscode-variable)))) ;; CSS Properties
-   ;; `(web-mode-css-color-face ((t (:foreground ,vscode-css))))
-   ;; `(web-mode-javascript-string-face ((t (:foreground ,vscode-string)))) ;; Orange for string like JS
-   ;; `(web-mode-block-face ((t (:background unspecified)))) ;; Use the same background of the rest of the HTML
-   ;; `(web-mode-current-element-highlight-face ((t (:foregrund ,vscode-keyword :background ,vscode-tag-background))))
-   ;; `(web-mode-current-column-highlight-face ((t (:foregrund ,vscode-keyword :background ,vscode-tag-background))))
+   `(web-mode-html-tag-face ((t (:foreground ,vscode-keyword))))   ;; Color for HTML tags
+   `(web-mode-html-attr-name-face ((t (:foreground ,vscode-variable)))) ;; HTML attributes
+   `(web-mode-html-attr-value-face ((t (:foreground ,vscode-string)))) ;; Values
+   `(web-mode-comment-face ((t (:foreground ,vscode-comment :slant italic)))) ;; Comments
+   `(web-mode-docvscode-type-face ((t (:foreground ,vscode-cursor)))) ;; !DOCTYPE
+   `(web-mode-css-selector-face ((t (:foreground ,vscode-tag)))) ;; CSS selectors
+   `(web-mode-css-property-name-face ((t (:foreground ,vscode-variable)))) ;; CSS Properties
+   `(web-mode-css-color-face ((t (:foreground ,vscode-tag))))
+   `(web-mode-javascript-string-face ((t (:foreground ,vscode-string)))) ;; Orange for string like JS
+   `(web-mode-block-face ((t (:background unspecified)))) ;; Use the same background of the rest of the HTML
+;;   `(web-mode-current-element-highlight-face ((t (:foregrund ,vscode-keyword :background ,vscode-tag-background))))
+;;   `(web-mode-current-column-highlight-face ((t (:foregrund ,vscode-keyword :background ,vscode-tag-background))))
 
    ;; LSP
 
