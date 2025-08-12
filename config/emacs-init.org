@@ -1081,10 +1081,23 @@ Magit is a complete User Interface for Git.
             )
           )
 
+    ;; Emacs 30 do not provide treesitter for SCSS
+    ;; Add definition for scss-ts-mode derived from css-ts-mode
+    (when (treesit-language-available-p 'scss)
+      (define-derived-mode scss-ts-mode css-ts-mode "SCSS[TS]"
+        "Major mode for editing SCSS files using tree-sitter."
+        (treesit-parser-create 'scss))
+      (add-to-list 'auto-mode-alist '("\\.scss\\'" . scss-ts-mode)))
+
+    (add-hook 'scss-ts-mode-hook
+              (lambda ()
+                (font-lock-add-keywords nil
+                                        '(("//.*$" . font-lock-comment-face))
+                                        'append))
+              )
+
     ;; Installa automaticamente le grammatiche mancanti
-
     ;; TODO: add (bash c rust) when grammars are compatible with Emacs 30
-
     (dolist (lang '(cpp css dockerfile go html javascript json php python ruby scss typescript tsx))
       (unless (treesit-language-available-p lang)
         (ignore-errors
@@ -1160,6 +1173,11 @@ All the LSP fine tuning are grouped in the following functions.
 
     ;; Headerline icon enable
     (setq lsp-headerline-breadcrumb-icons-enable nil)
+
+    ;; Associate SCSS
+    (setq lsp-language-id-configuration
+          (append lsp-language-id-configuration
+                  '((scss-ts-mode . "scss"))))
     )
 #+END_SRC
 
@@ -1278,7 +1296,7 @@ Enable only needed UI.
            (tsx-ts-mode        . lsp)
            ;; No-treesitter modes
            (sh-mode            . lsp)
-           ;; (web-mode . lsp)
+           (web-mode           . lsp)
            )
     )
 #+END_SRC
@@ -1393,14 +1411,25 @@ The web-mode package is good for HTML and SCSS mode.
 
     ;; Colors
 
-
-
     :mode (
            ("\\.html?\\'" . web-mode)
            ("\\.erb\\'" . web-mode)
            ("\\.handlebars\\'" . web-mode)
            ("\\.mustache\\'" . web-mode)
            )
+    )
+#+END_SRC
+
+Add support for SCSS files.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package scss-mode
+    :ensure t
+    :defer t
+    :custom
+    ;; Do not compile
+    (scss-compile-at-save nil)
+    :mode ("\\.scss\\'" . scss-mode)
     )
 #+END_SRC
 
