@@ -145,9 +145,9 @@
    `(treemacs-root-face ((,class (:foreground ,vscode-fg-light :weight bold))))
    `(treemacs-directory-collapsed-face ((,class (:foreground ,vscode-fg-light))))
    `(treemacs-directory-face ((,class (:foreground ,vscode-fg-light))))
-
    `(treemacs-git-ignored-face ((,class (:foreground ,vscode-fg-dim))))
    `(treemacs-git-ignored-face ((,class (:foreground ,vscode-keyword))))
+   `(treemacs-hl-line-face ((,class (:background ,vscode-bg-light))))
 
    ;; Vertico
    `(vertico-posframe-border ((,class (:background ,vscode-border-dark))))
@@ -155,19 +155,32 @@
    `(vertico-group-separator ((,class (:foreground ,vscode-fg-dim :strike-through t))))
    `(vertico-group-title ((,class (:foreground ,vscode-fg-dim))))
 
-   ;; ;; Web Mode
-   `(web-mode-html-tag-face ((t (:foreground ,vscode-keyword))))   ;; Color for HTML tags
-   `(web-mode-html-attr-name-face ((t (:foreground ,vscode-variable)))) ;; HTML attributes
-   `(web-mode-html-attr-value-face ((t (:foreground ,vscode-string)))) ;; Values
-   `(web-mode-comment-face ((t (:foreground ,vscode-comment :slant italic)))) ;; Comments
-   `(web-mode-docvscode-type-face ((t (:foreground ,vscode-cursor)))) ;; !DOCTYPE
-   `(web-mode-css-selector-face ((t (:foreground ,vscode-tag)))) ;; CSS selectors
-   `(web-mode-css-property-name-face ((t (:foreground ,vscode-variable)))) ;; CSS Properties
-   `(web-mode-css-color-face ((t (:foreground ,vscode-tag))))
-   `(web-mode-javascript-string-face ((t (:foreground ,vscode-string)))) ;; Orange for string like JS
-   `(web-mode-block-face ((t (:background unspecified)))) ;; Use the same background of the rest of the HTML
-;;   `(web-mode-current-element-highlight-face ((t (:foregrund ,vscode-keyword :background ,vscode-tag-background))))
-;;   `(web-mode-current-column-highlight-face ((t (:foregrund ,vscode-keyword :background ,vscode-tag-background))))
+   ;; Web Mode (HTML)
+   `(web-mode-doctype-face ((,class (:foreground ,vscode-operator :slant italic)))) ;; <!DOCTYPE>
+   `(web-mode-html-tag-face ((,class (:foreground ,vscode-keyword)))) ;; <div>
+   `(web-mode-html-tag-bracket-face ((,class (:foreground ,vscode-fg-dim)))) ;; <, >
+   `(web-mode-html-attr-name-face ((,class (:foreground ,vscode-variable)))) ;; class, id
+   `(web-mode-html-attr-equal-face ((t (:foreground ,vscode-operator)))) ;; =
+   `(web-mode-html-attr-value-face ((t (:foreground ,vscode-string)))) ;; "value"
+   `(web-mode-html-entity-face ((t (:foreground ,vscode-constant)))) ;; &nbsp;
+   `(web-mode-comment-face ((t (:foreground ,vscode-comment :slant italic)))) ;; <!-- comment -->
+   `(web-mode-block-face ((t (:background ,vscode-bg-extra-dark)))) ;; <% %> / {{ }}
+   `(web-mode-block-delimiter-face ((t (:foreground ,vscode-variable)))) ;; {{ }}
+   ;; Web Mode (CSS)
+   `(web-mode-css-selector-face ((t (:foreground ,vscode-tag :weight semi-bold)))) ;; .class, #id
+   `(web-mode-css-property-name-face ((t (:foreground ,vscode-variable)))) ;; color, margin
+   `(web-mode-css-pseudo-class-face ((t (:foreground ,vscode-namespace :slant italic)))) ;; :hover, :before
+   `(web-mode-css-color-face ((t (:foreground ,vscode-constant)))) ;; #fff, red
+   `(web-mode-css-variable-face ((t (:foreground ,vscode-parameter)))) ;; --main-color
+   ;; Web Mode (JS/TS inside HTML)
+   `(web-mode-javascript-string-face ((t (:foreground ,vscode-string)))) ;; "string"
+   `(web-mode-javascript-face ((t (:foreground ,vscode-variable)))) ;; JS variables
+   `(web-mode-keyword-face ((t (:foreground ,vscode-keyword :weight semi-bold)))) ;; if, for, return
+   `(web-mode-constant-face ((t (:foreground ,vscode-constant)))) ;; true, false, null
+   `(web-mode-function-call-face ((t (:foreground ,vscode-function)))) ;; myFunction()
+   ;; Web Mode (Highlighting)
+   `(web-mode-current-element-highlight-face ((t (:background ,vscode-line-highlight :weight normal))))
+   `(web-mode-current-column-highlight-face ((t (:background ,vscode-bg-light))))
 
    ;; LSP
 
@@ -215,8 +228,8 @@
    `(mode-line-buffer-id ((,class (:background unspecified :foreground ,vscode-fg-light :height 100 :weight normal))))
    `(mode-line-emphasis ((,class (:background unspecified :foreground ,vscode-fg-light :height 100 :weight normal))))
    ;; Doom modeline specific faces
-   `(doom-modeline-bar ((,class (:background ,vscode-border-dark :foreground nil :box nil))))
-   `(doom-modeline-bar-inactive ((,class (:background ,vscode-border-dark :foreground nil :box nil))))
+   `(doom-modeline-bar ((,class (:background ,vscode-border-dark :foreground unspecified :box nil))))
+   `(doom-modeline-bar-inactive ((,class (:background ,vscode-border-dark :foreground unspecified :box nil))))
    `(doom-modeline-highlight ((,class (:box nil :weight bold))))
    `(doom-modeline-info ((,class (:foreground ,vscode-brackets-match :weight normal))))
 
