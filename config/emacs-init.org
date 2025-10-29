@@ -1,3 +1,4 @@
+
 #+AUTHOR: Alessandro Passerini
 #+TITLE: Emacs Configuration
 
@@ -653,7 +654,7 @@ Show indent guides.
     :hook (
            (prog-mode . indent-bars-mode)
            )
-  )
+    )
 #+END_SRC
 
 ** Cut-Paste like Windows
@@ -779,8 +780,7 @@ An example is switching between files such as C/C++ header files.
         ("\\.ts\\'" (".html" ".scss" ".spec.ts"))
         ("\\.html\\'" (".scss" ".spec.ts" ".ts"))
         ))
-    (setq-default ff-other-file-alist 'my-other-file-alist)
-    )
+    (setq-default ff-other-file-alist 'my-other-file-alist))
 
   (my-other-file-settings)
   (my-update-loading-message)
@@ -970,7 +970,7 @@ Now we can activate "projectile" package.
 
     :bind (
            ;; Project building and testing
-           ("C-S-d"  . projectile-compile-project)    ;; VS Code keybinding
+           ("C-S-d"  . projectile-compile-project)    ;; VS Code
            ("<f9>"   . projectile-compile-project)
            ("C-<f9>" . projectile-run-project)
            ("S-<f9>" . projectile-configure-project)
