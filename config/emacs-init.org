@@ -753,10 +753,10 @@ This package interferes with org-mode so we
            (after-change-major-mode  . my-activate-move-dup)
            )
     :bind (
-           ("M-<up>" . md-move-lines-up)
-           ("M-<down>" . md-move-lines-down)
-           ("M-C-<up>" . md-duplicate-up)
-           ("M-C-<down>" . md-duplicate-down)
+           ("M-<up>" . move-dup-move-lines-up)
+           ("M-<down>" . move-dup-move-lines-down)
+           ("M-C-<up>" . move-dup-duplicate-up)
+           ("M-C-<down>" . move-dup-duplicate-down)
            )
     )
 #+END_SRC
@@ -1055,76 +1055,35 @@ Magit is a complete User Interface for Git.
 * Language Support
 ** Tree Sitter
 
+Install missing grammar.
+
 #+BEGIN_SRC emacs-lisp :tangle yes
-  (use-package treesit
-    ;; Tree-sitter integrated in Emacs 29+
-    :ensure nil
+  (use-package treesit-auto
+    :ensure t
     :config
-    ;; Official sources fopr grammars
+    (setq treesit-auto-install nil)
     (setq treesit-language-source-alist
-          '(
-            (bash        . ("https://github.com/tree-sitter/tree-sitter-bash"))
-            (c           . ("https://github.com/tree-sitter/tree-sitter-c"))
-            (cpp         . ("https://github.com/tree-sitter/tree-sitter-cpp"))
-            (css         . ("https://github.com/tree-sitter/tree-sitter-css"))
-            (dockerfile  . ("https://github.com/camdencheek/tree-sitter-dockerfile"))
-            (go          . ("https://github.com/tree-sitter/tree-sitter-go"))
-            (html        . ("https://github.com/tree-sitter/tree-sitter-html"))
-            (javascript  . ("https://github.com/tree-sitter/tree-sitter-javascript" "master" "src"))
-            (json        . ("https://github.com/tree-sitter/tree-sitter-json"))
-            (python      . ("https://github.com/tree-sitter/tree-sitter-python"))
-            (ruby        . ("https://github.com/tree-sitter/tree-sitter-ruby"))
-            (rust        . ("https://github.com/tree-sitter/tree-sitter-rust"))
-            (scss        . ("https://github.com/serenadeai/tree-sitter-scss"))
-            (typescript  . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src"))
-            (tsx         . ("https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src"))
-            )
-          )
+      '((bash . ("https://github.com/tree-sitter/tree-sitter-bash"))
+        (c . ("https://github.com/tree-sitter/tree-sitter-c"))
+        (cpp . ("https://github.com/tree-sitter/tree-sitter-cpp"))
+        (css . ("https://github.com/tree-sitter/tree-sitter-css"))
+        (go . ("https://github.com/tree-sitter/tree-sitter-go"))
+        (html . ("https://github.com/tree-sitter/tree-sitter-html"))
+        (javascript . ("https://github.com/tree-sitter/tree-sitter-javascript" "src"))
+        (json . ("https://github.com/tree-sitter/tree-sitter-json"))
+        (python . ("https://github.com/tree-sitter/tree-sitter-python"))
+        (rust . ("https://github.com/tree-sitter/tree-sitter-rust"))
+        (toml . ("https://github.com/tree-sitter/tree-sitter-toml"))
+        (typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" "typescript/src"))
+        (tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" "tsx/src"))))
 
-    ;; Emacs 30 do not provide treesitter for SCSS
-    ;; Add definition for scss-ts-mode derived from css-ts-mode
-    (when (treesit-language-available-p 'scss)
-      (define-derived-mode scss-ts-mode css-ts-mode "SCSS[TS]"
-        "Major mode for editing SCSS files using tree-sitter."
-        (treesit-parser-create 'scss))
-      (add-to-list 'auto-mode-alist '("\\.scss\\'" . scss-ts-mode)))
+    (treesit-auto-add-to-auto-mode-alist 'all)
+    (global-treesit-auto-mode)
 
-    (add-hook 'scss-ts-mode-hook
-              (lambda ()
-                (font-lock-add-keywords nil
-                                        '(("//.*$" . font-lock-comment-face))
-                                        'append))
-              )
-
-    ;; Installa automaticamente le grammatiche mancanti
-    ;; TODO: add (bash c rust) when grammars are compatible with Emacs 30
-    (dolist (lang '(cpp css dockerfile go html javascript json php python ruby scss typescript tsx))
-      (unless (treesit-language-available-p lang)
-        (ignore-errors
-          (treesit-install-language-grammar lang))))
-
-    ;; Auto remap to new "-ts-mode"
-    ;; TODO: add (bash c rust) when grammars are compatible with Emacs 30
-    (setq major-mode-remap-alist
-          '(
-            ;; (bash-mode          . bash-ts-mode)
-            ;; (c-mode          . c-ts-mode)
-            (c++-mode        . c++-ts-mode)
-            (css-mode        . css-ts-mode)
-            (dockerfile-mode . dockerfile-ts-mode)
-            (go-mode         . go-ts-mode)
-            (html-mode       . html-ts-mode)
-            (js2-mode        . js-ts-mode)
-            (javascript-mode . js-ts-mode)
-            (json-mode       . json-ts-mode)
-            (php-mode        . php-ts-mode)
-            (python-mode     . python-ts-mode)
-            (ruby-mode       . ruby-ts-mode)
-            ;; (rust-mode       . rust-ts-mode)
-            (scss-mode       . scss-ts-mode)
-            (typescript-mode . typescript-ts-mode)
-            (tsx-mode        . tsx-ts-mode)
-            ))
+    :mode (
+           ;; Javascript mode doesn't provide a good syntax highlight: fallback to Typescript mode
+           ("\\.js\\'" . typescript-ts-mode)
+           )
     )
 #+END_SRC
 
@@ -1275,10 +1234,7 @@ Enable only needed UI.
     :hook (
            ;; Integrate with which-key
            (lsp-mode . lsp-enable-which-key-integration)
-           ;; Activate folding when activate LSP
-           (lsp-mode . hs-minor-mode)
            ;; Enable languages
-           ;;(js2-mode . lsp)
            (c-ts-mode          . lsp)
            (c++-ts-mode        . lsp)
            (css-ts-mode        . lsp)
@@ -1296,7 +1252,6 @@ Enable only needed UI.
            (tsx-ts-mode        . lsp)
            ;; No-treesitter modes
            (sh-mode            . lsp)
-           (web-mode           . lsp)
            )
     )
 #+END_SRC
@@ -1395,67 +1350,56 @@ Install packages for write web pages.
 The web-mode package is good for HTML and SCSS mode.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-  (use-package web-mode
-    :ensure t
-    :defer t
-    :config
+  ;; (use-package web-mode
+  ;;   :ensure t
+  ;;   :defer t
+  ;;   :config
 
-    ;; Configuration
-    (setq web-mode-enable-auto-pairing t) ;; Keep auto pairing
-    (setq web-mode-enable-css-colorization t) ;; Enable CSS colors
-    (setq web-mode-enable-block-face t)
-    (setq web-mode-enable-part-face t)
-    (setq web-mode-enable-heredoc-fontification t)
-    (setq web-mode-enable-current-element-highlight t)
-    (setq web-mode-enable-current-column-highlight nil) ;; Do not "connect" tags with background color
+  ;;   ;; Configuration
+  ;;   (setq web-mode-enable-auto-pairing t) ;; Keep auto pairing
+  ;;   (setq web-mode-enable-css-colorization t) ;; Enable CSS colors
+  ;;   (setq web-mode-enable-block-face t)
+  ;;   (setq web-mode-enable-part-face t)
+  ;;   (setq web-mode-enable-heredoc-fontification t)
+  ;;   (setq web-mode-enable-current-element-highlight t)
+  ;;   (setq web-mode-enable-current-column-highlight nil) ;; Do not "connect" tags with background color
 
-    ;; Colors
+  ;;   ;; Colors
 
-    :mode (
-           ("\\.html?\\'" . web-mode)
-           ("\\.erb\\'" . web-mode)
-           ("\\.handlebars\\'" . web-mode)
-           ("\\.mustache\\'" . web-mode)
-           )
-    )
+  ;;   :mode (
+  ;;          ("\\.html?\\'" . web-mode)
+  ;;          ("\\.erb\\'" . web-mode)
+  ;;          ("\\.handlebars\\'" . web-mode)
+  ;;          ("\\.mustache\\'" . web-mode)
+  ;;          )
+  ;;   )
 #+END_SRC
 
 Add support for SCSS files.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-  (use-package scss-mode
-    :ensure t
-    :defer t
-    :custom
-    ;; Do not compile
-    (scss-compile-at-save nil)
-    :mode ("\\.scss\\'" . scss-mode)
-    )
+  ;; (use-package scss-mode
+  ;;   :ensure t
+  ;;   :defer t
+  ;;   :config
+  ;;   (setq scss-compile-at-save nil)
+  ;;   (setq-local flymake-mode nil)
+  ;;   :mode ("\\.scss\\'" . scss-mode)
+  ;;   )
 #+END_SRC
 
 For pure JavaScript code js2-mode is a great package.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-  (use-package js2-mode
-    :ensure t
-    :defer t
-    :mode (
-           ("\\.js?\\'" . js2-mode)
-           )
-    )
+  ;; (use-package js2-mode
+  ;;   :ensure t
+  ;;   :defer t
+  ;;   :mode (
+  ;;          ("\\.js?\\'" . js2-mode)
+  ;;          )
+  ;;   )
 #+END_SRC
 
-** Language: JSON
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (use-package json-mode
-    :ensure t
-    :defer t
-    :mode (
-           ("\\.json\\'" . json-mode)
-           )
-    )
-#+END_SRC
 
 ** Language: YAML
 
