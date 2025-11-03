@@ -744,6 +744,7 @@ This package interferes with org-mode so we
 
 ** Find other files
 
+
 The *ff-find-other-file* function is used to search for file related to the current buffer.
 An example is switching between files such as C/C++ header files.
 
@@ -751,48 +752,42 @@ An example is switching between files such as C/C++ header files.
   (require 'cl-lib)
 
   (defvar my-other-file-alist
-    '(
-      ;; Angular
-      ("\\.spec\\.ts\\'" (".ts" ".html" ".scss"))
-      ("\\.scss\\'"      (".spec.ts" ".ts" ".html"))
+    '(("\\.spec\\.ts\\'" (".ts" ".html" ".scss"))
       ("\\.ts\\'"        (".html" ".scss" ".spec.ts"))
-      ("\\.html\\'"      (".scss" ".spec.ts" ".ts")))
+      ("\\.html\\'"      (".scss" ".spec.ts" ".ts"))
+      ("\\.scss\\'"      (".spec.ts" ".ts" ".html")))
     "Pattern associations → list of extensions to cycle.")
 
-  (defvar my--last-other-file nil
-    "Last opened file.")
-
-  (defun my-cycle-other-file ()
-    "Cicle between correlated files."
+  (defun my-cycle-other-file()
+    "Cycle between related Angular files (.ts, .html, .scss, .spec.ts),
+  skipping missing ones and correctly looping back to .ts."
     (interactive)
-    (let* ((file (buffer-file-name))
-           (matched (cl-find-if (lambda (x)
-                                  (string-match (car x) file))
-                                my-other-file-alist)))
-      (if (not matched)
-          (message "No rule found for %s" file)
-        (let* ((alts (cadr matched)) ;; Take internal list
-               (base (file-name-sans-extension file))
-               ;; Manage .spec.ts
-
-               (base (if (string-match "\\.spec\\'" base)
-                         (file-name-sans-extension base)
-                       base))
-               (next-ext
-                (if (and my--last-other-file
-                         (string-prefix-p base my--last-other-file))
-                    (let* ((last-ext (file-name-extension my--last-other-file t))
-                           (pos (cl-position last-ext alts :test #'string=)))
-                      (nth (mod (1+ (or pos -1)) (length alts)) alts))
-                  (car alts)))
-               (target (concat base next-ext)))
-          (if (file-exists-p target)
-              (progn
-                (setq my--last-other-file target)
-                (find-file target))
-            (message "File %s non found" target))))))
-
-  (my-update-loading-message)
+    (let* ((file (buffer-file-name)))
+      (if (not file)
+          (message "Buffer not visiting a file")
+        (let* ((matched (cl-find-if (lambda (x)
+                                      (string-match (car x) file))
+                                    my-other-file-alist)))
+          (if (not matched)
+              (message "No rule found for %s" file)
+            (let* ((alts (cadr matched))
+                   ;; Base name without extensions (.ts / .spec.ts)
+                   (base (replace-regexp-in-string "\\.spec\\'" "" (file-name-sans-extension file)))
+                   (current-ext (cond
+                                 ((string-match "\\.spec\\.ts\\'" file) ".spec.ts")
+                                 (t (file-name-extension file t))))
+                   (len (length alts))
+                   (pos (cl-position current-ext alts :test #'string=))
+                   (next-ext nil)
+                   (target nil))
+              ;; cycle skipping missing
+              (cl-loop for i from 1 to len
+                       do (setq next-ext (nth (mod (+ i (or pos -1)) len) alts)
+                                target (concat base next-ext))
+                       until (file-exists-p target))
+              (if (and target (file-exists-p target))
+                  (find-file target)
+                (message "No related files found for %s" file))))))))
 #+END_SRC
 
 ** Multiple Cursors
@@ -932,7 +927,7 @@ Consult provides the actual functions for vertico.
   (use-package consult
     :ensure t
     :defer t
-    :bind (("C-f" . my-consult-empty-line-or-symbol)
+    :bind (("C-f" . my-consult-line-empty-or-symbol)
            ("C-x b" . consult-buffer)
            ("C-x C-b" . consult-buffer)
            ("C-<tab>" . consult-buffer)
