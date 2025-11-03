@@ -914,17 +914,25 @@ The "vertico-posframe" package is used to show selection in a popup (like VS Cod
 Consult provides the actual functions for vertico.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-  (defun my-consult-line-with-symbol-at-point ()
+  (defun my-consult-line-empty-or-symbol ()
     "Search buffer with `consult-line` using symbol at point."
     (interactive)
-    (consult-line (thing-at-point 'symbol)))
+    (let ((symbol (thing-at-point 'symbol t)))
+      (minibuffer-with-setup-hook
+          (lambda ()
+            (when symbol
+              (local-set-key (kbd "C-f")
+                             (lambda ()
+                               (interactive)
+                               (insert symbol)))))
+        (consult-line ""))))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package consult
     :ensure t
     :defer t
-    :bind (("C-f" . my-consult-line-with-symbol-at-point)
+    :bind (("C-f" . my-consult-empty-line-or-symbol)
            ("C-x b" . consult-buffer)
            ("C-x C-b" . consult-buffer)
            ("C-<tab>" . consult-buffer)
@@ -1089,10 +1097,6 @@ Install missing grammar.
     (treesit-auto-add-to-auto-mode-alist 'all)
     (global-treesit-auto-mode)
 
-    :mode (
-           ;; Javascript mode doesn't provide a good syntax highlight: fallback to Typescript mode
-           ("\\.js\\'" . typescript-ts-mode)
-           )
     )
 #+END_SRC
 
@@ -1356,10 +1360,15 @@ Integrate with treemacs package.
 For developing Angular Apps we need the support of TypeScript language.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-  ;; (use-package typescript-mode
-  ;;   :ensure t
-  ;;   :defer t
-  ;;   )
+  (use-package typescript-mode
+    :ensure t
+    :defer t
+    :mode (
+           ;; Javascript mode doesn't provide a good syntax highlight: fallback to Typescript mode
+           ("\\.js\\'" . typescript-mode)
+           ("\\.ts\\'" . typescript-mode)
+           )
+     )
 #+END_SRC
 
 ** Language: PHP
