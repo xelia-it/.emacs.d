@@ -633,6 +633,8 @@ Show indent guides.
 
     :hook (
            (prog-mode . indent-bars-mode)
+           (web-mode . indent-bars-mode)
+           (yaml-mode . indent-bars-mode)
            )
     )
 #+END_SRC
@@ -1074,24 +1076,15 @@ Install missing grammar.
     :ensure t
     :config
     (setq treesit-auto-install nil)
-    (setq treesit-language-source-alist
-      '((bash . ("https://github.com/tree-sitter/tree-sitter-bash"))
-        (c . ("https://github.com/tree-sitter/tree-sitter-c"))
-        (cpp . ("https://github.com/tree-sitter/tree-sitter-cpp"))
-        (css . ("https://github.com/tree-sitter/tree-sitter-css"))
-        (go . ("https://github.com/tree-sitter/tree-sitter-go"))
-        (html . ("https://github.com/tree-sitter/tree-sitter-html"))
-        (javascript . ("https://github.com/tree-sitter/tree-sitter-javascript" "src"))
-        (json . ("https://github.com/tree-sitter/tree-sitter-json"))
-        (python . ("https://github.com/tree-sitter/tree-sitter-python"))
-        (rust . ("https://github.com/tree-sitter/tree-sitter-rust"))
-        (toml . ("https://github.com/tree-sitter/tree-sitter-toml"))
-        (typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" "typescript/src"))
-        (tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" "tsx/src"))))
-
     (treesit-auto-add-to-auto-mode-alist 'all)
     (global-treesit-auto-mode)
 
+    :mode (
+           ;; Javascript to not have Treesitter mode: fallback to normal Javascript mode
+           ("\\.js\\'" . javascript-mode)
+           ;; Ensure Treesitter is activated
+           ("\\.ts\\'" . typescript-ts-mode)
+           )
     )
 #+END_SRC
 
@@ -1238,22 +1231,6 @@ Enable only needed UI.
     :bind (
            ("<f2>"      . lsp-rename)
 
-           ;; Main keybinding
-           ("C-<f4>"   . 'kill-buffer-and-window)
-           ("C-w"      . 'kill-buffer-and-window)
-           ("S-C-<f4>" . 'my-kill-other-buffers)
-           ("S-C-w"    . 'my-kill-other-buffers)
-           ("<escape>" . 'keyboard-escape-quit)
-           ("C-s"      . 'my-save)
-           ("C-M-s"    . 'my-save-all)
-           ("C-S-a"    . 'my-cycle-other-file)
-           ("C-S-x"    . 'list-packages)
-           ("C-ò"      . 'term)
-           ("C-/"      . 'comment-dwim)
-           ("C-S-m"    . 'flymake-show-buffer-diagnostics)
-           ("<f8>"     . 'flymake-goto-next-error)
-           ("S-<f8>"   . 'flymake-goto-prev-error)
-
            )
 
     :hook (
@@ -1277,6 +1254,7 @@ Enable only needed UI.
            (tsx-ts-mode        . lsp)
            ;; No-treesitter modes
            (sh-mode            . lsp)
+           (typescript-mode    . lsp)
            )
 
     )
@@ -1353,16 +1331,12 @@ Integrate with treemacs package.
 ** Language: Angular
 
 For developing Angular Apps we need the support of TypeScript language.
+This is a fallback in case `typescrypt-ts-mode` grammar do not work properly.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package typescript-mode
     :ensure t
     :defer t
-    :mode (
-           ;; Javascript mode doesn't provide a good syntax highlight: fallback to Typescript mode
-           ("\\.js\\'" . typescript-mode)
-           ("\\.ts\\'" . typescript-mode)
-           )
      )
 #+END_SRC
 
@@ -1561,5 +1535,38 @@ The package "impatient mode" provides a tool for edit HTML page on the fly.
   (use-package impatient-mode
     :ensure t
     :defer t
+
+
     )
+#+END_SRC
+
+* Keybindings
+
+The last part is activate keybindings.
+This is at the end because we may want to call
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+
+  (use-package emacs
+    :ensure nil
+    :bind (
+     ;; Main keybinding
+     ("C-<f4>"   . 'kill-buffer-and-window)
+     ("C-w"      . 'kill-buffer-and-window)
+     ("S-C-<f4>" . 'my-kill-other-buffers)
+     ("S-C-w"    . 'my-kill-other-buffers)
+     ("<escape>" . 'keyboard-escape-quit)
+     ("C-s"      . 'my-save)
+     ("C-M-s"    . 'my-save-all)
+     ("C-S-a"    . 'my-cycle-other-file)
+     ("C-S-x"    . 'list-packages)
+     ("C-ò"      . 'term)
+     ("C-/"      . comment-dwim)
+     ("C-S-m"    . 'flymake-show-buffer-diagnostics)
+     ("<f8>"     . 'flymake-goto-next-error)
+     ("S-<f8>"   . 'flymake-goto-prev-error)
+     )
+    )
+
+
 #+END_SRC
