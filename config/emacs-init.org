@@ -633,6 +633,8 @@ Show indent guides.
 
     :hook (
            (prog-mode . indent-bars-mode)
+           (web-mode . indent-bars-mode)
+           (yaml-mode . indent-bars-mode)
            )
     )
 #+END_SRC
@@ -744,6 +746,7 @@ This package interferes with org-mode so we
 
 ** Find other files
 
+
 The *ff-find-other-file* function is used to search for file related to the current buffer.
 An example is switching between files such as C/C++ header files.
 
@@ -751,48 +754,42 @@ An example is switching between files such as C/C++ header files.
   (require 'cl-lib)
 
   (defvar my-other-file-alist
-    '(
-      ;; Angular
-      ("\\.spec\\.ts\\'" (".ts" ".html" ".scss"))
-      ("\\.scss\\'"      (".spec.ts" ".ts" ".html"))
+    '(("\\.spec\\.ts\\'" (".ts" ".html" ".scss"))
       ("\\.ts\\'"        (".html" ".scss" ".spec.ts"))
-      ("\\.html\\'"      (".scss" ".spec.ts" ".ts")))
+      ("\\.html\\'"      (".scss" ".spec.ts" ".ts"))
+      ("\\.scss\\'"      (".spec.ts" ".ts" ".html")))
     "Pattern associations → list of extensions to cycle.")
 
-  (defvar my--last-other-file nil
-    "Last opened file.")
-
-  (defun my-cycle-other-file ()
-    "Cicle between correlated files."
+  (defun my-cycle-other-file()
+    "Cycle between related Angular files (.ts, .html, .scss, .spec.ts),
+  skipping missing ones and correctly looping back to .ts."
     (interactive)
-    (let* ((file (buffer-file-name))
-           (matched (cl-find-if (lambda (x)
-                                  (string-match (car x) file))
-                                my-other-file-alist)))
-      (if (not matched)
-          (message "No rule found for %s" file)
-        (let* ((alts (cadr matched)) ;; Take internal list
-               (base (file-name-sans-extension file))
-               ;; Manage .spec.ts
-
-               (base (if (string-match "\\.spec\\'" base)
-                         (file-name-sans-extension base)
-                       base))
-               (next-ext
-                (if (and my--last-other-file
-                         (string-prefix-p base my--last-other-file))
-                    (let* ((last-ext (file-name-extension my--last-other-file t))
-                           (pos (cl-position last-ext alts :test #'string=)))
-                      (nth (mod (1+ (or pos -1)) (length alts)) alts))
-                  (car alts)))
-               (target (concat base next-ext)))
-          (if (file-exists-p target)
-              (progn
-                (setq my--last-other-file target)
-                (find-file target))
-            (message "File %s non found" target))))))
-
-  (my-update-loading-message)
+    (let* ((file (buffer-file-name)))
+      (if (not file)
+          (message "Buffer not visiting a file")
+        (let* ((matched (cl-find-if (lambda (x)
+                                      (string-match (car x) file))
+                                    my-other-file-alist)))
+          (if (not matched)
+              (message "No rule found for %s" file)
+            (let* ((alts (cadr matched))
+                   ;; Base name without extensions (.ts / .spec.ts)
+                   (base (replace-regexp-in-string "\\.spec\\'" "" (file-name-sans-extension file)))
+                   (current-ext (cond
+                                 ((string-match "\\.spec\\.ts\\'" file) ".spec.ts")
+                                 (t (file-name-extension file t))))
+                   (len (length alts))
+                   (pos (cl-position current-ext alts :test #'string=))
+                   (next-ext nil)
+                   (target nil))
+              ;; cycle skipping missing
+              (cl-loop for i from 1 to len
+                       do (setq next-ext (nth (mod (+ i (or pos -1)) len) alts)
+                                target (concat base next-ext))
+                       until (file-exists-p target))
+              (if (and target (file-exists-p target))
+                  (find-file target)
+                (message "No related files found for %s" file))))))))
 #+END_SRC
 
 ** Multiple Cursors
@@ -914,17 +911,25 @@ The "vertico-posframe" package is used to show selection in a popup (like VS Cod
 Consult provides the actual functions for vertico.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-  (defun my-consult-line-with-symbol-at-point ()
+  (defun my-consult-line-empty-or-symbol ()
     "Search buffer with `consult-line` using symbol at point."
     (interactive)
-    (consult-line (thing-at-point 'symbol)))
+    (let ((symbol (thing-at-point 'symbol t)))
+      (minibuffer-with-setup-hook
+          (lambda ()
+            (when symbol
+              (local-set-key (kbd "C-f")
+                             (lambda ()
+                               (interactive)
+                               (insert symbol)))))
+        (consult-line ""))))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package consult
     :ensure t
     :defer t
-    :bind (("C-f" . my-consult-line-with-symbol-at-point)
+    :bind (("C-f" . my-consult-line-empty-or-symbol)
            ("C-x b" . consult-buffer)
            ("C-x C-b" . consult-buffer)
            ("C-<tab>" . consult-buffer)
@@ -1071,27 +1076,14 @@ Install missing grammar.
     :ensure t
     :config
     (setq treesit-auto-install nil)
-    (setq treesit-language-source-alist
-      '((bash . ("https://github.com/tree-sitter/tree-sitter-bash"))
-        (c . ("https://github.com/tree-sitter/tree-sitter-c"))
-        (cpp . ("https://github.com/tree-sitter/tree-sitter-cpp"))
-        (css . ("https://github.com/tree-sitter/tree-sitter-css"))
-        (go . ("https://github.com/tree-sitter/tree-sitter-go"))
-        (html . ("https://github.com/tree-sitter/tree-sitter-html"))
-        (javascript . ("https://github.com/tree-sitter/tree-sitter-javascript" "src"))
-        (json . ("https://github.com/tree-sitter/tree-sitter-json"))
-        (python . ("https://github.com/tree-sitter/tree-sitter-python"))
-        (rust . ("https://github.com/tree-sitter/tree-sitter-rust"))
-        (toml . ("https://github.com/tree-sitter/tree-sitter-toml"))
-        (typescript . ("https://github.com/tree-sitter/tree-sitter-typescript" "typescript/src"))
-        (tsx . ("https://github.com/tree-sitter/tree-sitter-typescript" "tsx/src"))))
-
     (treesit-auto-add-to-auto-mode-alist 'all)
     (global-treesit-auto-mode)
 
     :mode (
-           ;; Javascript mode doesn't provide a good syntax highlight: fallback to Typescript mode
-           ("\\.js\\'" . typescript-ts-mode)
+           ;; Javascript to not have Treesitter mode: fallback to normal Javascript mode
+           ("\\.js\\'" . javascript-mode)
+           ;; Ensure Treesitter is activated
+           ("\\.ts\\'" . typescript-ts-mode)
            )
     )
 #+END_SRC
@@ -1239,22 +1231,6 @@ Enable only needed UI.
     :bind (
            ("<f2>"      . lsp-rename)
 
-           ;; Main keybinding
-           ("C-<f4>"   . 'kill-buffer-and-window)
-           ("C-w"      . 'kill-buffer-and-window)
-           ("S-C-<f4>" . 'my-kill-other-buffers)
-           ("S-C-w"    . 'my-kill-other-buffers)
-           ("<escape>" . 'keyboard-escape-quit)
-           ("C-s"      . 'my-save)
-           ("C-M-s"    . 'my-save-all)
-           ("C-S-a"    . 'my-cycle-other-file)
-           ("C-S-x"    . 'list-packages)
-           ("C-ò"      . 'term)
-           ("C-/"      . 'comment-dwim)
-           ("C-S-m"    . 'flymake-show-buffer-diagnostics)
-           ("<f8>"     . 'flymake-goto-next-error)
-           ("S-<f8>"   . 'flymake-goto-prev-error)
-
            )
 
     :hook (
@@ -1278,6 +1254,7 @@ Enable only needed UI.
            (tsx-ts-mode        . lsp)
            ;; No-treesitter modes
            (sh-mode            . lsp)
+           (typescript-mode    . lsp)
            )
 
     )
@@ -1354,12 +1331,13 @@ Integrate with treemacs package.
 ** Language: Angular
 
 For developing Angular Apps we need the support of TypeScript language.
+This is a fallback in case `typescrypt-ts-mode` grammar do not work properly.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-  ;; (use-package typescript-mode
-  ;;   :ensure t
-  ;;   :defer t
-  ;;   )
+  (use-package typescript-mode
+    :ensure t
+    :defer t
+     )
 #+END_SRC
 
 ** Language: PHP
@@ -1557,5 +1535,38 @@ The package "impatient mode" provides a tool for edit HTML page on the fly.
   (use-package impatient-mode
     :ensure t
     :defer t
+
+
     )
+#+END_SRC
+
+* Keybindings
+
+The last part is activate keybindings.
+This is at the end because we may want to call
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+
+  (use-package emacs
+    :ensure nil
+    :bind (
+     ;; Main keybinding
+     ("C-<f4>"   . 'kill-buffer-and-window)
+     ("C-w"      . 'kill-buffer-and-window)
+     ("S-C-<f4>" . 'my-kill-other-buffers)
+     ("S-C-w"    . 'my-kill-other-buffers)
+     ("<escape>" . 'keyboard-escape-quit)
+     ("C-s"      . 'my-save)
+     ("C-M-s"    . 'my-save-all)
+     ("C-S-a"    . 'my-cycle-other-file)
+     ("C-S-x"    . 'list-packages)
+     ("C-ò"      . 'term)
+     ("C-/"      . comment-dwim)
+     ("C-S-m"    . 'flymake-show-buffer-diagnostics)
+     ("<f8>"     . 'flymake-goto-next-error)
+     ("S-<f8>"   . 'flymake-goto-prev-error)
+     )
+    )
+
+
 #+END_SRC
