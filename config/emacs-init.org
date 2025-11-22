@@ -1084,6 +1084,8 @@ Install missing grammar.
            ("\\.js\\'" . javascript-mode)
            ;; Ensure Treesitter is activated
            ("\\.ts\\'" . typescript-ts-mode)
+           ("\\.cpp\\'" . cpp-ts-mode)
+           ("\\.hpp\\'" . cpp-ts-mode)
            )
     )
 #+END_SRC
@@ -1335,6 +1337,16 @@ This is a fallback in case `typescrypt-ts-mode` grammar do not work properly.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package typescript-mode
+    :ensure t
+    :defer t
+     )
+#+END_SRC
+
+** Language: C/C++
+
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package ccls
     :ensure t
     :defer t
      )
