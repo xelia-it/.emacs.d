@@ -320,6 +320,7 @@ Define the function now. Loading theme triggers this function.
     (add-hook 'prog-mode-hook 'display-line-numbers-mode)
     (add-hook 'json-mode-hook 'display-line-numbers-mode)
     (add-hook 'yaml-mode-hook 'display-line-numbers-mode)
+    (add-hook 'html-mode-hook 'display-line-numbers-mode)
 
     ;; Show active line (globally)
     (global-hl-line-mode)
@@ -1081,11 +1082,13 @@ Install missing grammar.
 
     :mode (
            ;; Javascript to not have Treesitter mode: fallback to normal Javascript mode
-           ("\\.js\\'" . javascript-mode)
+           ;; ("\\.js\\'" . javascript-mode)
            ;; Ensure Treesitter is activated
            ("\\.ts\\'" . typescript-ts-mode)
            ("\\.cpp\\'" . cpp-ts-mode)
            ("\\.hpp\\'" . cpp-ts-mode)
+           ("\\.rb\\'" . ruby-ts-mode)
+           ("\\.json\\'" . json-ts-mode)
            )
     )
 #+END_SRC
@@ -1132,8 +1135,6 @@ All the LSP fine tuning are grouped in the following functions.
     ;; The headerline shows a breadcrumb over the code buffer
     ;; I prefer to disable it
     (setq lsp-headerline-breadcrumb-enable nil)
-
-    ;; Headerline icon enable
     (setq lsp-headerline-breadcrumb-icons-enable nil)
 
     ;; Associate SCSS
@@ -1225,6 +1226,9 @@ Enable only needed UI.
     ;; Set prefix for LSP commands
     (setq lsp-keymap-prefix "C-l")
 
+    ;; Add PATH for support rbenv
+    (setenv "PATH" (concat (getenv "HOME") "/.rbenv/shims:" (getenv "PATH")))
+
     :config
 
     (my-lsp-settings)
@@ -1232,7 +1236,6 @@ Enable only needed UI.
 
     :bind (
            ("<f2>"      . lsp-rename)
-
            )
 
     :hook (
@@ -1256,6 +1259,9 @@ Enable only needed UI.
            (tsx-ts-mode        . lsp)
            ;; No-treesitter modes
            (sh-mode            . lsp)
+           (css-mode           . lsp)
+           (scss-mode          . lsp)
+           (ruby-mode          . lsp)
            (typescript-mode    . lsp)
            )
 
@@ -1405,7 +1411,10 @@ Integrate with projectile package.
 
     (define-key projectile-rails-mode-map (kbd "C-c r") 'projectile-rails-command-map)
 
-    :hook (ruby-mode . projectile-rails-mode)
+    :hook (
+           (ruby-mode . projectile-rails-mode)
+           (ruby-ts-mode . projectile-rails-mode)
+           )
     )
 #+END_SRC
 
