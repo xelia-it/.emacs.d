@@ -500,9 +500,12 @@ Both these setup will be performed later.
     "Save all buffers without confirmation and refresh magit."
     (interactive)
 
+    ;; Save all buffers without prompt
+    (save-some-buffers t)
+    ;; Update Magit if available
     (save-some-buffers t)
     (if (fboundp 'magit-refresh-all)
-      (magit-refresh-all))
+        (magit-refresh-all))
     (message "Saved all files.")
     )
 #+END_SRC
@@ -529,26 +532,26 @@ This preference ensures Emacs reload buffer automatically.
   (defun my-backup-preferences()
     "Apply my backup preference."
 
-    ;; Temporary .#files interferes with Angular
+    ;; Temporary .# files interferes with Angular
     (setq create-lockfiles nil)
 
     ;; Backup files copying them into a subdirectory
     (setq backup-directory-alist `(("." . "~/.saves")))
 
-    (setq make-backup-files t               ; backup of a file the first time it is saved.
-          backup-by-copying t               ; don't clobber symlinks
-          version-control t                 ; version numbers for backup files
-          delete-old-versions t             ; delete excess backup files silently
-          delete-by-moving-to-trash t
-          kept-old-versions 6               ; oldest versions to keep when a new numbered backup is made (default: 2)
-          kept-new-versions 9               ; newest versions to keep when a new numbered backup is made (default: 2)
-          auto-save-default t               ; auto-save every buffer that visits a file
-          auto-save-timeout 20              ; number of seconds idle time before auto-save (default: 30)
-          auto-save-interval 200            ; number of keystrokes between auto-saves (default: 300)
-          )
-
-    ;; Save without messages
-    (setq-default save-silently t)
+    (setq-default
+     make-backup-files t                    ; backup of a file the first time it is saved.
+     backup-by-copying t                    ; don't clobber symlinks
+     version-control t                      ; version numbers for backup files
+     delete-old-versions t                  ; delete excess backup files silently
+     delete-by-moving-to-trash t
+     kept-old-versions 6                    ; oldest versions to keep when a new numbered backup is made (default: 2)
+     kept-new-versions 9                    ; newest versions to keep when a new numbered backup is made (default: 2)
+     auto-save-default t                    ; auto-save every buffer that visits a file
+     auto-save-timeout 20                   ; number of seconds idle time before auto-save (default: 30)
+     auto-save-interval 200                 ; number of keystrokes between auto-saves (default: 300)
+     save-silently t                        ; Save without messages (generic)
+     magit-save-repository-buffers 'dontask ; Save without messages (magit)
+     )
 
     ;; Delete trailing whitespaces before saving
     (add-hook 'before-save-hook 'delete-trailing-whitespace)
@@ -574,10 +577,8 @@ I prefer to avoid tabs for indentation.
     ;; Do not use tabs by default
     (setq-default indent-tabs-mode nil)
 
-    ;; Use 4 spaces by default
-    (setq-default tab-width 4)
-    (setq-default ruby-indent-level 2)
-    (setq-default css-indent-offset 4)
+    ;; Use 2 spaces by default
+    (setq-default tab-width 2)
     )
 
   (my-indent-preferences)
@@ -747,7 +748,6 @@ This package interferes with org-mode so we
 
 ** Find other files
 
-
 The *ff-find-other-file* function is used to search for file related to the current buffer.
 An example is switching between files such as C/C++ header files.
 
@@ -763,7 +763,7 @@ An example is switching between files such as C/C++ header files.
 
   (defun my-cycle-other-file()
     "Cycle between related Angular files (.ts, .html, .scss, .spec.ts),
-  skipping missing ones and correctly looping back to .ts."
+     skipping missing ones and correctly looping back to .ts."
     (interactive)
     (let* ((file (buffer-file-name)))
       (if (not file)
@@ -783,7 +783,7 @@ An example is switching between files such as C/C++ header files.
                    (pos (cl-position current-ext alts :test #'string=))
                    (next-ext nil)
                    (target nil))
-              ;; cycle skipping missing
+              ;; Cycle skipping missing
               (cl-loop for i from 1 to len
                        do (setq next-ext (nth (mod (+ i (or pos -1)) len) alts)
                                 target (concat base next-ext))
@@ -935,6 +935,7 @@ Consult provides the actual functions for vertico.
            ("C-x C-b" . consult-buffer)
            ("C-<tab>" . consult-buffer)
            ("C-S-<tab>" . consult-buffer)
+           ("C-S-v" . consult-yank-from-kill-ring)
            ("C-x C-f" . find-file) ;; Open file
            ("C-o" . find-file)     ;; Open file
            ("C-t" . consult-imenu) ;; Symbols
@@ -1076,7 +1077,7 @@ Install missing grammar.
   (use-package treesit-auto
     :ensure t
     :config
-    (setq treesit-auto-install nil)
+    (setq treesit-auto-install t)
     (treesit-auto-add-to-auto-mode-alist 'all)
     (global-treesit-auto-mode)
 
@@ -1089,6 +1090,7 @@ Install missing grammar.
            ("\\.hpp\\'" . cpp-ts-mode)
            ("\\.rb\\'" . ruby-ts-mode)
            ("\\.json\\'" . json-ts-mode)
+           ("\\.html\\'" . html-ts-mode)
            )
     )
 #+END_SRC
@@ -1558,6 +1560,25 @@ The package "impatient mode" provides a tool for edit HTML page on the fly.
     :defer t
 
 
+    )
+#+END_SRC
+
+** Copilot
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package copilot
+    :ensure t
+    :defer t
+    ;; I prefer to start Copilot complete ony in some buffers
+    ;; :hook (lsp-mode . copilot-mode)
+    :bind (
+           ("C-M-SPC" . copilot-complete)
+           :map copilot-completion-map
+           ("<tab>" . copilot-accept-completion)
+           ("TAB" . copilot-accept-completion)
+           ("ESC" . copilot-clear-overlay)
+           ([escape] . copilot-clear-overlay)
+           )
     )
 #+END_SRC
 
