@@ -1071,26 +1071,20 @@ Magit is a complete User Interface for Git.
 * Language Support
 ** Tree Sitter
 
-Install missing grammar.
+The package _treesit_ is available starting from Emacs 29.
+It allows for better parsing of installed grammars.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package treesit-auto
     :ensure t
+    :custom
+    (treesit-auto-install 't)
     :config
-    (setq treesit-auto-install t)
     (treesit-auto-add-to-auto-mode-alist 'all)
     (global-treesit-auto-mode)
-
     :mode (
            ;; Javascript to not have Treesitter mode: fallback to normal Javascript mode
-           ;; ("\\.js\\'" . javascript-mode)
-           ;; Ensure Treesitter is activated
-           ("\\.ts\\'" . typescript-ts-mode)
-           ("\\.cpp\\'" . cpp-ts-mode)
-           ("\\.hpp\\'" . cpp-ts-mode)
-           ("\\.rb\\'" . ruby-ts-mode)
-           ("\\.json\\'" . json-ts-mode)
-           ("\\.html\\'" . html-ts-mode)
+           ("\\.js\\'" . javascript-mode)
            )
     )
 #+END_SRC
@@ -1219,55 +1213,55 @@ Enable only needed UI.
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-  (use-package lsp-mode
-    :ensure t
-    :defer t
-    :commands lsp
-    :init
+    (use-package lsp-mode
+      :ensure t
+      :defer t
+      :commands lsp
+      :init
 
-    ;; Set prefix for LSP commands
-    (setq lsp-keymap-prefix "C-l")
+      ;; Set prefix for LSP commands
+      (setq lsp-keymap-prefix "C-l")
 
-    ;; Add PATH for support rbenv
-    (setenv "PATH" (concat (getenv "HOME") "/.rbenv/shims:" (getenv "PATH")))
+      ;; Add PATH for support rbenv
+      (setenv "PATH" (concat (getenv "HOME") "/.rbenv/shims:" (getenv "PATH")))
 
-    :config
+      :config
 
-    (my-lsp-settings)
-    (my-lsp-performance-settings)
+      (my-lsp-settings)
+      (my-lsp-performance-settings)
 
-    :bind (
-           ("<f2>"      . lsp-rename)
-           )
+      :bind (
+             ("<f2>"      . lsp-rename)
+             )
 
-    :hook (
-           ;; Integrate with which-key
-           (lsp-mode . lsp-enable-which-key-integration)
-           ;; Enable languages
-           (c-ts-mode          . lsp)
-           (c++-ts-mode        . lsp)
-           (css-ts-mode        . lsp)
-           (dockerfile-ts-mode . lsp)
-           (go-ts-mode         . lsp)
-           (html-ts-mode       . lsp)
-           (js-ts-mode         . lsp)
-           (json-ts-mode       . lsp)
-           (php-ts-mode        . lsp)
-           (python-ts-mode     . lsp)
-           (ruby-ts-mode       . lsp)
-           (rust-ts-mode       . lsp)
-           (scss-ts-mode       . lsp)
-           (typescript-ts-mode . lsp)
-           (tsx-ts-mode        . lsp)
-           ;; No-treesitter modes
-           (sh-mode            . lsp)
-           (css-mode           . lsp)
-           (scss-mode          . lsp)
-           (ruby-mode          . lsp)
-           (typescript-mode    . lsp)
-           )
+      :hook (
+             ;; Integrate with which-key
+             (lsp-mode . lsp-enable-which-key-integration)
+             ;; Enable languages
+             ;; (c-ts-mode          . lsp)
+             ;; (c++-ts-mode        . lsp)
+             ;; (css-ts-mode        . lsp)
+             ;; (dockerfile-ts-mode . lsp)
+             ;; (go-ts-mode         . lsp)
+             ;; (html-ts-mode       . lsp)
+             ;; (js-ts-mode         . lsp)
+             ;; (json-ts-mode       . lsp)
+             ;; (php-ts-mode        . lsp)
+             ;; (python-ts-mode     . lsp)
+             ;; (ruby-ts-mode       . lsp)
+             ;; (rust-ts-mode       . lsp)
+             ;; (scss-ts-mode       . lsp)
+             ;; (typescript-ts-mode . lsp)
+             ;; (tsx-ts-mode        . lsp)
+             ;; No-treesitter modes
+          ;;   (sh-mode            . lsp)
+        ;;     (css-mode           . lsp)
+      ;;       (scss-mode          . lsp)
+    ;;         (ruby-mode          . lsp)
+  ;;           (typescript-mode    . lsp)
+             )
 
-    )
+      )
 #+END_SRC
 
 Add lsp-ui package for better user interface.
@@ -1351,7 +1345,6 @@ This is a fallback in case `typescrypt-ts-mode` grammar do not work properly.
 #+END_SRC
 
 ** Language: C/C++
-
 
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package ccls
