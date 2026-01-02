@@ -70,6 +70,11 @@
    `(link ((,class (:foreground ,vscode-info :underline t))))
    `(italic ((,class (:foreground ,vscode-fg-dim :underline nil))))
 
+   `(success ((,class (:foreground ,vscode-type :underline nil))))
+   `(warning ((,class (:foreground ,vscode-error :underline nil))))
+   `(error ((,class (:foreground ,vscode-warning :underline nil))))
+
+
    ;; Font-lock faces completi (VSCode Dark Modern+)
    `(font-lock-bracket-face ((,class (:foreground ,vscode-brackets))))
    `(font-lock-builtin-face ((,class (:foreground ,vscode-function))))
