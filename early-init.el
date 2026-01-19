@@ -11,6 +11,7 @@
 ;; Scollbars, menu bars, splash screen are distracting and occupies space.
 ;; No more default Emacs splash screen
 (setq inhibit-splash-screen t)
+
 ;; Disable toolbar on top
 (tool-bar-mode -1)
 ;; Disable menu bar on top
@@ -20,9 +21,12 @@
 ;; Start maximized
 (add-hook 'window-setup-hook 'toggle-frame-maximized t)
 
-;; Main colors
+;; Set main colors equal to theme colors
 (add-to-list 'default-frame-alist '(background-color . "#1f1f1f"))
 (add-to-list 'default-frame-alist '(foreground-color . "#cccccc"))
+
+;; Hide modeline (initially)
+(setq mode-line-format nil)
 
 ;; Set UTF-8 encoding
 (set-language-environment "UTF-8")

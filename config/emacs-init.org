@@ -131,30 +131,13 @@ Setup a fancy modeline..
     ;; The maximum displayed length of the branch name of version control.
     (setq doom-modeline-vcs-max-length 30)
 
+;;    (doom-modeline-mode 1)
     ;; Activate modeline after loading
     :hook (emacs-startup . (lambda ()
                  ;;(setq-default mode-line-format doom-modeline-mode-line)
                  (doom-modeline-mode 1))
              )
     )
-#+END_SRC
-
-** Initial loading progress bar
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (defvar my-loading-dots "" "Dots for loading message.")
-
-  (defun my-update-loading-message (&optional base-message)
-    "Update loading message with increasing dots.
-     BASE-MESSAGE is the default loading message (default: \"Loading\").
-     The dots wraps after reaching 50 dots."
-    (let ((message (or base-message "Loading")))
-      (setq my-loading-dots
-        (if (< (length my-loading-dots) 50)
-        (concat my-loading-dots ".")
-          "")) ;; Resetta dopo 3 puntini
-      (message "%s%s" message my-loading-dots))
-  )
 #+END_SRC
 
 ** Cursor style
@@ -174,7 +157,6 @@ Set default cursor style.
     )
 
   (my-setup-cursor)
-  (my-update-loading-message)
 #+END_SRC
 
 ** Tree
@@ -273,13 +255,14 @@ Setup a sidenav tree.
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package nerd-icons
     :ensure t
-    ;; :custom
     ;; The Nerd Font you want to use in GUI
     ;; "Symbols Nerd Font Mono" is the default and is recommended
-    ;; but you can use any other Nerd Font if you want
-    ;; (nerd-icons-font-family "Symbols Nerd Font Mono")
-    :init
-      (my-update-loading-message)
+    ;; but you can use any other Nerd Font if you want.
+    ;;
+    ;; Example:
+    ;;
+    ;; :config
+    ;;   (nerd-icons-font-family "Symbols Nerd Font Mono")
     )
 
   (use-package nerd-icons-completion
@@ -327,7 +310,6 @@ Define the function now. Loading theme triggers this function.
     )
 
   (my-line-preferences)
-  (my-update-loading-message)
 #+END_SRC
 
 ** End-of-line vertical ruler
@@ -343,7 +325,6 @@ In programming modes it's useful to have a vertical line that show the right mar
     )
 
   (my-display-fill-column)
-  (my-update-loading-message)
 #+END_SRC
 
 ** Parentesis
@@ -361,7 +342,6 @@ In programming modes it's useful to have a vertical line that show the right mar
     "Face per evidenziare tutte le parentesi.")
 
   (add-hook 'prog-mode-hook 'my-highlight-parentheses)
-  (my-update-loading-message)
 #+END_SRC
 
 ** Dired...
@@ -377,7 +357,6 @@ In programming modes it's useful to have a vertical line that show the right mar
     )
 
   (my-dired-settings)
-  (my-update-loading-message)
 #+END_SRC
 
 ** Kill buffers
@@ -432,7 +411,6 @@ Show help for keybindings.
   (use-package which-key
     :ensure t
     :init
-    (my-update-loading-message)
     (which-key-setup-side-window-right)
     (which-key-mode)
     )
@@ -455,7 +433,6 @@ in a separate file.
     )
 
   (my-custom-file)
-  (my-update-loading-message)
 #+END_SRC
 
 ** Path for executable files
@@ -467,8 +444,6 @@ The environment variables in Emacs looks the same as in user's shell.
     ;; (Works only on Linux/Mac)
     :if (memq window-system '(mac ns x))
     :ensure t
-    :init
-    (my-update-loading-message)
     :config
     ;;(setq exec-path-from-shell-arguments nil)
     ;;(setq exec-path-from-shell-check-startup-files nil)
@@ -523,7 +498,6 @@ This preference ensures Emacs reload buffer automatically.
     )
 
   (my-auto-revert)
-  (my-update-loading-message)
 #+END_SRC
 
 ** Backup preferences
@@ -561,7 +535,6 @@ This preference ensures Emacs reload buffer automatically.
     )
 
   (my-backup-preferences)
-  (my-update-loading-message)
 #+END_SRC
 
 * Editing
@@ -582,7 +555,6 @@ I prefer to avoid tabs for indentation.
     )
 
   (my-indent-preferences)
-  (my-update-loading-message)
 #+END_SRC
 
 ** Indent preferences (per-project)
@@ -592,22 +564,15 @@ These files apply indentations and editor preferences for each file (per project
 For more information please read: https://editorconfig.org/
 
 #+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my-enable-editorconfig ()
+    "Activate editorconfig-mode only inside a project."
+    (when (project-current)
+      (editorconfig-mode 1)))
+
   (use-package editorconfig
     :ensure t
-    :init
-    (my-update-loading-message)
-    :config
-
-    ;; Workaround for emacs 30
-    (custom-set-variables
-     '(safe-local-variable-values
-       '((web-mode-style-padding . 2)
-         (web-mode-script-padding . 2)
-         (web-mode-block-padding . 2)
-         (web-mode-indent-style . 2))))
-
-    (editorconfig-mode 1)
-    )
+    :defer t
+    :hook (prog-mode . my-enable-editorconfig))
 #+END_SRC
 
 ** Indent Guide
@@ -665,7 +630,6 @@ Setup Cut-Paste like most Windows and MAC editors.
     )
 
   (my-cut-paste-preferences)
-  (my-update-loading-message)
 #+END_SRC
 
 ** Search and Replace
@@ -711,7 +675,6 @@ Setup Cut-Paste like most Windows and MAC editors.
     )
 
   (my-word-wrap)
-  (my-update-loading-message)
 #+END_SRC
 
 ** Move line
@@ -800,8 +763,6 @@ Add the ability to manage multiple cursors.
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package multiple-cursors
     :ensure t
-    :init
-    (my-update-loading-message)
     :config
 
     ;; Needed to configure this package
@@ -853,7 +814,6 @@ Add the ability to manage multiple cursors.
     )
 
   (my-compiling-preferences)
-  (my-update-loading-message)
 #+END_SRC
 
 * Completion
@@ -1082,10 +1042,16 @@ It allows for better parsing of installed grammars.
     :config
     (treesit-auto-add-to-auto-mode-alist 'all)
     (global-treesit-auto-mode)
-    :mode (
-           ;; Javascript to not have Treesitter mode: fallback to normal Javascript mode
-           ("\\.js\\'" . javascript-mode)
-           )
+
+    (treesit-auto-add-to-auto-mode-alist
+     '((
+        ;; Treesit mode
+        ("\\.cpp\\'" . c++-ts-mode)
+        ("\\.hpp\\'" . c++-ts-mode)
+        ("\\.rb\\'" . ruby-ts-mode)
+        ;; Javascript to not have Treesitter mode: fallback to Typescript mode
+        ("\\.js\\'" . typescript-mode)
+        )))
     )
 #+END_SRC
 
@@ -1213,55 +1179,56 @@ Enable only needed UI.
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-    (use-package lsp-mode
-      :ensure t
-      :defer t
-      :commands lsp
-      :init
+  (use-package lsp-mode
+    :ensure t
+    :defer t
+    :commands lsp
+    :init
 
-      ;; Set prefix for LSP commands
-      (setq lsp-keymap-prefix "C-l")
+    ;; Set prefix for LSP commands
+    (setq lsp-keymap-prefix "C-l")
 
-      ;; Add PATH for support rbenv
-      (setenv "PATH" (concat (getenv "HOME") "/.rbenv/shims:" (getenv "PATH")))
+    ;; Add PATH for support rbenv
+    (setenv "PATH" (concat (getenv "HOME") "/.rbenv/shims:" (getenv "PATH")))
 
-      :config
+    :config
 
-      (my-lsp-settings)
-      (my-lsp-performance-settings)
+    (my-lsp-settings)
+    (my-lsp-performance-settings)
 
-      :bind (
-             ("<f2>"      . lsp-rename)
-             )
+    :bind (
+           ("<f2>"      . lsp-rename)
+           )
 
-      :hook (
-             ;; Integrate with which-key
-             (lsp-mode . lsp-enable-which-key-integration)
-             ;; Enable languages
-             ;; (c-ts-mode          . lsp)
-             ;; (c++-ts-mode        . lsp)
-             ;; (css-ts-mode        . lsp)
-             ;; (dockerfile-ts-mode . lsp)
-             ;; (go-ts-mode         . lsp)
-             ;; (html-ts-mode       . lsp)
-             ;; (js-ts-mode         . lsp)
-             ;; (json-ts-mode       . lsp)
-             ;; (php-ts-mode        . lsp)
-             ;; (python-ts-mode     . lsp)
-             ;; (ruby-ts-mode       . lsp)
-             ;; (rust-ts-mode       . lsp)
-             ;; (scss-ts-mode       . lsp)
-             ;; (typescript-ts-mode . lsp)
-             ;; (tsx-ts-mode        . lsp)
-             ;; No-treesitter modes
-          ;;   (sh-mode            . lsp)
-        ;;     (css-mode           . lsp)
-      ;;       (scss-mode          . lsp)
-    ;;         (ruby-mode          . lsp)
-  ;;           (typescript-mode    . lsp)
-             )
+    :hook (
+           ;; Integrate with which-key
+           (lsp-mode . lsp-enable-which-key-integration)
+           ;; Enable languages (treesit support)
+           (c-ts-mode          . lsp)
+           (c++-ts-mode        . lsp)
+           ;; (css-ts-mode        . lsp)
+           ;; (dockerfile-ts-mode . lsp)
+           ;; (go-ts-mode         . lsp)
+           ;; (html-ts-mode       . lsp)
+           ;; (js-ts-mode         . lsp)
+           (json-ts-mode       . lsp)
+           ;; (php-ts-mode        . lsp)
+           ;; (python-ts-mode     . lsp)
+           (ruby-ts-mode       . lsp)
+           (rust-ts-mode       . lsp)
+           ;; (scss-ts-mode       . lsp)
+           (typescript-ts-mode . lsp)
+           ;; (tsx-ts-mode        . lsp)
 
-      )
+           ;; Enable languages (fallback normal syntax highlight)
+           ;; (sh-mode            . lsp)
+           ;;     (css-mode           . lsp)
+           ;;       (scss-mode          . lsp)
+           ;;    (ruby-mode          . lsp)
+           ;; (typescript-mode    . lsp)
+           )
+
+    )
 #+END_SRC
 
 Add lsp-ui package for better user interface.
@@ -1341,7 +1308,7 @@ This is a fallback in case `typescrypt-ts-mode` grammar do not work properly.
   (use-package typescript-mode
     :ensure t
     :defer t
-     )
+    )
 #+END_SRC
 
 ** Language: C/C++
@@ -1445,11 +1412,11 @@ Manage nginx configuration files.
 ** Language: Rust
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-  (use-package rust-mode
-    :ensure t
-    :defer t
-    :mode ("\\.rs\\'" . rust-mode)
-    )
+  ;; (use-package rust-mode
+  ;;   :ensure t
+  ;;   :defer t
+  ;;   :mode ("\\.rs\\'" . rust-mode)
+  ;;   )
 #+END_SRC
 
 ** Language: Python
@@ -1468,10 +1435,10 @@ Manage nginx configuration files.
 ** Language: Go
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-  (use-package go-mode
-    :ensure t
-    :defer t
-    )
+  ;; (use-package go-mode
+  ;;   :ensure t
+  ;;   :defer t
+  ;;   )
 #+END_SRC
 
 ** Language: Vue

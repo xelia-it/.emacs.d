@@ -10,6 +10,7 @@
 ;; If this do not exists use the original org file to produce Lisp file.
 
 (unless (file-exists-p my-init-compiled-file)
+  (setq mode-line-format "")
   (unless (file-exists-p my-init-file)
     (message "Extracting code from init file ...")
     (require 'ob-tangle)
