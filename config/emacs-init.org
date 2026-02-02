@@ -102,10 +102,6 @@ Setup a fancy modeline..
   (use-package doom-modeline
     :ensure t
     :init
-    ;; Hide modeline bar at startup
-    ;; TODO: remove? It seems to not work
-    ;; (setq-default mode-line-format '(" "))
-
     ;; How tall the mode-line should be. It's only respected in GUI.
     ;; If the actual char height is larger, it respects the actual height.
     (setq doom-modeline-height 28)
@@ -131,12 +127,9 @@ Setup a fancy modeline..
     ;; The maximum displayed length of the branch name of version control.
     (setq doom-modeline-vcs-max-length 30)
 
-;;    (doom-modeline-mode 1)
     ;; Activate modeline after loading
     :hook (emacs-startup . (lambda ()
-                 ;;(setq-default mode-line-format doom-modeline-mode-line)
-                 (doom-modeline-mode 1))
-             )
+                             (doom-modeline-mode 1)))
     )
 #+END_SRC
 
@@ -1049,8 +1042,12 @@ It allows for better parsing of installed grammars.
         ("\\.cpp\\'" . c++-ts-mode)
         ("\\.hpp\\'" . c++-ts-mode)
         ("\\.rb\\'" . ruby-ts-mode)
+        ("\\.yaml\\'" . yaml-ts-mode)
+        ("\\.yml\\'" . yaml-ts-mode)
         ;; Javascript to not have Treesitter mode: fallback to Typescript mode
-        ("\\.js\\'" . typescript-mode)
+        ("\\.js\\'" . typescript-ts-mode)
+        ;; Ruby ERB to not have Treesitter mode: fallback to Typescript mode
+        ("\\.js.erb\\'" . typescript-ts-mode)
         )))
     )
 #+END_SRC
@@ -1203,21 +1200,23 @@ Enable only needed UI.
     :hook (
            ;; Integrate with which-key
            (lsp-mode . lsp-enable-which-key-integration)
+
            ;; Enable languages (treesit support)
-           (c-ts-mode          . lsp)
            (c++-ts-mode        . lsp)
+           (c-ts-mode          . lsp)
+           (json-ts-mode       . lsp)
+           (ruby-ts-mode       . lsp)
+           (rust-ts-mode       . lsp)
+           (typescript-ts-mode . lsp)
+           (yaml-ts-mode       . lsp)
            ;; (css-ts-mode        . lsp)
            ;; (dockerfile-ts-mode . lsp)
            ;; (go-ts-mode         . lsp)
            ;; (html-ts-mode       . lsp)
            ;; (js-ts-mode         . lsp)
-           (json-ts-mode       . lsp)
            ;; (php-ts-mode        . lsp)
            ;; (python-ts-mode     . lsp)
-           (ruby-ts-mode       . lsp)
-           (rust-ts-mode       . lsp)
            ;; (scss-ts-mode       . lsp)
-           (typescript-ts-mode . lsp)
            ;; (tsx-ts-mode        . lsp)
 
            ;; Enable languages (fallback normal syntax highlight)
