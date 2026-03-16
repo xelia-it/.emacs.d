@@ -363,7 +363,7 @@ Utility for killing buffers other than current buffer.
 
     (mapc 'kill-buffer
           (delq (current-buffer)
-                (remove-if-not 'buffer-file-name (buffer-list))))
+                (seq-filter 'buffer-file-name (buffer-list))))
     (message "Killed other buffers")
     )
 #+END_SRC
@@ -557,15 +557,12 @@ These files apply indentations and editor preferences for each file (per project
 For more information please read: https://editorconfig.org/
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-  (defun my-enable-editorconfig ()
-    "Activate editorconfig-mode only inside a project."
-    (when (project-current)
-      (editorconfig-mode 1)))
-
   (use-package editorconfig
     :ensure t
-    :defer t
-    :hook (prog-mode . my-enable-editorconfig))
+    :config
+    (editorconfig-mode 1)
+    (add-hook 'find-file-hook #'editorconfig-apply)
+    )
 #+END_SRC
 
 ** Indent Guide
@@ -817,6 +814,7 @@ The core package for narrowing selection is Vertico.
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package vertico
     :ensure t
+    :defer t
     :init
     (vertico-mode))
 #+END_SRC
@@ -826,6 +824,7 @@ For fuzzy completion we use "orderless".
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package orderless
     :ensure t
+    :defer t
     :init
     (setq completion-styles '(orderless)
           completion-category-defaults nil
@@ -856,6 +855,7 @@ The "vertico-posframe" package is used to show selection in a popup (like VS Cod
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package marginalia
     :ensure t
+    :defer t
     :after vertico
     :init
 
@@ -925,7 +925,6 @@ Now we can activate "projectile" package.
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package projectile
     :ensure t
-    :defer t
     :init
 
     (setq projectile-completion-system 'default)
@@ -1005,7 +1004,7 @@ Magit is a complete User Interface for Git.
     ;; Disable background for unchanged text
     (set-face-attribute 'git-gutter:unchanged nil :background 'unspecified)
 
-    :hook (prog-mode . git-gutter-mode)
+    :hook ((prog-mode yaml-mode web-mode) . git-gutter-mode)
 
     :bind (
            ("S-M-<f5>" . git-gutter:previous-hunk)
@@ -1100,6 +1099,10 @@ All the LSP fine tuning are grouped in the following functions.
     (setq lsp-language-id-configuration
           (append lsp-language-id-configuration
                   '((scss-ts-mode . "scss"))))
+    ;; Override for HTML
+    (setq lsp-html-format-tab-size 2)
+    (setq lsp-html-options '((tabSize . 2)
+                             (insertSpaces . t)))
     )
 #+END_SRC
 
@@ -1209,24 +1212,8 @@ Enable only needed UI.
            (rust-ts-mode       . lsp)
            (typescript-ts-mode . lsp)
            (yaml-ts-mode       . lsp)
-           ;; (css-ts-mode        . lsp)
-           ;; (dockerfile-ts-mode . lsp)
-           ;; (go-ts-mode         . lsp)
-           ;; (html-ts-mode       . lsp)
-           ;; (js-ts-mode         . lsp)
-           ;; (php-ts-mode        . lsp)
-           ;; (python-ts-mode     . lsp)
-           ;; (scss-ts-mode       . lsp)
-           ;; (tsx-ts-mode        . lsp)
-
-           ;; Enable languages (fallback normal syntax highlight)
-           ;; (sh-mode            . lsp)
-           ;;     (css-mode           . lsp)
-           ;;       (scss-mode          . lsp)
-           ;;    (ruby-mode          . lsp)
-           ;; (typescript-mode    . lsp)
+           (web-mode          . lsp)
            )
-
     )
 #+END_SRC
 
@@ -1298,6 +1285,37 @@ Integrate with treemacs package.
     )
 #+END_SRC
 
+** Language: HTML
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package web-mode
+    :ensure t
+    :defer t
+    :mode (("\\.html\\'" . web-mode)
+           ("\\.htm\\'"  . web-mode))
+    :config
+    (setq web-mode-markup-indent-offset 2)
+    (setq web-mode-css-indent-offset 2)
+    (setq web-mode-code-indent-offset 2)
+    (setq web-mode-auto-close-style 2)
+    (setq web-mode-enable-auto-pairing t)
+    (setq web-mode-enable-css-colorization t)
+    (setq web-mode-enable-current-element-highlight t)
+
+    :hook (web-mode . (lambda ()
+                        (lsp)
+                        (display-line-numbers-mode)
+                        (vc-find-file-hook)
+                        ;; Settings for editorconfig
+                        (require 'editorconfig)
+                        (when-let* ((props (editorconfig-get-properties))
+                                    (indent (gethash 'indent_size props)))
+                          (setq web-mode-markup-indent-offset (string-to-number indent))
+                          (setq web-mode-css-indent-offset (string-to-number indent))
+                          (setq web-mode-code-indent-offset (string-to-number indent)))))
+    )
+#+END_SRC
+
 ** Language: Angular
 
 For developing Angular Apps we need the support of TypeScript language.
@@ -1317,15 +1335,6 @@ This is a fallback in case `typescrypt-ts-mode` grammar do not work properly.
     :ensure t
     :defer t
      )
-#+END_SRC
-
-** Language: PHP
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (use-package php-mode
-    :ensure t
-    :defer t
-    )
 #+END_SRC
 
 ** Language: YAML
@@ -1550,24 +1559,25 @@ This is at the end because we may want to call
 
   (use-package emacs
     :ensure nil
+    :config
+    (with-eval-after-load 'lsp-mode
+      (global-set-key (kbd "C-l") lsp-command-map))
     :bind (
-     ;; Main keybinding
-     ("C-<f4>"   . 'kill-buffer-and-window)
-     ("C-w"      . 'kill-buffer-and-window)
-     ("S-C-<f4>" . 'my-kill-other-buffers)
-     ("S-C-w"    . 'my-kill-other-buffers)
-     ("<escape>" . 'keyboard-escape-quit)
-     ("C-s"      . 'my-save)
-     ("C-M-s"    . 'my-save-all)
-     ("C-S-a"    . 'my-cycle-other-file)
-     ("C-S-x"    . 'list-packages)
-     ("C-ò"      . 'term)
-     ("C-/"      . comment-dwim)
-     ("C-S-m"    . 'flymake-show-buffer-diagnostics)
-     ("<f8>"     . 'flymake-goto-next-error)
-     ("S-<f8>"   . 'flymake-goto-prev-error)
-     )
+           ;; Main keybinding
+           ("C-<f4>"   . 'kill-buffer-and-window)
+           ("C-w"      . 'kill-buffer-and-window)
+           ("S-C-<f4>" . 'my-kill-other-buffers)
+           ("S-C-w"    . 'my-kill-other-buffers)
+           ("<escape>" . 'keyboard-escape-quit)
+           ("C-s"      . 'my-save)
+           ("C-M-s"    . 'my-save-all)
+           ("C-S-a"    . 'my-cycle-other-file)
+           ("C-S-x"    . 'list-packages)
+           ("C-ò"      . 'term)
+           ("C-/"      . comment-dwim)
+           ("C-S-m"    . 'flymake-show-buffer-diagnostics)
+           ("<f8>"     . 'flymake-goto-next-error)
+           ("S-<f8>"   . 'flymake-goto-prev-error)
+           )
     )
-
-
 #+END_SRC
