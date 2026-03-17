@@ -9,23 +9,20 @@
 ;; Load compiled Lisp file.
 ;; If this do not exists use the original org file to produce Lisp file.
 
-(unless (file-exists-p my-init-compiled-file)
-  (setq mode-line-format "")
-  (unless (file-exists-p my-init-file)
-    (message "Extracting code from init file ...")
-    (require 'ob-tangle)
-    (org-babel-tangle-file my-init-org-file my-init-file)
-  )
+;; Step 1: tangling if needed
+(when (or (not (file-exists-p my-init-file))
+          (file-newer-than-file-p my-init-org-file my-init-file))
+  (message "Extracting code from init file ...")
+  (require 'ob-tangle)
+  (org-babel-tangle-file my-init-org-file my-init-file))
 
-  (message "Byte-compiling init file ...")
-  (byte-compile-file my-init-file)
-)
+;; Step 2: compile if needed
+(when (or (not (file-exists-p my-init-compiled-file))
+          (file-newer-than-file-p my-init-file my-init-compiled-file))
+  (message "Byte-compiling init file...")
+  (byte-compile-file my-init-file))
 
-;; Then load it
-;; Arguments meaning:
-;;  1st) report error if file not found,
-;;  2nd) do not print loading message,
-;;  3rd) add suffix
-(load my-init-file nil t t t)
+;; Step 3: load .elc
+(load (file-name-sans-extension my-init-file) nil t)
 
 ;;; init.el ends here

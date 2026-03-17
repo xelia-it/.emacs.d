@@ -19,7 +19,7 @@
 ;; No more scrollbars
 (scroll-bar-mode -1)
 ;; Start maximized
-(add-hook 'window-setup-hook 'toggle-frame-maximized t)
+(setq initial-frame-alist '((fullscreen . maximized)))
 
 ;; Set main colors equal to theme colors
 (add-to-list 'default-frame-alist '(background-color . "#1f1f1f"))
@@ -29,11 +29,7 @@
 (setq mode-line-format nil)
 
 ;; Set UTF-8 encoding
-(set-language-environment "UTF-8")
-(set-default-coding-systems 'utf-8)
 (prefer-coding-system 'utf-8)
-(set-terminal-coding-system 'utf-8)
-(set-keyboard-coding-system 'utf-8)
 
 ;; Define vars here
 (defvar my-vendor-dir
@@ -83,6 +79,6 @@
 ;; I strongly suggest to enable  Native Compilation whenever possible.
 (setq native-comp-deferred-compilation t)
 (setq package-native-compile t)
-(setq comp-async-report-warnings-errors nil)
+(setq comp-async-report-warnings-errors 'silent)
 
 ;;; early-init.el ends here
