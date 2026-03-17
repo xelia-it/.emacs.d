@@ -1450,6 +1450,17 @@ Manage nginx configuration files.
     )
 #+END_SRC
 
+** Language: Dart
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package dart-mode
+    :ensure t
+    :defer t
+    :mode (
+      ("\\.dart\\'" . dart-mode)
+    ))
+#+END_SRC
+
 ** Language: Go
 
 #+BEGIN_SRC emacs-lisp :tangle yes
