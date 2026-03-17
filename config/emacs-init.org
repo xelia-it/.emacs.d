@@ -102,7 +102,19 @@ Setup a fancy modeline..
   (use-package doom-modeline
     :ensure t
     :init
-    ;; How tall the mode-line should be. It's only respected in GUI.
+
+    ;; (doom-modeline-def-modeline 'my-vscode-line
+    ;;   '()
+    ;;   '(buffer-info lsp
+    ;;     major-mode
+    ;;     vcs
+    ;;     workspace-name
+    ;;     minor-modes)
+    ;;   )
+
+    ;; (doom-modeline-set-modeline 'my-vscode-line t)
+
+    ;; ;; How tall the mode-line should be. It's only respected in GUI.
     ;; If the actual char height is larger, it respects the actual height.
     (setq doom-modeline-height 28)
 
@@ -116,16 +128,24 @@ Setup a fancy modeline..
     (setq doom-modeline-highlight-modified-buffer-name nil)
 
     ;; Show line and column position
-    (setq doom-modeline-position-line-format '("%4l:%c"))
+    (setq doom-modeline-position-line-format '("Ln %l, Col %c"))
 
     ;; Hide position within buffer
-    (setq doom-modeline-percent-position '(""))
+    (setq doom-modeline-percent-position nil)
 
     ;; Whether display the buffer encoding.
     (setq doom-modeline-buffer-encoding nil)
 
     ;; The maximum displayed length of the branch name of version control.
-    (setq doom-modeline-vcs-max-length 30)
+    (setq doom-modeline-vcs-max-length 40)
+
+    ;; Icon
+    (setq doom-modeline-icon t)
+
+    ;; Minor modes OFF
+    (setq doom-modeline-minor-modes nil)
+
+    (setq doom-modeline-highlight-modified-buffer-name t)
 
     ;; Activate modeline after loading
     :hook (emacs-startup . (lambda ()
@@ -561,7 +581,7 @@ For more information please read: https://editorconfig.org/
     :ensure t
     :config
     (editorconfig-mode 1)
-    (add-hook 'find-file-hook #'editorconfig-apply)
+    ;;(add-hook 'find-file-hook #'editorconfig-apply)
     )
 #+END_SRC
 
@@ -1290,29 +1310,19 @@ Integrate with treemacs package.
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package web-mode
     :ensure t
-    :defer t
-    :mode (("\\.html\\'" . web-mode)
-           ("\\.htm\\'"  . web-mode))
+    :mode ("\\.html?\\'" . web-mode)
     :config
-    (setq web-mode-markup-indent-offset 2)
-    (setq web-mode-css-indent-offset 2)
-    (setq web-mode-code-indent-offset 2)
-    (setq web-mode-auto-close-style 2)
-    (setq web-mode-enable-auto-pairing t)
-    (setq web-mode-enable-css-colorization t)
-    (setq web-mode-enable-current-element-highlight t)
-
+    ;; fallback default
+    (setq web-mode-markup-indent-offset 2
+          web-mode-css-indent-offset 2
+          web-mode-code-indent-offset 2
+          web-mode-auto-close-style 2
+          web-mode-enable-auto-pairing t
+          web-mode-enable-css-colorization t
+          web-mode-enable-current-element-highlight t)
     :hook (web-mode . (lambda ()
-                        (lsp)
-                        (display-line-numbers-mode)
-                        (vc-find-file-hook)
-                        ;; Settings for editorconfig
-                        (require 'editorconfig)
-                        (when-let* ((props (editorconfig-get-properties))
-                                    (indent (gethash 'indent_size props)))
-                          (setq web-mode-markup-indent-offset (string-to-number indent))
-                          (setq web-mode-css-indent-offset (string-to-number indent))
-                          (setq web-mode-code-indent-offset (string-to-number indent)))))
+                        (setq-local electric-indent-inhibit t)
+                        (setq web-mode-enable-auto-indentation nil)))
     )
 #+END_SRC
 
