@@ -149,7 +149,8 @@ Setup a fancy modeline..
 
     ;; Activate modeline after loading
     :hook (emacs-startup . (lambda ()
-                             (doom-modeline-mode 1)))
+                             (doom-modeline-mode 1)
+                             ))
     )
 #+END_SRC
 
@@ -335,6 +336,13 @@ In programming modes it's useful to have a vertical line that show the right mar
 
     (setq-default fill-column 80)
     (add-hook 'prog-mode-hook 'display-fill-column-indicator-mode)
+
+    ;; Override fill-column con il valore da EditorConfig se presente
+    (add-hook 'editorconfig-after-apply-functions
+              (lambda (props)
+                (let ((max-line (gethash 'max_line_length props)))
+                  (when max-line
+                    (setq fill-column (string-to-number max-line))))))
     )
 
   (my-display-fill-column)
@@ -728,10 +736,16 @@ An example is switching between files such as C/C++ header files.
   (require 'cl-lib)
 
   (defvar my-other-file-alist
-    '(("\\.spec\\.ts\\'" (".ts" ".html" ".scss"))
+    '(
+      ("\\.spec\\.ts\\'" (".ts" ".html" ".scss"))
       ("\\.ts\\'"        (".html" ".scss" ".spec.ts"))
       ("\\.html\\'"      (".scss" ".spec.ts" ".ts"))
-      ("\\.scss\\'"      (".spec.ts" ".ts" ".html")))
+      ("\\.scss\\'"      (".spec.ts" ".ts" ".html"))
+      ("\\.cpp\\'"       (".hpp"))
+      ("\\.c\\'"         (".h"))
+      ("\\.hpp\\'"       (".cpp"))
+      ("\\.h\\'"         (".c"))
+      )
     "Pattern associations → list of extensions to cycle.")
 
   (defun my-cycle-other-file()
