@@ -90,7 +90,6 @@ Load theme as soon as possible setting the base colors for each element.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
   (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
-  ;;(load-theme 'vscode t)
   (load-theme 'vscode-dark-modern t)
 #+END_SRC
 
@@ -102,19 +101,7 @@ Setup a fancy modeline..
   (use-package doom-modeline
     :ensure t
     :init
-
-    ;; (doom-modeline-def-modeline 'my-vscode-line
-    ;;   '()
-    ;;   '(buffer-info lsp
-    ;;     major-mode
-    ;;     vcs
-    ;;     workspace-name
-    ;;     minor-modes)
-    ;;   )
-
-    ;; (doom-modeline-set-modeline 'my-vscode-line t)
-
-    ;; ;; How tall the mode-line should be. It's only respected in GUI.
+    ;; How tall the mode-line should be. It's only respected in GUI.
     ;; If the actual char height is larger, it respects the actual height.
     (setq doom-modeline-height 28)
 
@@ -202,7 +189,7 @@ Setup a sidenav tree.
         treemacs-goto-tag-strategy               'refetch-index
         treemacs-header-scroll-indicators        '(nil . "^^^^^^")
         treemacs-hide-dot-git-directory          t
-        treemacs-indentation                     2
+        treemacs-indentation                     1
         treemacs-indentation-string              " "
         treemacs-is-never-other-window           nil
         treemacs-max-git-entries                 5000
@@ -240,7 +227,7 @@ Setup a sidenav tree.
         treemacs-workspace-switch-cleanup        nil)
 
       ;; The default width and height of the icons is 22 pixels.
-      (treemacs-resize-icons 20)
+      (treemacs-resize-icons 16)
 
       ;; Set root folder similar to VSCode theme
       (set-face-attribute 'treemacs-root-face nil
@@ -267,40 +254,61 @@ Setup a sidenav tree.
 ** Icons
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-  (use-package nerd-icons
-    :ensure t
-    ;; The Nerd Font you want to use in GUI
-    ;; "Symbols Nerd Font Mono" is the default and is recommended
-    ;; but you can use any other Nerd Font if you want.
-    ;;
-    ;; Example:
-    ;;
-    ;; :config
-    ;;   (nerd-icons-font-family "Symbols Nerd Font Mono")
-    )
+    (use-package nerd-icons
+      :ensure t
+      )
 
-  (use-package nerd-icons-completion
+    (use-package nerd-icons-completion
+      :ensure t
+      :defer t
+      :after (:lsp)
+      :config
+      (nerd-icons-completion-mode)
+      )
+
+    (use-package treemacs-nerd-icons
+      :ensure t
+      :after (treemacs nerd-icons)
+      :config
+      (treemacs-nerd-icons-config)
+      )
+
+    (use-package nerd-icons-dired
+       :ensure t
+       :defer t
+       :hook
+       (dired-mode . nerd-icons-dired-mode)
+       )
+#+END_SRC
+
+** Tabs
+
+Sets tab mode like VSCode.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package centaur-tabs
     :ensure t
-    :defer t
-    :after (:lsp)
     :config
-    (nerd-icons-completion-mode)
-    )
+    (centaur-tabs-headline-match)
 
-  (use-package treemacs-nerd-icons
-    :ensure t
-    :defer t
-    :after (:treemacs)
-    :config
-    (treemacs-load-theme "nerd-icons")
-    )
+    (setq centaur-tabs-style "bar")
+    (setq centaur-tabs-height 32)
+    (setq centaur-tabs-set-icons t)
+    (setq centaur-tabs-set-bar 'over)
+    ;; (setq centaur-tabs-buffer-groups-function nil)
 
-  (use-package nerd-icons-dired
-     :ensure t
-     :defer t
-     :hook
-     (dired-mode . nerd-icons-dired-mode)
-     )
+    ;; Tab are grouped using Projectile
+    (centaur-tabs-group-by-projectile-project)
+    (centaur-tabs-mode t)
+
+    :hook (
+           (after-init . centaur-tabs-mode)
+           )
+    :bind (
+           ("C-<prior>" . centaur-tabs-backward)
+           ("C-<next>" . centaur-tabs-forward)
+           )
+    )
 #+END_SRC
 
 ** Line numbers

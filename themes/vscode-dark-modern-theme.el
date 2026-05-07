@@ -238,6 +238,17 @@
    `(doom-modeline-highlight ((,class (:box nil :weight bold))))
    `(doom-modeline-info ((,class (:foreground ,vscode-brackets-match :weight normal))))
 
+   ;; Centaur tabs
+   `(centaur-tabs-active-bar-face ((,class (:background ,vscode-border-accent))))
+   `(centaur-tabs-selected ((,class (:background ,vscode-bg-dark :foreground ,vscode-fg-light
+                                     :overline ,vscode-border-accent :underline nil))))
+   `(centaur-tabs-selected-modified ((,class (:background ,vscode-bg-dark :foreground ,vscode-fg-light
+                                              :overline ,vscode-border-accent :underline nil))))
+   `(centaur-tabs-unselected ((,class (:background ,vscode-bg-extra-dark :foreground ,vscode-fg-dim
+                                       :overline nil :underline ,vscode-border-dark))))
+   `(centaur-tabs-unselected-modified ((,class (:background ,vscode-bg-extra-dark :foreground ,vscode-fg-dim
+                                                :overline nil :underline ,vscode-border-dark))))
+
    ;; Matching parenthesis
    `(show-paren-match
      ((t (:foreground ,vscode-brackets-match
