@@ -63,6 +63,10 @@ These fonts should be installed manually.
       (set-frame-font "Monospace 11" t t)
       )
 
+     ((find-font (font-spec :name "DejaVu Sans Mono"))
+      (set-frame-font "DejaVu Sans Mono 11" t t)
+      )
+
      ((find-font (font-spec :name "Droid Sans Mono"))
       (set-frame-font "Droid Sans Mono 11" t t)
       )
@@ -74,12 +78,8 @@ These fonts should be installed manually.
      ((find-font (font-spec :name "Monaco"))
       (set-frame-font "Monaco 11" t t)
       )
-
-     ((find-font (font-spec :name "DejaVu Sans Mono"))
-      (set-frame-font "DejaVu Sans Mono 11" t t)
-      )
-     )
     )
+  )
 
   (my-set-default-font)
 #+END_SRC
@@ -90,7 +90,6 @@ Load theme as soon as possible setting the base colors for each element.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
   (add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
-  ;;(load-theme 'vscode t)
   (load-theme 'vscode-dark-modern t)
 #+END_SRC
 
@@ -102,19 +101,7 @@ Setup a fancy modeline..
   (use-package doom-modeline
     :ensure t
     :init
-
-    ;; (doom-modeline-def-modeline 'my-vscode-line
-    ;;   '()
-    ;;   '(buffer-info lsp
-    ;;     major-mode
-    ;;     vcs
-    ;;     workspace-name
-    ;;     minor-modes)
-    ;;   )
-
-    ;; (doom-modeline-set-modeline 'my-vscode-line t)
-
-    ;; ;; How tall the mode-line should be. It's only respected in GUI.
+    ;; How tall the mode-line should be. It's only respected in GUI.
     ;; If the actual char height is larger, it respects the actual height.
     (setq doom-modeline-height 28)
 
@@ -149,7 +136,8 @@ Setup a fancy modeline..
 
     ;; Activate modeline after loading
     :hook (emacs-startup . (lambda ()
-                             (doom-modeline-mode 1)))
+                             (doom-modeline-mode 1)
+                             ))
     )
 #+END_SRC
 
@@ -185,61 +173,13 @@ Setup a sidenav tree.
       (define-key winum-keymap (kbd "M-0") #'treemacs-select-window))
     :config
 
-      (setq treemacs-collapse-dirs                   (if treemacs-python-executable 3 0)
-        treemacs-deferred-git-apply-delay        0.5
-        treemacs-directory-name-transformer      #'identity
-        treemacs-display-in-side-window          t
-        treemacs-eldoc-display                   'simple
-        treemacs-file-event-delay                2000
-        treemacs-file-extension-regex            treemacs-last-period-regex-value
-        treemacs-file-follow-delay               0.2
-        treemacs-file-name-transformer           #'identity
-        treemacs-follow-after-init               t
-        treemacs-expand-after-init               t
-        treemacs-find-workspace-method           'find-for-file-or-pick-first
-        treemacs-git-command-pipe                ""
-        treemacs-goto-tag-strategy               'refetch-index
-        treemacs-header-scroll-indicators        '(nil . "^^^^^^")
-        treemacs-hide-dot-git-directory          t
-        treemacs-indentation                     2
-        treemacs-indentation-string              " "
-        treemacs-is-never-other-window           nil
-        treemacs-max-git-entries                 5000
-        treemacs-missing-project-action          'ask
-        treemacs-move-forward-on-expand          nil
-        treemacs-no-png-images                   nil
-        treemacs-no-delete-other-windows         t
-        treemacs-project-follow-cleanup          nil
-        treemacs-persist-file                    (expand-file-name ".cache/treemacs-persist" user-emacs-directory)
-        treemacs-position                        'left
-        treemacs-read-string-input               'from-child-frame
-        treemacs-recenter-distance               0.1
-        treemacs-recenter-after-file-follow      nil
-        treemacs-recenter-after-tag-follow       nil
-        treemacs-recenter-after-project-jump     'always
-        treemacs-recenter-after-project-expand   'on-distance
-        treemacs-litter-directories              '("/node_modules" "/.venv" "/.cask")
-        treemacs-project-follow-into-home        nil
-        treemacs-show-cursor                     nil
-        treemacs-show-hidden-files               t
-        treemacs-silent-filewatch                nil
-        treemacs-silent-refresh                  nil
-        treemacs-sorting                         'alphabetic-asc
-        treemacs-select-when-already-in-treemacs 'move-back
-        treemacs-space-between-root-nodes        t
-        treemacs-tag-follow-cleanup              t
-        treemacs-tag-follow-delay                1.5
-        treemacs-text-scale                      nil
-        treemacs-user-mode-line-format           nil
-        treemacs-user-header-line-format         nil
-        treemacs-wide-toggle-width               70
-        treemacs-width                           50
-        treemacs-width-increment                 1
-        treemacs-width-is-initially-locked       t
-        treemacs-workspace-switch-cleanup        nil)
-
+      (setq treemacs-space-between-root-nodes nil)
+      (setq treemacs-width 35)
+      (setq treemacs-indentation 3)
+      (setq treemacs-indentation-string " ")
+      (setq treemacs-text-scale 0)
       ;; The default width and height of the icons is 22 pixels.
-      (treemacs-resize-icons 20)
+      (treemacs-resize-icons 16)
 
       ;; Set root folder similar to VSCode theme
       (set-face-attribute 'treemacs-root-face nil
@@ -248,6 +188,10 @@ Setup a sidenav tree.
               :underline nil
               :inherit 'default
               )
+
+      (add-hook 'treemacs-mode-hook
+                (lambda ()
+                  (variable-pitch-mode -1)))
 
     :bind (:map global-map
       ("C-S-e"         . treemacs-select-window)
@@ -265,17 +209,11 @@ Setup a sidenav tree.
 
 ** Icons
 
+Icons are managed by nerd-icons.
+
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package nerd-icons
     :ensure t
-    ;; The Nerd Font you want to use in GUI
-    ;; "Symbols Nerd Font Mono" is the default and is recommended
-    ;; but you can use any other Nerd Font if you want.
-    ;;
-    ;; Example:
-    ;;
-    ;; :config
-    ;;   (nerd-icons-font-family "Symbols Nerd Font Mono")
     )
 
   (use-package nerd-icons-completion
@@ -288,18 +226,54 @@ Setup a sidenav tree.
 
   (use-package treemacs-nerd-icons
     :ensure t
-    :defer t
-    :after (:treemacs)
+    :after (treemacs nerd-icons)
     :config
-    (treemacs-load-theme "nerd-icons")
+    ;; TODO: Do not work well with indentation
+    ;;    (treemacs-nerd-icons-config)
     )
 
   (use-package nerd-icons-dired
-     :ensure t
-     :defer t
-     :hook
-     (dired-mode . nerd-icons-dired-mode)
-     )
+    :ensure t
+    :defer t
+    :hook
+    (dired-mode . nerd-icons-dired-mode)
+    )
+#+END_SRC
+
+** Tabs
+
+Sets tab mode like VSCode.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+    (use-package centaur-tabs
+      :ensure t
+      :config
+      (centaur-tabs-headline-match)
+
+      (setq centaur-tabs-style "bar")
+      (setq centaur-tabs-height 32)
+      (setq centaur-tabs-set-icons t)
+      (setq centaur-tabs-set-bar 'over)
+      (setq centaur-tabs-set-modified-marker t)
+      ;; Force dynamic width
+      (setq centaur-tabs-label-fixed-length 0)
+      ;; Set default font equal to the main font
+      (centaur-tabs-change-fonts "JetBrains Mono" 100)
+
+      ;; (setq centaur-tabs-buffer-groups-function nil)
+
+      ;; Tab are grouped using Projectile
+      (centaur-tabs-group-by-projectile-project)
+      (centaur-tabs-mode t)
+
+      :hook (
+             (after-init . centaur-tabs-mode)
+             )
+      :bind (
+             ("C-<prior>" . centaur-tabs-backward)
+             ("C-<next>" . centaur-tabs-forward)
+             )
+  )
 #+END_SRC
 
 ** Line numbers
@@ -335,6 +309,13 @@ In programming modes it's useful to have a vertical line that show the right mar
 
     (setq-default fill-column 80)
     (add-hook 'prog-mode-hook 'display-fill-column-indicator-mode)
+
+    ;; Override fill-column con il valore da EditorConfig se presente
+    (add-hook 'editorconfig-after-apply-functions
+              (lambda (props)
+                (let ((max-line (gethash 'max_line_length props)))
+                  (when max-line
+                    (setq fill-column (string-to-number max-line))))))
     )
 
   (my-display-fill-column)
@@ -551,6 +532,7 @@ This preference ensures Emacs reload buffer automatically.
 #+END_SRC
 
 * Editing
+
 ** Indent preferences (generic)
 
 First we define a set of default values to be used in every buffer.
@@ -728,10 +710,16 @@ An example is switching between files such as C/C++ header files.
   (require 'cl-lib)
 
   (defvar my-other-file-alist
-    '(("\\.spec\\.ts\\'" (".ts" ".html" ".scss"))
+    '(
+      ("\\.spec\\.ts\\'" (".ts" ".html" ".scss"))
       ("\\.ts\\'"        (".html" ".scss" ".spec.ts"))
       ("\\.html\\'"      (".scss" ".spec.ts" ".ts"))
-      ("\\.scss\\'"      (".spec.ts" ".ts" ".html")))
+      ("\\.scss\\'"      (".spec.ts" ".ts" ".html"))
+      ("\\.cpp\\'"       (".hpp"))
+      ("\\.c\\'"         (".h"))
+      ("\\.hpp\\'"       (".cpp"))
+      ("\\.h\\'"         (".c"))
+      )
     "Pattern associations → list of extensions to cycle.")
 
   (defun my-cycle-other-file()
@@ -1230,9 +1218,10 @@ Enable only needed UI.
            (json-ts-mode       . lsp)
            (ruby-ts-mode       . lsp)
            (rust-ts-mode       . lsp)
+           (python-ts-mode     . lsp)
            (typescript-ts-mode . lsp)
            (yaml-ts-mode       . lsp)
-           (web-mode          . lsp)
+           (web-mode           . lsp)
            )
     )
 #+END_SRC
@@ -1412,7 +1401,39 @@ Integrate with projectile package.
     :mode (("README\\.md\\'" . gfm-mode)
            ("\\.md\\'" . markdown-mode)
            ("\\.markdown\\'" . markdown-mode))
+    :bind (
+            ("C-c C-e" . markdown-do)
+           )
     )
+#+END_SRC
+
+** Language: Markwhen (Gantt)
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+;; ─── Markwhen ────────────────────────────────────────────────────
+
+(use-package markwhen-mode
+  :ensure nil  ;; non è su MELPA — lo definiamo noi
+  :mode ("\\.mw\\'" . markwhen-mode)
+  :init
+  (define-derived-mode markwhen-mode text-mode "Markwhen"
+    "Major mode for Markwhen .mw files."
+    (setq-local comment-start "// ")
+    (font-lock-add-keywords nil
+      '(("^[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}.*:.*$" . font-lock-keyword-face)
+        ("#[a-zA-Z]+"                                      . font-lock-type-face)
+        ("//.*$"                                           . font-lock-comment-face)
+        ("^group.*$"                                       . font-lock-builtin-face)
+        ("^endGroup$"                                      . font-lock-builtin-face)
+        ("★\\|●\\|⚠\\|⏸"                                 . font-lock-warning-face))))
+  :bind (:map markwhen-mode-map
+         ("C-c C-v" . markwhen-preview))
+  :config
+  (defun markwhen-preview ()
+    (interactive)
+    (shell-command
+      (format "npx mw %s /tmp/mw-preview.html && xdg-open /tmp/mw-preview.html"
+              buffer-file-name))))
 #+END_SRC
 
 ** Language: Nginx
@@ -1599,6 +1620,8 @@ This is at the end because we may want to call
            ("C-S-m"    . 'flymake-show-buffer-diagnostics)
            ("<f8>"     . 'flymake-goto-next-error)
            ("S-<f8>"   . 'flymake-goto-prev-error)
+
+
            )
     )
 #+END_SRC
