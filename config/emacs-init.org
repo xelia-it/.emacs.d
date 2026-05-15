@@ -49,37 +49,38 @@ If these are not installed it fallbacks to "DejaVu Sans Mono" that is pretty com
 These fonts should be installed manually.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-  (defun my-set-default-font()
+  (defun my-set-default-font ()
+    "Set the first available preferred font."
     (interactive)
-    "Set default font for the whole frame"
 
-    ;; Search installed font and apply  the first found
-    (cond
-     ((find-font (font-spec :name "JetBrains Mono"))
-      (set-frame-font "JetBrains Mono 11" t t)
-      )
+    (let ((fonts '(
+                   "JetBrains Mono"
+                   "Monospace"
+                   "DejaVu Sans Mono"
+                   "Droid Sans Mono"
+                   "Consolas"
+                   "Monaco"
+                   ))
+          (size 110)
+          selected-font)
 
-     ((find-font (font-spec :name "Monospace"))
-      (set-frame-font "Monospace 11" t t)
-      )
+      (catch 'font-found
+        (dolist (font fonts)
+          (when (find-font (font-spec :name font))
+            (setq selected-font font)
+            (throw 'font-found t))))
 
-     ((find-font (font-spec :name "DejaVu Sans Mono"))
-      (set-frame-font "DejaVu Sans Mono 11" t t)
-      )
+      (when selected-font
+        (set-face-attribute 'default nil
+                            :family selected-font
+                            :height size)
 
-     ((find-font (font-spec :name "Droid Sans Mono"))
-      (set-frame-font "Droid Sans Mono 11" t t)
-      )
-
-     ((find-font (font-spec :name "Consolas"))
-      (set-frame-font "Consolas 11" t t)
-      )
-
-     ((find-font (font-spec :name "Monaco"))
-      (set-frame-font "Monaco 11" t t)
-      )
+        ;; TODO: Uncomment to show informational message
+        ;; (message "Using font: %s (%s)"
+        ;;          selected-font
+        ;;          (/ size 10.0))
+        ))
     )
-  )
 
   (my-set-default-font)
 #+END_SRC
@@ -173,7 +174,8 @@ Setup a sidenav tree.
       (define-key winum-keymap (kbd "M-0") #'treemacs-select-window))
     :config
 
-      (setq treemacs-space-between-root-nodes nil)
+      ;; Separate projects with an empty line
+      (setq treemacs-space-between-root-nodes t)
       (setq treemacs-width 35)
       (setq treemacs-indentation 3)
       (setq treemacs-indentation-string " ")
@@ -264,11 +266,14 @@ Sets tab mode like VSCode.
 
       ;; Tab are grouped using Projectile
       (centaur-tabs-group-by-projectile-project)
-      (centaur-tabs-mode t)
 
-      :hook (
-             (after-init . centaur-tabs-mode)
-             )
+      ;; TODO: uncomment in order to run at startup
+      ;; (centaur-tabs-mode t)
+      ;;
+      ;; :hook (
+      ;;        (after-init . centaur-tabs-mode)
+      ;;        )
+
       :bind (
              ("C-<prior>" . centaur-tabs-backward)
              ("C-<next>" . centaur-tabs-forward)
