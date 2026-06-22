@@ -63,3 +63,4 @@ projectile.cache
 projects
 .projectile-cache.eld
 tree-sitter
+.aider*
