@@ -73,7 +73,15 @@ These fonts should be installed manually.
       (when selected-font
         (set-face-attribute 'default nil
                             :family selected-font
-                            :height size)
+                            :height size
+                            :weight 'normal)
+
+        ;; Improve font rendering on Linux
+        (when (eq system-type 'gnu/linux)
+          (setq-default line-spacing 0.1)
+          ;; Disable bold font simulation
+          (set-face-attribute 'bold nil :weight 'normal)
+          )
 
         ;; TODO: Uncomment to show informational message
         ;; (message "Using font: %s (%s)"
@@ -1556,12 +1564,16 @@ Manage nginx configuration files.
   (use-package systemd
     :ensure t
     :defer t
-    :mode ("\\.service\\'" "\\.timer\\'" "\\.target\\'" "\\.socket\\'"
-           "\\.mount\\'" "\\.automount\\'" "\\.swap\\'" "\\.path\\'"
-           "\\.slice\\'" "\\.scope\\'")
-   ;; :config
-   ;; (add-hook 'systemd-mode-hook #'turn-on-font-lock)
-    )
+    :mode (("\\.service\\'"    . systemd-mode)
+           ("\\.timer\\'"      . systemd-mode)
+           ("\\.target\\'"     . systemd-mode)
+           ("\\.socket\\'"     . systemd-mode)
+           ("\\.mount\\'"      . systemd-mode)
+           ("\\.automount\\'"  . systemd-mode)
+           ("\\.swap\\'"       . systemd-mode)
+           ("\\.path\\'"       . systemd-mode)
+           ("\\.slice\\'"      . systemd-mode)
+           ("\\.scope\\'"      . systemd-mode)))
 #+END_SRC
 
 * Misc tools

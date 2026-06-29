@@ -7,23 +7,23 @@
 
 (let ((class '((class color) (min-colors 89)))
       ;; Palette VSCode Dark Modern+
-      (vscode-bg-extra-dark       "#181818")
+      (vscode-bg-extra-dark       "#1a1a1a")
       (vscode-bg-dark             "#1f1f1f")
-      (vscode-bg-light            "#202020")
+      (vscode-bg-light            "#252526")
       (vscode-fg-light            "#cccccc")
-      (vscode-fg-dim              "#6e7681")
+      (vscode-fg-dim              "#858585")
 
       (vscode-border-dark         "#2b2b2b")
-      (vscode-border-accent       "#0078d4")
+      (vscode-border-accent       "#007acc")
       (vscode-cursor              "#aeafad")
       (vscode-selection-bg        "#264f78")
-      (vscode-line-highlight      "#2a2a2a")
+      (vscode-line-highlight      "#282828")
 
-      (vscode-error               "#f85149")
-      (vscode-warning             "#ff8800")
+      (vscode-error               "#f48771")
+      (vscode-warning             "#cca700")
       (vscode-info                "#3794ff")
 
-      (vscode-string              "#d69d85")
+      (vscode-string              "#ce9178")
       (vscode-function            "#dcdcaa")
       (vscode-variable            "#9cdcfe")
 
@@ -32,15 +32,15 @@
       (vscode-type                "#4ec9b0")
       (vscode-comment             "#6a9955")
       (vscode-tag                 "#d7ba7d") ;; CSS Selector
-      (vscode-git-added           "#2ea043")
-      (vscode-git-modified        "#0078d4")
+      (vscode-git-added           "#89d185")
+      (vscode-git-modified        "#e2c08d")
 
       (vscode-brackets            "#c586c0")
       (vscode-brackets-match      "#ffd700")
-      (vscode-search-match        "#623315")
-      (vscode-selection-bg-dark   "#04395e") ;; Vertico completion
-      (vscode-highlight-read      "#474747") ;; Keyword highlight
-      (vscode-highlight-write     "#093d5b") ;; Keyword assignment highlight
+      (vscode-search-match        "#613214")
+      (vscode-selection-bg-dark   "#094771") ;; Vertico completion
+      (vscode-highlight-read      "#575757") ;; Keyword highlight
+      (vscode-highlight-write     "#004972") ;; Keyword assignment highlight
 
       ;; Palette extra VSCode
       (vscode-namespace         "#4ec9b0") ;; namespace/import
