@@ -4,8 +4,7 @@ An Emacs configuration with theme and keybinding inspired to Visual Studio Code.
 
 ## Requirements
 
-This configuration is compatible with *Emacs 28.1+* and
-has test on *Debian 11* and *Debian 12*.
+This configuration is compatible with *Emacs 30.1+* and tested on *Debian 13*.
 
 You also require [git](https://git-scm.com/) for cloning the repo.
 

@@ -78,7 +78,7 @@ These fonts should be installed manually.
 
         ;; Improve font rendering on Linux
         (when (eq system-type 'gnu/linux)
-          (setq-default line-spacing 0.1)
+          (setq-default line-spacing 0.05)
           ;; Disable bold font simulation
           (set-face-attribute 'bold nil :weight 'normal)
           )
