@@ -225,9 +225,9 @@
    ;; Modeline
 
    ;; Active modeline
-   `(mode-line ((t (:background ,vscode-bg-extra-dark :foreground ,vscode-fg-light :box nil))))
+   `(mode-line ((t (:background ,vscode-bg-extra-dark :foreground ,vscode-fg-light :box nil :height 0.95))))
    ;; Inactive modeline
-   `(mode-line-inactive ((,class (:background ,vscode-bg-extra-dark :foreground ,vscode-fg-dim :box nil))))
+   `(mode-line-inactive ((,class (:background ,vscode-bg-extra-dark :foreground ,vscode-fg-dim :box nil :height 0.95))))
    `(mode-line-hightlight ((,class (:background nil :foreground ,vscode-fg-light :box nil))))
    `(mode-line-buffer-id ((,class (:background nil :foreground ,vscode-fg-light))))
    `(mode-line-emphasis ((,class (:background nil :foreground ,vscode-fg-light))))
