@@ -55,6 +55,8 @@ site-lisp/package/
 /.python-environments/
 /.lsp-session*
 /.cache
+/projectile-frecency.eld
+
 /config/emacs-init.el
 /eln-cache/
 lsp-cache
@@ -64,3 +66,4 @@ projects
 .projectile-cache.eld
 tree-sitter
 .aider*
+.markdown-preview.html

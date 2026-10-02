@@ -29,7 +29,7 @@ You also require [git](https://git-scm.com/) for cloning the repo.
 
 * Details about implemented [keybindings](docs/keybindings.md).
 * Where to download [fonts](docs/fonts.md) for better experience.
-* How to [configure LSP](docs/lsp-configuration.md).
+* External tools needed ([LSP servers, Markdown](docs/external-packages.md)).
 
 ## License
 
