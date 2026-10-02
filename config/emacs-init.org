@@ -388,7 +388,7 @@ Utility for killing buffers other than current buffer.
   (defun my-flymake-focus-window()
     "Show Flymake diagnostic buffer and focus it."
     (interactive)
-    (flymake-show-buffer-diagnostics)
+    (flymake-show-project-diagnostics)
     (let ((win (seq-find
                 (lambda (window)
                   (with-current-buffer (window-buffer window)
@@ -402,10 +402,23 @@ Utility for killing buffers other than current buffer.
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package flymake
     :defer t
+    :custom
+    (flymake-show-diagnostics-at-end-of-line nil)
+    (flymake-no-changes-timeout 0.5)
+    :config
+    ;; Problems panel (like VSCode): fixed at the bottom, never closed by
+    ;; `delete-other-windows' (ESC) or by other buffers replacing it.
+    (add-to-list 'display-buffer-alist
+                 '("\\*Flymake diagnostics"
+                   (display-buffer-in-side-window)
+                   (side . bottom)
+                   (slot . 0)
+                   (window-height . 0.20)
+                   (window-parameters . ((no-delete-other-windows . t)))))
     :bind (
            ("C-S-m"    . 'my-flymake-focus-window)
            ("<f8>"     . 'flymake-goto-next-error)
-           ("S-<f8>"   . 'flymake-goto-previous-error)
+           ("S-<f8>"   . 'flymake-goto-prev-error)
            )
     )
 #+END_SRC
@@ -665,7 +678,7 @@ Setup Cut-Paste like most Windows and MAC editors.
       )
     :bind (
            ("S-C-r" . vr/mc-mark)
-           ("C-r" . vr/replace)
+           ("C-S-h" . vr/replace)  ;; VS Code: Ctrl+Shift+H
            )
     )
 #+END_SRC
@@ -708,8 +721,8 @@ This package interferes with org-mode so we
     :bind (
            ("M-<up>" . move-dup-move-lines-up)
            ("M-<down>" . move-dup-move-lines-down)
-           ("M-C-<up>" . move-dup-duplicate-up)
-           ("M-C-<down>" . move-dup-duplicate-down)
+           ("M-S-<up>" . move-dup-duplicate-up)
+           ("M-S-<down>" . move-dup-duplicate-down)
            )
     )
 #+END_SRC
@@ -800,8 +813,8 @@ Add the ability to manage multiple cursors.
 
     ;; Basic selection
     (global-set-key (kbd "C-D") 'mc/mark-next-like-this-word)
-    (global-set-key (kbd "M-S-<up>") 'mc/mark-previous-lines)
-    (global-set-key (kbd "M-S-<down>") 'mc/mark-next-lines)
+    (global-set-key (kbd "C-M-<up>") 'mc/mark-previous-lines)
+    (global-set-key (kbd "C-M-<down>") 'mc/mark-next-lines)
     )
 #+END_SRC
 
@@ -901,6 +914,15 @@ Consult provides the actual functions for vertico.
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my-go-to-symbol-in-workspace ()
+    "Go to a symbol of the whole workspace (LSP), else of the project buffers."
+    (interactive)
+    (if (bound-and-true-p lsp-mode)
+        (call-interactively #'xref-find-apropos)
+      (consult-imenu-multi)))
+
+  (recentf-mode 1)
+
   (use-package consult
     :ensure t
     :defer t
@@ -912,7 +934,9 @@ Consult provides the actual functions for vertico.
            ("C-S-v" . consult-yank-from-kill-ring)
            ("C-x C-f" . find-file) ;; Open file
            ("C-o" . find-file)     ;; Open file
-           ("C-t" . consult-imenu) ;; Symbols
+           ("C-S-o" . consult-imenu)               ;; Symbols in file
+           ("C-t" . my-go-to-symbol-in-workspace)  ;; Symbols in workspace
+           ("C-S-t" . consult-recent-file)         ;; Reopen closed file
            )
     )
 #+END_SRC
@@ -965,7 +989,6 @@ Now we can activate "projectile" package.
            ("S-<f9>" . projectile-configure-project)
            ("M-<f9>" . projectile-test-project)
            ("C-S-f"  . projectile-grep)
-           ("S-C-o"  . projectile-switch-project)
            ("C-p"    . my-projectile-find-file)
            )
        )
@@ -976,7 +999,7 @@ Now we can activate "projectile" package.
     :ensure t
     :after (consult projectile)
     :bind (
-           ("S-C-o"  . consult-projectile-switch-project)
+           ("C-r"    . consult-projectile-switch-project)  ;; VS Code: open recent
            )
     )
 #+END_SRC
@@ -1051,7 +1074,11 @@ It allows for better parsing of installed grammars.
   (use-package treesit-auto
     :ensure t
     :custom
-    (treesit-auto-install 't)
+    ;; Never download grammars automatically: Debian ships libtree-sitter 0.22
+    ;; (ABI 14) while the latest upstream grammars are ABI 15, so they would
+    ;; be reinstalled at every start (`version-mismatch').
+    ;; Grammars that do not load fall back to the classic major mode.
+    (treesit-auto-install nil)
     :config
     (treesit-auto-add-to-auto-mode-alist 'all)
     (global-treesit-auto-mode)
@@ -1086,8 +1113,8 @@ All the LSP fine tuning are grouped in the following functions.
     "Activate/deactivate LSP functionality."
     (interactive)
 
-    ;; Flycheck (or flymake if no flycheck is present)
-    (setq lsp-diagnostics-provider :auto)
+    ;; Diagnostics are shown by Flymake (built in)
+    (setq lsp-diagnostics-provider :flymake)
 
     ;; Completion (company-mode)
     (setq lsp-completion-provider :capf)   ;; It can be disabled with :none
@@ -1101,7 +1128,6 @@ All the LSP fine tuning are grouped in the following functions.
     ;; Eldoc shows information about methods in the modeline
     ;; Queste configurazioni vengono eseguite dopo che lsp-mode è stato caricato.
     (setq lsp-signature-auto-activate nil)
-    (setq lsp-signature-render-enabled nil)
     (setq lsp-eldoc-enable-hover nil)
     (setq lsp-eldoc-render-all nil)
 
@@ -1120,10 +1146,6 @@ All the LSP fine tuning are grouped in the following functions.
     (setq lsp-language-id-configuration
           (append lsp-language-id-configuration
                   '((scss-ts-mode . "scss"))))
-    ;; Override for HTML
-    (setq lsp-html-format-tab-size 2)
-    (setq lsp-html-options '((tabSize . 2)
-                             (insertSpaces . t)))
     )
 #+END_SRC
 
@@ -1135,8 +1157,6 @@ All the LSP fine tuning are grouped in the following functions.
     ;; Performance improvements
     (setq lsp-use-plists t)
 
-    ;; I still prefer flymake: it's simple, fast and integrated in core Emacs
-    (setq lsp-prefer-flymake t)
     ;; Don't watch the file in the workspace
     (setq lsp-enable-file-watchers nil)
     ;; Set warning only if the file to watch are bigger than 100000
@@ -1182,7 +1202,8 @@ Enable only needed UI.
     (setq lsp-ui-doc-enable t)             ;; Enable documentation
     (setq lsp-ui-doc-show-with-cursor t)   ;; Enable cursor hover (keep mouse hover)
     (setq lsp-ui-doc-show-with-mouse t)    ;; Enable mouse hover (keep cursor hover)
-    (setq lsp-ui-doc-use-webkit t)         ;; Display documentation using a webkit
+    ;; No webkit/HTML rendering: Debian Emacs is built without xwidgets.
+    (setq lsp-ui-doc-use-webkit nil)
     (setq lsp-ui-doc-delay 0.2)            ;; Setup delay
     (setq lsp-ui-doc-use-childframe t)     ;; Ensures to show doc in a in a childframe
     (setq lsp-ui-doc-position 'at-point)   ;; Position doc near the cursor
@@ -1226,8 +1247,12 @@ Enable only needed UI.
            (lsp-mode . lsp-enable-which-key-integration)
 
            ;; Enable languages (treesit support)
+           (bash-ts-mode       . lsp)
            (c++-ts-mode        . lsp)
            (c-ts-mode          . lsp)
+           ;; Classic modes: used when the Tree-sitter grammar is not loadable
+           (c-mode             . lsp)
+           (c++-mode           . lsp)
            (json-ts-mode       . lsp)
            (ruby-ts-mode       . lsp)
            (rust-ts-mode       . lsp)
@@ -1260,6 +1285,7 @@ Add lsp-ui package for better user interface.
 
     :bind (
            ("<f12>"     . lsp-find-definition)
+           ("M-<f12>"   . lsp-ui-peek-find-definitions)
            ("<S-f12>"   . lsp-ui-peek-find-references)
            ("<C-f12>"   . lsp-find-implementation)
            )
@@ -1302,7 +1328,7 @@ Integrate with treemacs package.
     :defer t
     :commands lsp-treemacs-error-list
     :bind (
-            ("C-S-t" . lsp-treemacs-symbols)
+            ("C-c l s" . lsp-treemacs-symbols)
             )
     )
 #+END_SRC
@@ -1343,10 +1369,13 @@ This is a fallback in case `typescrypt-ts-mode` grammar do not work properly.
 ** Language: C/C++
 
 #+BEGIN_SRC emacs-lisp :tangle yes
+  ;; ccls must be loaded before `lsp' looks for a server: its client is
+  ;; registered by the package, otherwise C/C++ buffers get no diagnostics.
   (use-package ccls
     :ensure t
-    :defer t
-     )
+    :after lsp-mode
+    :demand t
+    )
 #+END_SRC
 
 ** Language: YAML
@@ -1406,18 +1435,40 @@ Integrate with projectile package.
   (use-package markdown-mode
     :ensure t
     :defer t
-    :init
-    (setq markdown-command "multimarkdown")
-
     :commands (markdown-mode gfm-mode)
+
+    :init
+    ;; First available Markdown processor (apt install pandoc | multimarkdown)
+    (setq markdown-command
+          (or (executable-find "multimarkdown")
+              (executable-find "pandoc")
+              (executable-find "cmark")
+              "markdown"))
 
     :mode (("README\\.md\\'" . gfm-mode)
            ("\\.md\\'" . markdown-mode)
            ("\\.markdown\\'" . markdown-mode))
-    :bind (
-            ("C-c C-e" . markdown-do)
-           )
+    :bind (:map markdown-mode-map
+                ("C-c C-e" . markdown-do))
+
     )
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  ;; Live preview in browser: M-x markdown-preview-mode (or C-c C-v)
+  (use-package markdown-preview-mode
+    :ensure t
+    :after markdown-mode
+    :bind (:map markdown-mode-map
+                ("C-c C-v" . markdown-preview-mode)))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package markdown-mermaid
+    :ensure t
+    :after markdown-mode
+    :bind (:map markdown-mode-map
+                ("C-c m" . markdown-mermaid-preview)))
 #+END_SRC
 
 ** Language: Markwhen (Gantt)
@@ -1616,6 +1667,22 @@ This is at the end because we may want to call
 
 #+BEGIN_SRC emacs-lisp :tangle yes
 
+  (defun my-escape ()
+    "Quit minibuffer, deactivate region, or `keyboard-quit'.
+Unlike `keyboard-escape-quit' it never closes the other windows."
+    (interactive)
+    (cond ((minibuffer-window-active-p (selected-window)) (abort-recursive-edit))
+          ((region-active-p) (deactivate-mark))
+          (t (keyboard-quit))))
+
+  ;; Code folding: Ctrl+Shift+[ and Ctrl+Shift+] (Emacs sees them as C-{ and C-})
+  (use-package hideshow
+    :ensure nil
+    :hook (prog-mode . hs-minor-mode)
+    :bind (:map hs-minor-mode-map
+                ("C-{" . hs-hide-block)
+                ("C-}" . hs-show-block)))
+
   (use-package emacs
     :ensure nil
     :config
@@ -1627,17 +1694,16 @@ This is at the end because we may want to call
            ("C-w"      . 'kill-buffer-and-window)
            ("S-C-<f4>" . 'my-kill-other-buffers)
            ("S-C-w"    . 'my-kill-other-buffers)
-           ("<escape>" . 'keyboard-escape-quit)
+           ("<escape>" . 'my-escape)
+           ("C-S-p"    . 'execute-extended-command)
+           ("C-S-z"    . 'undo-redo)
+           ("C-S-k"    . 'kill-whole-line)
            ("C-s"      . 'my-save)
            ("C-M-s"    . 'my-save-all)
            ("C-S-a"    . 'my-cycle-other-file)
            ("C-S-x"    . 'list-packages)
            ("C-ò"      . 'term)
            ("C-/"      . comment-dwim)
-           ("C-S-m"    . 'flymake-show-buffer-diagnostics)
-           ("<f8>"     . 'flymake-goto-next-error)
-           ("S-<f8>"   . 'flymake-goto-prev-error)
-
 
            )
     )
