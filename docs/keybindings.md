@@ -1,84 +1,71 @@
-# Keybinding
+# Keybindings
 
-Currently supported VSCode Keybindings.
+This configuration aims to keep familiar Visual Studio Code shortcuts while
+preserving Emacs commands where a direct mapping would cause a conflict.
 
-## VSCode sidebar
+## Same as VS Code
 
-| Keybinding                                        | Visual Studio Behaviour  | Bind to                      |
-|---------------------------------------------------|--------------------------|------------------------------|
-| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>E</kbd> | Side Bar: Explorer       | `treemacs-select-window`     |
-| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd> | Side Bar: Search         | `projectile-grep`            |
-| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>G</kbd> | Side Bar: Source Control | `magit-status`               |
-| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>D</kbd> | Side Bar: Run            | `projectile-compile-project` |
-| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>X</kbd> | Side Bar: Extensions     | `list-packages`              |
+| Shortcut | VS Code action | Emacs command |
+|---|---|---|
+| <kbd>Ctrl</kbd> + <kbd>S</kbd> | Save | `my-save` (save current buffer and refresh Magit) |
+| <kbd>Ctrl</kbd> + <kbd>O</kbd> | Open File | `find-file` |
+| <kbd>Ctrl</kbd> + <kbd>P</kbd> | Quick Open / Go to File | `my-projectile-find-file` (1) |
+| <kbd>Ctrl</kbd> + <kbd>F</kbd> | Find | `my-consult-line-empty-or-symbol` |
+| <kbd>Ctrl</kbd> + <kbd>Tab</kbd> / <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Tab</kbd> | Switch editor | `consult-buffer` |
+| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>E</kbd> | Explorer | `treemacs-select-window` |
+| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd> | Search in files | `projectile-grep` |
+| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>G</kbd> | Source Control | `magit-status` |
+| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd> | Command Palette | `execute-extended-command` |
+| <kbd>Ctrl</kbd> + <kbd>/</kbd> | Toggle line comment | `comment-dwim` |
+| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>K</kbd> | Delete line | `kill-whole-line` |
+| <kbd>Ctrl</kbd> + <kbd>Backspace</kbd> | Delete word left | Emacs default: `backward-kill-word` |
+| <kbd>Ctrl</kbd> + <kbd>Delete</kbd> | Delete word right | Emacs default: `kill-word` |
+| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Z</kbd> | Redo | `undo-redo` |
+| <kbd>Ctrl</kbd> + <kbd>D</kbd> | Add next occurrence | `mc/mark-next-like-this-word` |
+| <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>↑</kbd> / <kbd>↓</kbd> | Add cursor above / below | `mc/mark-previous-lines` / `mc/mark-next-lines` |
+| <kbd>Alt</kbd> + <kbd>↑</kbd> / <kbd>↓</kbd> | Move line up / down | `move-dup-move-lines-up` / `move-dup-move-lines-down` |
+| <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>↑</kbd> / <kbd>↓</kbd> | Copy line up / down | `move-dup-duplicate-up` / `move-dup-duplicate-down` |
+| <kbd>F2</kbd> | Rename symbol | `lsp-rename` |
+| <kbd>F8</kbd> / <kbd>Shift</kbd> + <kbd>F8</kbd> | Next / previous problem | `flymake-goto-next-error` / `flymake-goto-prev-error` |
+| <kbd>F12</kbd> | Go to Definition | `lsp-find-definition` |
+| <kbd>Alt</kbd> + <kbd>F12</kbd> | Peek Definition | `lsp-ui-peek-find-definitions` |
+| <kbd>Shift</kbd> + <kbd>F12</kbd> | Find All References | `lsp-ui-peek-find-references` |
+| <kbd>Ctrl</kbd> + <kbd>F12</kbd> | Go to Implementation | `lsp-find-implementation` |
+| <kbd>Esc</kbd> | Dismiss / cancel | `my-escape` (2) |
 
-## File Navigation
+## Emacs-specific or different from VS Code
 
-| Keybinding                                          | Visual Studio Behaviour       | Bind to                            |
-|-----------------------------------------------------|-------------------------------|------------------------------------|
-| <kbd>Ctrl</kbd> + <kbd>P</kbd>                      | Go To File ...                | `my-projectile-find-file` (1)      |
-| <kbd>Ctrl</kbd> + <kbd>R</kbd>                      | Open Recent (project)         | `consult-projectile-switch-project`|
-| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>T</kbd>   | Reopen Closed Editor          | `consult-recent-file`              |
-| <kbd>Ctrl</kbd> + <kbd>Tab</kbd>                    | Move to next file             | `consult-buffer`                   |
-| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Tab</kbd> | Move to previous file         | `consult-buffer`                   |
-| <kbd>Ctrl</kbd> + <kbd>PgUp</kbd> / <kbd>PgDn</kbd> | Previous / next tab           | `centaur-tabs-backward` / `-forward` |
-| <kbd>Ctrl</kbd> + <kbd>W</kbd>                      | Close Window                  | `kill-buffer-and-window`           |
-| <kbd>Ctrl</kbd> + <kbd>S</kbd>                      | Save file                     | `my-save`                      (2) |
+| Shortcut | Emacs action | Why it differs |
+|---|---|---|
+| <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>S</kbd> | Save all files: `my-save-all` | Dedicated binding; VS Code uses <kbd>Ctrl</kbd> + <kbd>K</kbd>, then <kbd>S</kbd>. |
+| <kbd>Ctrl</kbd> + <kbd>W</kbd> | Kill current buffer and window | VS Code's close-editor action, implemented with Emacs buffer/window behavior. |
+| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>W</kbd> | Kill other file buffers: `my-kill-other-buffers` | Custom cleanup command; it does not close the entire Emacs application. |
+| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>A</kbd> | Cycle to related file: `my-cycle-other-file` | Custom switch among related source/header or Angular files. |
+| <kbd>Ctrl</kbd> + <kbd>R</kbd> | Switch project: `consult-projectile-switch-project` | Reassigned from replace to project switching. |
+| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>H</kbd> | Replace: `vr/replace` | Replace command moved here to avoid the <kbd>Ctrl</kbd> + <kbd>R</kbd> conflict. |
+| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>D</kbd> | Compile project: `projectile-compile-project` | Uses the VS Code Run/Debug shortcut for compiling. |
+| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>X</kbd> | List packages: `list-packages` | Emacs package manager, not VS Code's Extensions marketplace. |
+| <kbd>Ctrl</kbd> + <kbd>T</kbd> | Go to symbol in workspace: `my-go-to-symbol-in-workspace` | Uses LSP symbols or project indexes. |
+| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>O</kbd> | Go to symbol in current file: `consult-imenu` | Emacs/Consult implementation. |
+| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>T</kbd> | Reopen recent file: `consult-recent-file` | Reopens a recent file; it is not a full editor-history stack. |
+| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>V</kbd> | Browse clipboard history: `consult-yank-from-kill-ring` | Emacs kill-ring picker. |
+| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>M</kbd> | Show project diagnostics: `my-flymake-focus-window` | Opens/focuses the Flymake problems panel. |
+| <kbd>Ctrl</kbd> + <kbd>{</kbd> / <kbd>}</kbd> | Toggle / open code fold | `origami-recursively-toggle-node` / `origami-open-node`; uses LSP folding ranges. On an Italian layout these are entered with the corresponding shifted/AltGr keys. |
+| <kbd>Ctrl</kbd> + <kbd>ò</kbd> | Open terminal: `term` | Italian keyboard layout shortcut. |
+| <kbd>Ctrl</kbd> + <kbd>C</kbd>, <kbd>L</kbd>, <kbd>S</kbd> | Show workspace symbols: `lsp-treemacs-symbols` | Emacs-style multi-key sequence. |
+| <kbd>Ctrl</kbd> + <kbd>L</kbd> | Open LSP command map | Emacs prefix map for language-server commands. |
+| <kbd>Ctrl</kbd> + <kbd>Space</kbd> | Trigger completion: `company-complete` | Manual Company completion. |
+| <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>Space</kbd> | Trigger Copilot: `copilot-complete` | Explicit Copilot completion. |
+| <kbd>F9</kbd> / <kbd>Ctrl</kbd> + <kbd>F9</kbd> / <kbd>Shift</kbd> + <kbd>F9</kbd> / <kbd>Alt</kbd> + <kbd>F9</kbd> | Compile / run / configure / test project | Projectile project commands. |
+| <kbd>F6</kbd> | Show Git history: `magit-log-all` | Magit history view. |
+| <kbd>Alt</kbd> + <kbd>F5</kbd> / <kbd>Shift</kbd> + <kbd>Alt</kbd> + <kbd>F5</kbd> | Next / previous Git hunk | `git-gutter:next-hunk` / `git-gutter:previous-hunk`. |
 
-## Error management
+## Not currently bound
 
-| Keybinding                                         | Visual Studio Behaviour         | Bind to                           |
-|----------------------------------------------------|---------------------------------|-----------------------------------|
-| <kbd>F8</kbd>                                      | Go to next error or warning     | `flymake-goto-next-error`         |
-| <kbd>Shift</kbd> + <kbd>F8</kbd>                   | Go to previous error or warning | `flymake-goto-prev-error`         |
-| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>M</kbd>  | Show Problems panel             | `my-flymake-focus-window` (3)     |
-
-## Editing
-
-| Keybinding                                         | Visual Studio Behaviour      | Bind to                                |
-|----------------------------------------------------|------------------------------|----------------------------------------|
-| <kbd>Ctrl</kbd> + <kbd>/</kbd>                     | Toggle line comment          | `comment-dwim`                         |
-| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>[</kbd>  | Fold innermost block         | `hs-hide-block` (4)                    |
-| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>]</kbd>  | Unfold innermost block       | `hs-show-block` (4)                    |
-| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Z</kbd>  | Redo                         | `undo-redo`                            |
-| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>K</kbd>  | Delete line                  | `kill-whole-line`                      |
-| <kbd>Ctrl</kbd> + <kbd>D</kbd>                     | Add next occurrence          | `mc/mark-next-like-this-word`          |
-| <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>↑</kbd>/<kbd>↓</kbd>   | Add cursor above / below | `mc/mark-previous-lines` / `mc/mark-next-lines` |
-| <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>↑</kbd>/<kbd>↓</kbd>  | Copy line up / down      | `move-dup-duplicate-up` / `-down`     |
-| <kbd>Alt</kbd> + <kbd>↑</kbd>/<kbd>↓</kbd>         | Move line up / down          | `move-dup-move-lines-up` / `-down`     |
-| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>H</kbd>  | Replace                      | `vr/replace`                           |
-| <kbd>F2</kbd>                                      | Rename symbol                | `lsp-rename`                           |
-
-## Misc
-
-| Keybinding                                          | Visual Studio Behaviour       | Bind to                            |
-|-----------------------------------------------------|-------------------------------|------------------------------------|
-| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>   | List commands                 | `execute-extended-command`         |
-| <kbd>Ctrl</kbd> + <kbd>T</kbd>                      | Go To Symbol in Workspace ... | `my-go-to-symbol-in-workspace`     |
-| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>O</kbd>   | Go To Symbol in File ...      | `consult-imenu`                    |
-| <kbd>F12</kbd>                                      | Go to Definition              | `lsp-find-definition`              |
-| <kbd>Alt</kbd> + <kbd>F12</kbd>                     | Peek Definition               | `lsp-ui-peek-find-definitions`     |
-| <kbd>Shift</kbd> + <kbd>F12</kbd>                   | Find All References           | `lsp-ui-peek-find-references`      |
-| <kbd>Ctrl</kbd> + <kbd>F12</kbd>                    | Go to Implementation          | `lsp-find-implementation`          |
-| <kbd>Esc</kbd>                                      | Close popup / clear selection | `my-escape` (5)                    |
-| <kbd>Ctrl</kbd> + <kbd>ò</kbd>                      | Terminal (Italian layout)     | `term`                             |
-| `C-c l s`                                           | Outline panel                 | `lsp-treemacs-symbols`             |
+* <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>S</kbd> (VS Code **Save As…**): no explicit binding; use `M-x write-file`.
+* <kbd>Ctrl</kbd> + <kbd>K</kbd>, then <kbd>S</kbd> (VS Code **Save All**): not bound as a sequence. Emacs keeps its standard <kbd>Ctrl</kbd> + <kbd>K</kbd> `kill-line` command; use <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>S</kbd> for Save All.
 
 ## Notes
 
-1. This custom function that calls `projectile-find-file` when the opened file belongs to a project.
-   If you press <kbd>Ctrl</kbd> + <kbd>P</kbd> outside a project the default `previous-line` is invoked.
-2. This custom function is used for saving file (without confirmation) and reload git status.
-3. Shows the errors of the whole project in a fixed panel at the bottom (not closed by <kbd>Esc</kbd>).
-4. Emacs receives these keys as `C-{` and `C-}`. On the Italian layout `[` and `]` need AltGr,
-   so the combination is <kbd>Ctrl</kbd> + <kbd>AltGr</kbd> + <kbd>Shift</kbd> + <kbd>è</kbd> / <kbd>+</kbd>.
-5. Quits the minibuffer, clears the selection or runs `keyboard-quit`. Unlike `keyboard-escape-quit`
-   it never closes the other windows. Treemacs and Magit keep their own local <kbd>Esc</kbd> binding.
-
-## Changed to avoid conflicts
-
-* <kbd>Ctrl</kbd> + <kbd>R</kbd> now switches project (was `vr/replace`, moved to <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>H</kbd>).
-* <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>O</kbd> was bound twice (`projectile-switch-project` and
-  `consult-projectile-switch-project`): now it is *Go To Symbol in File*.
-* <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>T</kbd> was `lsp-treemacs-symbols`: moved to `C-c l s`.
-* Multiple cursors and line duplication were swapped compared to VSCode: now fixed.
+1. `my-projectile-find-file` invokes `projectile-find-file` inside a project; outside one, <kbd>Ctrl</kbd> + <kbd>P</kbd> retains its normal previous-line behavior.
+2. `my-escape` quits the minibuffer, clears the selection, or runs `keyboard-quit`; unlike `keyboard-escape-quit`, it does not close other windows. Treemacs and Magit keep local <kbd>Esc</kbd> bindings.
