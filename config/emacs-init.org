@@ -234,59 +234,12 @@ Icons are managed by nerd-icons.
     (nerd-icons-completion-mode)
     )
 
-  (use-package treemacs-nerd-icons
-    :ensure t
-    :after (treemacs nerd-icons)
-    :config
-    ;; TODO: Do not work well with indentation
-    ;;    (treemacs-nerd-icons-config)
-    )
-
   (use-package nerd-icons-dired
     :ensure t
     :defer t
     :hook
     (dired-mode . nerd-icons-dired-mode)
     )
-#+END_SRC
-
-** Tabs
-
-Sets tab mode like VSCode.
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-    (use-package centaur-tabs
-      :ensure t
-      :config
-      (centaur-tabs-headline-match)
-
-      (setq centaur-tabs-style "bar")
-      (setq centaur-tabs-height 32)
-      (setq centaur-tabs-set-icons t)
-      (setq centaur-tabs-set-bar 'over)
-      (setq centaur-tabs-set-modified-marker t)
-      ;; Force dynamic width
-      (setq centaur-tabs-label-fixed-length 0)
-      ;; Set default font equal to the main font
-      (centaur-tabs-change-fonts "JetBrains Mono" 100)
-
-      ;; (setq centaur-tabs-buffer-groups-function nil)
-
-      ;; Tab are grouped using Projectile
-      (centaur-tabs-group-by-projectile-project)
-
-      ;; TODO: uncomment in order to run at startup
-      ;; (centaur-tabs-mode t)
-      ;;
-      ;; :hook (
-      ;;        (after-init . centaur-tabs-mode)
-      ;;        )
-
-      :bind (
-             ("C-<prior>" . centaur-tabs-backward)
-             ("C-<next>" . centaur-tabs-forward)
-             )
-  )
 #+END_SRC
 
 ** Line numbers
@@ -356,6 +309,9 @@ In programming modes it's useful to have a vertical line that show the right mar
 #+BEGIN_SRC emacs-lisp :tangle yes
   (defun my-dired-settings()
     "Beautify and improve dired view."
+
+    ;; Allow opening the parent directory in the same Dired buffer.
+    (put 'dired-find-alternate-file 'disabled nil)
 
     ;; open file in the same window
     (eval-after-load "dired"
@@ -1004,16 +960,6 @@ Now we can activate "projectile" package.
     )
 #+END_SRC
 
-Let projectile integrate with Treemacs.
-
-#+BEGIN_SRC emacs-lisp :tangle yes
-  (use-package treemacs-projectile
-    :ensure t
-    :defer t
-    ;; TODO: add keybindings
-    )
-#+END_SRC
-
 ** Git support
 
 Magit is a complete User Interface for Git.
@@ -1250,12 +1196,15 @@ Enable only needed UI.
            (bash-ts-mode       . lsp)
            (c++-ts-mode        . lsp)
            (c-ts-mode          . lsp)
+           (go-ts-mode         . lsp)
            ;; Classic modes: used when the Tree-sitter grammar is not loadable
            (c-mode             . lsp)
            (c++-mode           . lsp)
+           (go-mode            . lsp)
            (json-ts-mode       . lsp)
            (ruby-ts-mode       . lsp)
            (rust-ts-mode       . lsp)
+           (rust-mode          . lsp)
            (python-ts-mode     . lsp)
            (typescript-ts-mode . lsp)
            (yaml-ts-mode       . lsp)
@@ -1330,6 +1279,19 @@ Integrate with treemacs package.
     :bind (
             ("C-c l s" . lsp-treemacs-symbols)
             )
+    )
+#+END_SRC
+
+Use folding ranges `lsp-origami` and its `origami` dependency are installed from MELPA.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package lsp-origami
+    :ensure t
+    :after lsp-mode
+    :hook (lsp-after-open . lsp-origami-try-enable)
+    :bind (:map origami-mode-map
+                ("C-{" . origami-recursively-toggle-node)
+                ("C-}" . origami-open-node))
     )
 #+END_SRC
 
@@ -1474,7 +1436,6 @@ Integrate with projectile package.
 ** Language: Markwhen (Gantt)
 
 #+BEGIN_SRC emacs-lisp :tangle yes
-;; ─── Markwhen ────────────────────────────────────────────────────
 
 (use-package markwhen-mode
   :ensure nil  ;; non è su MELPA — lo definiamo noi
@@ -1512,15 +1473,7 @@ Manage nginx configuration files.
     )
 #+END_SRC
 
-** Language: Rust
 
-#+BEGIN_SRC emacs-lisp :tangle yes
-  ;; (use-package rust-mode
-  ;;   :ensure t
-  ;;   :defer t
-  ;;   :mode ("\\.rs\\'" . rust-mode)
-  ;;   )
-#+END_SRC
 
 ** Language: Python
 
@@ -1548,11 +1501,28 @@ Manage nginx configuration files.
 
 ** Language: Go
 
+Use `go-mode` when the built-in Tree-sitter grammar is unavailable;
+`treesit-auto` remaps it to `go-ts-mode` when the grammar is ready.
+
 #+BEGIN_SRC emacs-lisp :tangle yes
-  ;; (use-package go-mode
-  ;;   :ensure t
-  ;;   :defer t
-  ;;   )
+  (use-package go-mode
+    :ensure t
+    :defer t
+    :mode ("\\.go\\'" . go-mode)
+    )
+#+END_SRC
+
+** Language: Rust
+
+Use `rust-mode` when the built-in Tree-sitter grammar is unavailable;
+`treesit-auto` remaps it to `rust-ts-mode` when the grammar is ready.
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (use-package rust-mode
+    :ensure t
+    :defer t
+    :mode ("\\.rs\\'" . rust-mode)
+    )
 #+END_SRC
 
 ** Language: Vue
@@ -1667,44 +1637,38 @@ This is at the end because we may want to call
 
 #+BEGIN_SRC emacs-lisp :tangle yes
 
-  (defun my-escape ()
-    "Quit minibuffer, deactivate region, or `keyboard-quit'.
-Unlike `keyboard-escape-quit' it never closes the other windows."
-    (interactive)
-    (cond ((minibuffer-window-active-p (selected-window)) (abort-recursive-edit))
-          ((region-active-p) (deactivate-mark))
-          (t (keyboard-quit))))
+    (defun my-escape ()
+      "Quit minibuffer, deactivate region, or `keyboard-quit'.
+  Unlike `keyboard-escape-quit' it never closes the other windows."
+      (interactive)
+      (cond ((minibuffer-window-active-p (selected-window)) (abort-recursive-edit))
+            ((region-active-p) (deactivate-mark))
+            (t (keyboard-quit))))
 
-  ;; Code folding: Ctrl+Shift+[ and Ctrl+Shift+] (Emacs sees them as C-{ and C-})
-  (use-package hideshow
-    :ensure nil
-    :hook (prog-mode . hs-minor-mode)
-    :bind (:map hs-minor-mode-map
-                ("C-{" . hs-hide-block)
-                ("C-}" . hs-show-block)))
+    ;; Rust code folding is provided by `lsp-origami' above.
 
-  (use-package emacs
-    :ensure nil
-    :config
-    (with-eval-after-load 'lsp-mode
-      (global-set-key (kbd "C-l") lsp-command-map))
-    :bind (
-           ;; Main keybinding
-           ("C-<f4>"   . 'kill-buffer-and-window)
-           ("C-w"      . 'kill-buffer-and-window)
-           ("S-C-<f4>" . 'my-kill-other-buffers)
-           ("S-C-w"    . 'my-kill-other-buffers)
-           ("<escape>" . 'my-escape)
-           ("C-S-p"    . 'execute-extended-command)
-           ("C-S-z"    . 'undo-redo)
-           ("C-S-k"    . 'kill-whole-line)
-           ("C-s"      . 'my-save)
-           ("C-M-s"    . 'my-save-all)
-           ("C-S-a"    . 'my-cycle-other-file)
-           ("C-S-x"    . 'list-packages)
-           ("C-ò"      . 'term)
-           ("C-/"      . comment-dwim)
+    (use-package emacs
+      :ensure nil
+      :config
+      (with-eval-after-load 'lsp-mode
+        (global-set-key (kbd "C-l") lsp-command-map))
+      :bind (
+             ;; Main keybinding
+             ("C-<f4>"   . 'kill-buffer-and-window)
+             ("C-w"      . 'kill-buffer-and-window)
+             ("S-C-<f4>" . 'my-kill-other-buffers)
+             ("S-C-w"    . 'my-kill-other-buffers)
+             ("<escape>" . 'my-escape)
+             ("C-S-p"    . 'execute-extended-command)
+             ("C-S-z"    . 'undo-redo)
+             ("C-S-k"    . 'kill-whole-line)
+             ("C-s"      . 'my-save)
+             ("C-M-s"    . 'my-save-all)
+             ("C-S-a"    . 'my-cycle-other-file)
+             ("C-S-x"    . 'list-packages)
+             ("C-ò"      . 'term)
+             ("C-/"      . comment-dwim)
 
-           )
-    )
+             )
+      )
 #+END_SRC
