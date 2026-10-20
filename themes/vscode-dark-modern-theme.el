@@ -122,22 +122,22 @@
 						    ))))
 
    ;; Diff
-   `(diff-added ((,class (:foreground ,vscode-git-added :background nil))))
-   `(diff-removed ((,class (:foreground ,vscode-error :background nil))))
-   `(diff-changed ((,class (:foreground ,vscode-git-modified :background nil))))
+   `(diff-added ((,class (:foreground ,vscode-git-added :background unspecified))))
+   `(diff-removed ((,class (:foreground ,vscode-error :background unspecified))))
+   `(diff-changed ((,class (:foreground ,vscode-git-modified :background unspecified))))
 
    ;; Git gutter
-   `(git-gutter:added  ((t (:foreground ,vscode-git-added :background nil))))
-   `(git-gutter:deleted  ((t (:foreground ,vscode-error :background nil))))
-   `(git-gutter:modified  ((t (:foreground ,vscode-git-modified :background nil))))
+   `(git-gutter:added  ((t (:foreground ,vscode-git-added :background unspecified))))
+   `(git-gutter:deleted  ((t (:foreground ,vscode-error :background unspecified))))
+   `(git-gutter:modified  ((t (:foreground ,vscode-git-modified :background unspecified))))
 
    ;; Current line
    `(hl-line
-     ((t (:background nil
+     ((t (:background unspecified
                       :box (:line-width (-1 . -1) :color ,vscode-border-dark :style nil)))))
 
    ;; Vertical line for max size
-   `(fill-column-indicator ((t (:foreground ,vscode-border-dark :background nil))))
+   `(fill-column-indicator ((t (:foreground ,vscode-border-dark :background unspecified))))
 
    ;; Search
    `(isearch ((,class (:background ,vscode-search-match))))
@@ -154,10 +154,21 @@
    `(treemacs-hl-line-face ((,class (:background ,vscode-bg-light))))
 
    ;; Vertico
-   `(vertico-posframe-border ((,class (:background ,vscode-border-dark))))
-   `(vertico-current ((,class (:background ,vscode-selection-bg-dark))))
+   `(vertico-posframe ((t (:foreground ,vscode-fg-light :background ,vscode-bg-extra-dark))))
+   `(vertico-posframe-border ((,class (:inherit default :background ,vscode-border-dark))))
+   `(vertico-posframe-border-2 ((,class (:inherit default :background ,vscode-border-dark))))
+   `(vertico-posframe-border-3 ((,class (:inherit default :background ,vscode-border-dark))))
+   `(vertico-posframe-border-4 ((,class (:inherit default :background ,vscode-border-dark))))
+   `(vertico-posframe-border-fallback ((,class (:inherit default :background ,vscode-border-dark))))
+   `(vertico-posframe-highlight ((,class (:background ,vscode-line-highlight))))
+   `(vertico-current ((,class (:foreground "#ffffff" :background ,vscode-selection-bg-dark :extend t))))
    `(vertico-group-separator ((,class (:foreground ,vscode-fg-dim :strike-through t))))
    `(vertico-group-title ((,class (:foreground ,vscode-fg-dim))))
+   `(vertico-indexed ((,class (:inherit font-lock-comment-face
+                                       :background ,vscode-bg-extra-dark))))
+   `(consult-line-number-prefix ((,class (:foreground ,vscode-fg-dim
+                                                      :background ,vscode-bg-extra-dark
+                                                      :extend t))))
 
    ;; Web Mode (HTML)
    `(web-mode-doctype-face ((,class (:foreground ,vscode-operator)))) ;; <!DOCTYPE>
@@ -189,9 +200,9 @@
    ;; LSP
 
    ;; Generic LSP
-   `(lsp-face-highlight-read ((,class (:background ,vscode-highlight-read :foreground nil :underline nil))))
-   `(lsp-face-highlight-textual ((,class (:background ,vscode-highlight-read :foreground nil :underline nil))))
-   `(lsp-face-highlight-write ((,class (:background ,vscode-highlight-write :foreground nil :underline nil))))
+   `(lsp-face-highlight-read ((,class (:background ,vscode-highlight-read :foreground unspecified :underline nil))))
+   `(lsp-face-highlight-textual ((,class (:background ,vscode-highlight-read :foreground unspecified :underline nil))))
+   `(lsp-face-highlight-write ((,class (:background ,vscode-highlight-write :foreground unspecified :underline nil))))
    ;; LSP UI specific settings
    `(lsp-ui-doc-background ((t (:background ,vscode-bg-extra-dark))))
    `(lsp-ui-doc-text ((,class (:foreground ,vscode-fg-light))))
@@ -228,23 +239,23 @@
    `(mode-line ((t (:background ,vscode-bg-extra-dark :foreground ,vscode-fg-light :box nil :height 0.95))))
    ;; Inactive modeline
    `(mode-line-inactive ((,class (:background ,vscode-bg-extra-dark :foreground ,vscode-fg-dim :box nil :height 0.95))))
-   `(mode-line-hightlight ((,class (:background nil :foreground ,vscode-fg-light :box nil))))
-   `(mode-line-buffer-id ((,class (:background nil :foreground ,vscode-fg-light))))
-   `(mode-line-emphasis ((,class (:background nil :foreground ,vscode-fg-light))))
+   `(mode-line-hightlight ((,class (:background unspecified :foreground ,vscode-fg-light :box nil))))
+   `(mode-line-buffer-id ((,class (:background unspecified :foreground ,vscode-fg-light))))
+   `(mode-line-emphasis ((,class (:background unspecified :foreground ,vscode-fg-light))))
    ;; Doom modeline specific faces
-   `(doom-modeline-bar ((,class (:background ,vscode-border-dark :foreground nil :box nil))))
-   `(doom-modeline-bar-inactive ((,class (:background ,vscode-border-dark :foreground nil :box nil))))
+   `(doom-modeline-bar ((,class (:background ,vscode-border-dark :foreground unspecified :box nil))))
+   `(doom-modeline-bar-inactive ((,class (:background ,vscode-border-dark :foreground unspecified :box nil))))
    `(doom-modeline-highlight ((,class (:box nil))))
    `(doom-modeline-info ((,class (:foreground ,vscode-brackets-match))))
 
    ;; Matching parenthesis
    `(show-paren-match
      ((t (:foreground ,vscode-brackets-match
-          :background nil
+          :background unspecified
           :box (:line-width (-1 . -1) :color ,vscode-border-dark :style nil)))))
    `(show-paren-match-expression
      ((t (:foreground ,vscode-brackets-match
-          :background nil
+          :background unspecified
           :box (:line-width (-1 . -1) :color ,vscode-border-dark :style nil)))))
    `(show-paren-mismatch
      ((t (:foreground ,vscode-bg-dark
@@ -300,11 +311,11 @@
    `(magit-diff-file-heading-highlight ((,class (:background ,vscode-line-highlight :foreground ,vscode-variable))))
    `(magit-diff-hunk-heading ((,class (:foreground ,vscode-keyword :background ,vscode-bg-extra-dark))))
    `(magit-diff-hunk-heading-highlight ((,class (:foreground ,vscode-keyword :background ,vscode-line-highlight))))
-   `(magit-diff-added ((,class (:foreground ,vscode-git-added :background nil))))
+   `(magit-diff-added ((,class (:foreground ,vscode-git-added :background unspecified))))
    `(magit-diff-added-highlight ((,class (:foreground ,vscode-git-added :background ,vscode-line-highlight))))
-   `(magit-diff-removed ((,class (:foreground ,vscode-error :background nil))))
+   `(magit-diff-removed ((,class (:foreground ,vscode-error :background unspecified))))
    `(magit-diff-removed-highlight ((,class (:foreground ,vscode-error :background ,vscode-line-highlight))))
-   `(magit-diff-context ((,class (:foreground ,vscode-fg-dim :background nil))))
+   `(magit-diff-context ((,class (:foreground ,vscode-fg-dim :background unspecified))))
    `(magit-diff-context-highlight ((,class (:foreground ,vscode-fg-light :background ,vscode-line-highlight))))
    `(magit-branch-local ((,class (:foreground ,vscode-type))))
    `(magit-branch-remote ((,class (:foreground ,vscode-git-modified))))
