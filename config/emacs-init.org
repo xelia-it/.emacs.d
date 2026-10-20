@@ -55,6 +55,7 @@ These fonts should be installed manually.
 
     (let ((fonts '(
                    "JetBrains Mono"
+                   "IBM Plex Mono"
                    "Monospace"
                    "DejaVu Sans Mono"
                    "Droid Sans Mono"
@@ -84,9 +85,9 @@ These fonts should be installed manually.
           )
 
         ;; TODO: Uncomment to show informational message
-        ;; (message "Using font: %s (%s)"
-        ;;          selected-font
-        ;;          (/ size 10.0))
+        (message "Using font: %s (%s)"
+                 selected-font
+                 (/ size 10.0))
         ))
     )
 
@@ -274,6 +275,8 @@ In programming modes it's useful to have a vertical line that show the right mar
     "Show a vertical line at the end of the line"
 
     (setq-default fill-column 80)
+;;    (setq-default display-fill-column-indicator-character ?┊)
+
     (add-hook 'prog-mode-hook 'display-fill-column-indicator-mode)
 
     ;; Override fill-column con il valore da EditorConfig se presente
@@ -514,7 +517,6 @@ This preference ensures Emacs reload buffer automatically.
 #+END_SRC
 
 * Editing
-
 ** Indent preferences (generic)
 
 First we define a set of default values to be used in every buffer.
@@ -834,12 +836,34 @@ The "vertico-posframe" package is used to show selection in a popup (like VS Cod
     (setq vertico-posframe-min-width 120)
     (setq vertico-posframe-parameters
           '(
-            (left-fringe . 16)
-            (right-fringe . 16)
+            (left-fringe . 0)
+            (right-fringe . 0)
             )
           )
     (vertico-posframe-mode 1)
     )
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp :tangle yes
+  (defvar-local my/vertico-posframe-background-cookie nil)
+
+  (defun my/vertico-posframe-use-caret-for-truncation ()
+    "Use a dark background and colored > glyph for Vertico posframes."
+    (when (bound-and-true-p vertico-posframe-mode)
+      (when my/vertico-posframe-background-cookie
+        (face-remap-remove-relative my/vertico-posframe-background-cookie))
+      (setq my/vertico-posframe-background-cookie
+            (face-remap-add-relative
+             'default :background
+             (face-background 'vertico-posframe nil t)))
+      (let ((table (make-display-table)))
+        (set-display-table-slot
+         table 'truncation
+         (vector (make-glyph-code ?> 'fill-column-indicator)))
+        (setq-local buffer-display-table table))))
+
+  (add-hook 'minibuffer-setup-hook
+            #'my/vertico-posframe-use-caret-for-truncation)
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp :tangle yes
@@ -907,6 +931,32 @@ Since Ctrl-p is used also to select previous line in vanilla Emacs the
 "Open File" behaviour is activated only when we are inside a project.
 
 #+BEGIN_SRC emacs-lisp :tangle yes
+  (defun my-project-ripgrep ()
+    "Search the current Projectile project with Consult and ripgrep.
+Start with the symbol at point when there is one."
+    (interactive)
+    (unless (projectile-project-p)
+      (user-error "Not inside a Projectile project"))
+    (consult-ripgrep (projectile-project-root)
+                     (thing-at-point 'symbol t)))
+
+  (defun my-run-project ()
+    "Run the current Projectile project without a debugger."
+    (interactive)
+    (unless (projectile-project-p)
+      (user-error "Not inside a Projectile project"))
+    (projectile-run-project))
+
+  (defun my-debug-project ()
+    "Start debugging the current project (not implemented yet)."
+    (interactive)
+    (message "Not implemented yet"))
+
+  (defun my-debug-toggle-breakpoint ()
+    "Toggle a breakpoint on the current line (not implemented yet)."
+    (interactive)
+    (message "Not implemented yet"))
+
   (defun my-projectile-find-file ()
     "In a project, C-p use projectile-find-file."
     (interactive)
@@ -938,13 +988,16 @@ Now we can activate "projectile" package.
     (projectile-mode)
 
     :bind (
-           ;; Project building and testing
-           ("C-S-d"  . projectile-compile-project)    ;; VS Code
-           ("<f9>"   . projectile-compile-project)
+           ;; Run, debug, and build
+           ("C-S-d"  . my-debug-project)
+           ("<f5>"   . my-debug-project)
+           ("C-<f5>" . my-run-project)
+           ("<f9>"   . my-debug-toggle-breakpoint)
+           ("C-S-b"  . projectile-compile-project)
            ("C-<f9>" . projectile-run-project)
            ("S-<f9>" . projectile-configure-project)
            ("M-<f9>" . projectile-test-project)
-           ("C-S-f"  . projectile-grep)
+           ("C-S-f"  . my-project-ripgrep)
            ("C-p"    . my-projectile-find-file)
            )
        )
@@ -953,7 +1006,7 @@ Now we can activate "projectile" package.
 #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package consult-projectile
     :ensure t
-    :after (consult projectile)
+    ;; Keep this binding available even before Consult and Projectile load.
     :bind (
            ("C-r"    . consult-projectile-switch-project)  ;; VS Code: open recent
            )
@@ -1171,6 +1224,13 @@ Enable only needed UI.
     :ensure t
     :defer t
     :commands lsp
+
+    :preface
+    ;; Drop the standalone single-file rustc Flymake backend:
+    ;; lsp-mode / rust-analyzer already provide correct, crate-aware diagnostics
+    (defun my/rust-disable-ts-flymake ()
+      (remove-hook 'flymake-diagnostic-functions #'rust-ts-flymake t))
+
     :init
 
     ;; Set prefix for LSP commands
@@ -1192,22 +1252,26 @@ Enable only needed UI.
            ;; Integrate with which-key
            (lsp-mode . lsp-enable-which-key-integration)
 
+           ;; Remove the buggy backend (the mode body has already added it
+           ;; by the time the mode hook runs, so this order is safe)
+           (rust-ts-mode . my/rust-disable-ts-flymake)
+
            ;; Enable languages (treesit support)
            (bash-ts-mode       . lsp)
            (c++-ts-mode        . lsp)
            (c-ts-mode          . lsp)
            (go-ts-mode         . lsp)
+           (json-ts-mode       . lsp)
+           (ruby-ts-mode       . lsp)
+           (rust-ts-mode       . lsp)
+           (python-ts-mode     . lsp)
+           (typescript-ts-mode . lsp)
+           (yaml-ts-mode       . lsp)
            ;; Classic modes: used when the Tree-sitter grammar is not loadable
            (c-mode             . lsp)
            (c++-mode           . lsp)
            (go-mode            . lsp)
-           (json-ts-mode       . lsp)
-           (ruby-ts-mode       . lsp)
-           (rust-ts-mode       . lsp)
            (rust-mode          . lsp)
-           (python-ts-mode     . lsp)
-           (typescript-ts-mode . lsp)
-           (yaml-ts-mode       . lsp)
            (web-mode           . lsp)
            )
     )
