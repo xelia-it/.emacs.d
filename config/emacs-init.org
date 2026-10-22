@@ -836,8 +836,8 @@ The "vertico-posframe" package is used to show selection in a popup (like VS Cod
     (setq vertico-posframe-min-width 120)
     (setq vertico-posframe-parameters
           '(
-            (left-fringe . 0)
-            (right-fringe . 0)
+            (left-fringe . 8)
+            (right-fringe . 8)
             )
           )
     (vertico-posframe-mode 1)
@@ -846,15 +846,22 @@ The "vertico-posframe" package is used to show selection in a popup (like VS Cod
 
 #+BEGIN_SRC emacs-lisp :tangle yes
   (defvar-local my/vertico-posframe-background-cookie nil)
+  (defvar-local my/vertico-posframe-fringe-cookie nil)
 
   (defun my/vertico-posframe-use-caret-for-truncation ()
-    "Use a dark background and colored > glyph for Vertico posframes."
+    "Use dark backgrounds and a colored > glyph for Vertico posframes."
     (when (bound-and-true-p vertico-posframe-mode)
       (when my/vertico-posframe-background-cookie
         (face-remap-remove-relative my/vertico-posframe-background-cookie))
       (setq my/vertico-posframe-background-cookie
             (face-remap-add-relative
              'default :background
+             (face-background 'vertico-posframe nil t)))
+      (when my/vertico-posframe-fringe-cookie
+        (face-remap-remove-relative my/vertico-posframe-fringe-cookie))
+      (setq my/vertico-posframe-fringe-cookie
+            (face-remap-add-relative
+             'fringe :background
              (face-background 'vertico-posframe nil t)))
       (let ((table (make-display-table)))
         (set-display-table-slot
