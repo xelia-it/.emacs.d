@@ -121,7 +121,7 @@
 
    ;; Line numbers
    `(line-number ((,class (:foreground ,vscode-line-number :background ,vscode-bg-editor))))
-   `(line-number-current-line ((,class(:foreground ,vscode-fg-light :background ,vscode-bg-raised
+   `(line-number-current-line ((,class(:foreground ,vscode-fg-light :background unspecified
 						    :box (:line-width (-1 . -1) :color ,vscode-border-dark :style nil)
 						    ))))
 
@@ -135,11 +135,14 @@
    `(git-gutter:deleted  ((t (:foreground ,vscode-error :background unspecified))))
    `(git-gutter:modified  ((t (:foreground ,vscode-git-modified :background unspecified))))
 
+
    ;; Current line
-   ;; Background only: the box hid the sides of show-paren-match under the cursor.
-   ;; VSCode uses editor.lineHighlightBorder #282828 (almost invisible on #1f1f1f),
-   ;; so the same color as background looks practically identical.
-   `(hl-line ((t (:background ,vscode-line-highlight))))
+   ;; Negative line-width draws the box INSIDE the glyph area, so it never
+   ;; changes line height (no layout shift). No :background, so color previews
+   ;; (SCSS, rainbow-mode, etc.) are not affected.
+   `(hl-line ((t (:background unspecified
+                  :box (:line-width (-1 . -1) :color ,vscode-border-dark :style nil)))))
+
 
    ;; Vertical line for max size
    `(fill-column-indicator ((t (:foreground ,vscode-border-dark :background unspecified))))
