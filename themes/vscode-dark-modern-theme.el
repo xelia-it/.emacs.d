@@ -6,52 +6,58 @@
 ;; Theme
 
 (let ((class '((class color) (min-colors 89)))
-      ;; Palette VSCode Dark Modern+
-      (vscode-bg-extra-dark       "#1a1a1a")
-      (vscode-bg-dark             "#1f1f1f")
-      (vscode-bg-light            "#252526")
-      (vscode-fg-light            "#cccccc")
-      (vscode-fg-dim              "#858585")
+      ;; Palette VSCode Dark Modern / Dark+
+      (vscode-bg-panel             "#181818") ;; Panel (sidebar, terminal, ...)
+      (vscode-bg-editor            "#1f1f1f") ;; Main editor background
+      (vscode-bg-raised            "#2b2b2b")
+      (vscode-fg-light             "#cccccc")
+      (vscode-fg-dim               "#858585")
+      (vscode-line-number          "#6e7681") ;; Line numbers
 
-      (vscode-border-dark         "#2b2b2b")
-      (vscode-border-accent       "#007acc")
-      (vscode-cursor              "#aeafad")
-      (vscode-selection-bg        "#264f78")
-      (vscode-line-highlight      "#282828")
+      (vscode-border-dark          "#2b2b2b")
+      (vscode-border-accent        "#007acc")
+      (vscode-cursor               "#aeafad")
+      (vscode-selection-bg         "#264f78")
+      (vscode-line-highlight       "#282828")
 
-      (vscode-error               "#f48771")
-      (vscode-warning             "#cca700")
-      (vscode-info                "#3794ff")
+      (vscode-error                "#f85149")
+      (vscode-warning              "#cca700")
+      (vscode-info                 "#4daafc")
 
-      (vscode-string              "#ce9178")
-      (vscode-function            "#dcdcaa")
-      (vscode-variable            "#9cdcfe")
+      (vscode-string               "#ce9178")
+      (vscode-function             "#dcdcaa")
+      (vscode-variable             "#9cdcfe")
 
-      (vscode-keyword             "#569cd6")
-      (vscode-constant            "#b5cea8")
-      (vscode-type                "#4ec9b0")
-      (vscode-comment             "#6a9955")
-      (vscode-tag                 "#d7ba7d") ;; CSS Selector
-      (vscode-git-added           "#89d185")
-      (vscode-git-modified        "#e2c08d")
+      (vscode-keyword              "#569cd6")
+      (vscode-constant             "#b5cea8")
+      (vscode-type                 "#4ec9b0")
+      (vscode-comment              "#6a9955")
+      (vscode-tag                  "#d7ba7d") ;; CSS Selector
+      (vscode-git-added            "#2ea043")
+      (vscode-git-modified         "#0078d4")
 
-      (vscode-brackets            "#c586c0")
-      (vscode-brackets-match      "#ffd700")
-      (vscode-search-match        "#613214")
-      (vscode-selection-bg-dark   "#094771") ;; Vertico completion
-      (vscode-highlight-read      "#575757") ;; Keyword highlight
-      (vscode-highlight-write     "#004972") ;; Keyword assignment highlight
+      (vscode-brackets             "#c586c0")
+      (vscode-brackets-match       "#ffd700")
+      (vscode-find-match           "#9e6a03")
+      (vscode-selection-bg-dark    "#094771") ;; Vertico completion
+      (vscode-highlight-read       "#575757") ;; Keyword highlight
+      (vscode-highlight-write      "#004972") ;; Keyword assignment highlight
+      (vscode-find-match-highlight "#623315") ;; Other find matches (vr replace)
+      (vscode-bracket-match-bg     "#1c261c") ;; Bracket match background
+      (vscode-bracket-match-border "#888888") ;; Bracket match border
+      (vscode-parenthesis          "#d8b804") ;; font-lock-parenthesis-face
+      (vscode-multicursor-bar      "#ffffff")
 
       ;; Palette extra VSCode
-      (vscode-namespace         "#4ec9b0") ;; namespace/import
-      (vscode-parameter         "#9cdcfe") ;; function parameters
-      (vscode-operator          "#d4d4d4") ;; +, -, &&, etc.
-      (vscode-enum              "#b8d7a3") ;; enum values
-      (vscode-annotation        "#d7ba7d") ;; decorators
-      (vscode-markup-heading    "#569cd6") ;; markdown headings
-      (vscode-markup-bold       "#d7ba7d") ;; markdown bold
-      (vscode-markup-italic     "#ce9178") ;; markdown italic
-      (vscode-markup-inlinecode "#dcdcaa") ;; markdown inline code
+      (vscode-namespace            "#4ec9b0") ;; namespace/import
+      (vscode-parameter            "#9cdcfe") ;; function parameters
+      (vscode-operator             "#d4d4d4") ;; +, -, &&, etc.
+      (vscode-enum                 "#4fc1ff") ;; enum values
+      (vscode-annotation           "#d7ba7d") ;; decorators
+      (vscode-markup-heading       "#569cd6") ;; markdown headings
+      (vscode-markup-bold          "#569cd6") ;; markdown bold
+      (vscode-markup-italic        "#c586c0") ;; markdown italic
+      (vscode-markup-inlinecode    "#dcdcaa") ;; markdown inline code
       )
 
 
@@ -59,15 +65,15 @@
    'vscode-dark-modern
 
    ;; Base
-   `(default ((,class (:background ,vscode-bg-dark :foreground ,vscode-fg-light))))
+   `(default ((,class (:background ,vscode-bg-editor :foreground ,vscode-fg-light))))
    `(cursor ((,class (:background ,vscode-cursor))))
    `(region ((,class (:background ,vscode-selection-bg))))
-   `(fringe ((,class (:background ,vscode-bg-dark))))
+   `(fringe ((,class (:background ,vscode-bg-editor))))
    `(vertical-border ((,class (:foreground ,vscode-border-dark))))
    `(highlight ((,class (:background ,vscode-line-highlight))))
    `(minibuffer-prompt ((,class (:foreground ,vscode-keyword))))
    `(link ((,class (:foreground ,vscode-info :underline t))))
-   `(italic ((,class (:foreground ,vscode-fg-dim :underline nil))))
+   `(italic ((,class (:foreground ,vscode-markup-italic :slant italic :underline nil))))
 
    `(success ((,class (:foreground ,vscode-git-added :underline nil))))
    `(warning ((,class (:foreground ,vscode-warning :underline nil))))
@@ -83,26 +89,26 @@
    `(font-lock-delimiter-face ((,class (:foreground ,vscode-fg-dim))))
    `(font-lock-doc-face ((,class (:foreground ,vscode-comment))))
    `(font-lock-doc-markup-face ((,class (:foreground ,vscode-string))))
-   `(font-lock-escape-face ((,class (:foreground ,vscode-constant :weight bold))))
+   `(font-lock-escape-face ((,class (:foreground ,vscode-annotation))))
    `(font-lock-function-call-face ((,class (:foreground ,vscode-function))))
    `(font-lock-function-name-face ((,class (:foreground ,vscode-function))))
    `(font-lock-keyword-face ((,class (:foreground ,vscode-keyword))))
    `(font-lock-misc-punctuation-face ((,class (:foreground ,vscode-fg-light))))
-   `(font-lock-negation-char-face ((,class (:foreground ,vscode-warning :weight bold))))
+   `(font-lock-negation-char-face ((,class (:foreground ,vscode-warning))))
    `(font-lock-number-face ((,class (:foreground ,vscode-constant))))
-   `(font-lock-operator-face ((,class (:foreground ,vscode-keyword))))
+   `(font-lock-operator-face ((,class (:foreground ,vscode-operator))))
    `(font-lock-preprocessor-face ((,class (:foreground ,vscode-type))))
    `(font-lock-property-name-face ((,class (:foreground ,vscode-variable))))
    `(font-lock-property-use-face ((,class (:foreground ,vscode-variable))))
    `(font-lock-punctuation-face ((,class (:foreground ,vscode-fg-light))))
    `(font-lock-regexp-face ((,class (:foreground ,vscode-string))))
-   `(font-lock-regexp-grouping-backslash ((,class (:foreground ,vscode-string :weight bold))))
-   `(font-lock-regexp-grouping-construct ((,class (:foreground ,vscode-string :weight bold))))
+   `(font-lock-regexp-grouping-backslash ((,class (:foreground ,vscode-string))))
+   `(font-lock-regexp-grouping-construct ((,class (:foreground ,vscode-string))))
    `(font-lock-string-face ((,class (:foreground ,vscode-string))))
    `(font-lock-type-face ((,class (:foreground ,vscode-type))))
    `(font-lock-variable-name-face ((,class (:foreground ,vscode-variable))))
    `(font-lock-variable-use-face ((,class (:foreground ,vscode-variable))))
-   `(font-lock-warning-face ((,class (:foreground ,vscode-error :weight bold))))
+   `(font-lock-warning-face ((,class (:foreground ,vscode-error))))
 
    ;; Parameters
    `(font-lock-parameter-name-face ((,class (:foreground ,vscode-parameter))))
@@ -112,12 +118,10 @@
    `(font-lock-enum-face ((,class (:foreground ,vscode-enum))))
    ;; Decorators / annotations
    `(font-lock-annotation-face ((,class (:foreground ,vscode-annotation))))
-   ;; Operators
-   `(font-lock-operator-face ((,class (:foreground ,vscode-operator))))
 
    ;; Line numbers
-   `(line-number ((,class (:foreground ,vscode-fg-dim :background ,vscode-bg-dark))))
-   `(line-number-current-line ((,class(:foreground ,vscode-fg-light :background ,vscode-bg-light
+   `(line-number ((,class (:foreground ,vscode-line-number :background ,vscode-bg-editor))))
+   `(line-number-current-line ((,class(:foreground ,vscode-fg-light :background ,vscode-bg-raised
 						    :box (:line-width (-1 . -1) :color ,vscode-border-dark :style nil)
 						    ))))
 
@@ -132,29 +136,38 @@
    `(git-gutter:modified  ((t (:foreground ,vscode-git-modified :background unspecified))))
 
    ;; Current line
-   `(hl-line
-     ((t (:background unspecified
-                      :box (:line-width (-1 . -1) :color ,vscode-border-dark :style nil)))))
+   ;; Background only: the box hid the sides of show-paren-match under the cursor.
+   ;; VSCode uses editor.lineHighlightBorder #282828 (almost invisible on #1f1f1f),
+   ;; so the same color as background looks practically identical.
+   `(hl-line ((t (:background ,vscode-line-highlight))))
 
    ;; Vertical line for max size
    `(fill-column-indicator ((t (:foreground ,vscode-border-dark :background unspecified))))
 
    ;; Search
-   `(isearch ((,class (:background ,vscode-search-match))))
-   `(lazy-highlight ((,class (:background ,vscode-search-match))))
-   `(match ((,class (:background ,vscode-search-match))))
+   `(isearch ((,class (:background ,vscode-find-match))))
+   `(lazy-highlight ((,class (:background ,vscode-find-match-highlight))))
+   `(match ((,class (:background ,vscode-find-match))))
+
+   ;; Custom face (was in emacs-init.org)
+   `(font-lock-parenthesis-face ((,class (:foreground ,vscode-parenthesis :weight normal))))
+   ;; Multiple cursors (was in emacs-init.org)
+   `(mc/cursor-bar-face ((,class (:background ,vscode-multicursor-bar :height 1))))
+   ;; visual-regexp (was in emacs-init.org)
+   ;; no box: VSCode has no border and the box splits at match/replacement
+   `(vr/match-0 ((,class (:foreground unspecified :background ,vscode-find-match-highlight :weight normal))))
+   `(vr/match-1 ((,class (:foreground unspecified :background ,vscode-find-match-highlight :weight normal))))
 
    ;; Treemacs
-   `(treemacs-window-background-face ((,class (:foreground ,vscode-fg-light :background ,vscode-bg-extra-dark :height 0.95))))
-   `(treemacs-root-face ((,class (:foreground ,vscode-fg-light :weight bold))))
+   `(treemacs-window-background-face ((,class (:foreground ,vscode-fg-light :background ,vscode-bg-panel :height 0.95))))
+   `(treemacs-root-face ((,class (:foreground ,vscode-fg-light))))
    `(treemacs-directory-collapsed-face ((,class (:foreground ,vscode-fg-light))))
    `(treemacs-directory-face ((,class (:foreground ,vscode-fg-light))))
    `(treemacs-git-ignored-face ((,class (:foreground ,vscode-fg-dim))))
-   `(treemacs-git-ignored-face ((,class (:foreground ,vscode-keyword))))
-   `(treemacs-hl-line-face ((,class (:background ,vscode-bg-light))))
+   `(treemacs-hl-line-face ((,class (:background ,vscode-bg-raised))))
 
    ;; Vertico
-   `(vertico-posframe ((t (:foreground ,vscode-fg-light :background ,vscode-bg-extra-dark))))
+   `(vertico-posframe ((t (:foreground ,vscode-fg-light :background ,vscode-bg-panel))))
    `(vertico-posframe-border ((,class (:inherit default :background ,vscode-border-dark))))
    `(vertico-posframe-border-2 ((,class (:inherit default :background ,vscode-border-dark))))
    `(vertico-posframe-border-3 ((,class (:inherit default :background ,vscode-border-dark))))
@@ -165,9 +178,9 @@
    `(vertico-group-separator ((,class (:foreground ,vscode-fg-dim :strike-through t))))
    `(vertico-group-title ((,class (:foreground ,vscode-fg-dim))))
    `(vertico-indexed ((,class (:inherit font-lock-comment-face
-                                       :background ,vscode-bg-extra-dark))))
+                                       :background ,vscode-bg-panel))))
    `(consult-line-number-prefix ((,class (:foreground ,vscode-fg-dim
-                                                      :background ,vscode-bg-extra-dark
+                                                      :background ,vscode-bg-panel
                                                       :extend t))))
 
    ;; Web Mode (HTML)
@@ -179,7 +192,7 @@
    `(web-mode-html-attr-value-face ((t (:foreground ,vscode-string)))) ;; "value"
    `(web-mode-html-entity-face ((t (:foreground ,vscode-constant)))) ;; &nbsp;
    `(web-mode-comment-face ((t (:foreground ,vscode-comment)))) ;; <!-- comment -->
-   `(web-mode-block-face ((t (:background ,vscode-bg-extra-dark)))) ;; <% %> / {{ }}
+   `(web-mode-block-face ((t (:background ,vscode-bg-panel)))) ;; <% %> / {{ }}
    `(web-mode-block-delimiter-face ((t (:foreground ,vscode-variable)))) ;; {{ }}
    ;; Web Mode (CSS)
    `(web-mode-css-selector-face ((t (:foreground ,vscode-tag)))) ;; .class, #id
@@ -195,7 +208,7 @@
    `(web-mode-function-call-face ((t (:foreground ,vscode-function)))) ;; myFunction()
    ;; Web Mode (Highlighting)
    `(web-mode-current-element-highlight-face ((t (:background ,vscode-line-highlight))))
-   `(web-mode-current-column-highlight-face ((t (:background ,vscode-bg-light))))
+   `(web-mode-current-column-highlight-face ((t (:background ,vscode-bg-raised))))
 
    ;; LSP
 
@@ -204,17 +217,17 @@
    `(lsp-face-highlight-textual ((,class (:background ,vscode-highlight-read :foreground unspecified :underline nil))))
    `(lsp-face-highlight-write ((,class (:background ,vscode-highlight-write :foreground unspecified :underline nil))))
    ;; LSP UI specific settings
-   `(lsp-ui-doc-background ((t (:background ,vscode-bg-extra-dark))))
+   `(lsp-ui-doc-background ((t (:background ,vscode-bg-panel))))
    `(lsp-ui-doc-text ((,class (:foreground ,vscode-fg-light))))
-   `(lsp-ui-peek-peek ((,class (:background ,vscode-bg-extra-dark))))
-   `(lsp-ui-peek-list ((t (:background ,vscode-bg-extra-dark))))
+   `(lsp-ui-peek-peek ((,class (:background ,vscode-bg-panel))))
+   `(lsp-ui-peek-list ((t (:background ,vscode-bg-panel))))
    `(lsp-ui-peek-selection ((t (:background ,vscode-selection-bg :foreground "#ffffff"))))
    `(lsp-ui-peek-highlight ((t (:background ,vscode-highlight-write :foreground "#ffffff"))))
    `(lsp-ui-peek-header
-      ((t (:background ,vscode-bg-extra-dark :foreground "#ffffff"
+      ((t (:background ,vscode-bg-panel :foreground "#ffffff"
                        :box (:line-width (-1 . -1) :color ,vscode-border-accent :style nil)))))
    `(lsp-ui-peek-footer
-     ((t (:background ,vscode-bg-extra-dark :foreground "#ffffff"
+     ((t (:background ,vscode-bg-panel :foreground "#ffffff"
                       :box (:line-width (-1 . -1) :color ,vscode-border-accent :style nil)))))
    `(lsp-ui-peek-filename ((t (:foreground ,vscode-variable))))
    `(lsp-ui-peek-line-number ((t (:foreground ,vscode-fg-dim))))
@@ -224,21 +237,39 @@
    `(lsp-face-semhl-decorator      ((,class (:foreground ,vscode-annotation))))
    `(lsp-face-semhl-enumMember     ((,class (:foreground ,vscode-enum))))
    `(lsp-face-semhl-operator       ((,class (:foreground ,vscode-operator))))
+   ;; Explicit :weight/:underline/:slant: lsp-mode defaults make these bold
+   ;; (namespace, definition, implementation), VSCode never does.
+   `(lsp-face-semhl-namespace      ((,class (:foreground ,vscode-namespace :weight normal))))
+   `(lsp-face-semhl-definition     ((,class (:inherit font-lock-function-name-face :weight normal))))
+   `(lsp-face-semhl-implementation ((,class (:inherit font-lock-function-name-face :weight normal))))
+   `(lsp-face-semhl-regexp         ((,class (:foreground "#d16969" :slant normal))))
+   `(lsp-face-semhl-macro          ((,class (:foreground ,vscode-keyword))))
+   `(lsp-face-semhl-keyword        ((,class (:foreground ,vscode-keyword))))
+   `(lsp-face-semhl-modifier       ((,class (:foreground ,vscode-keyword))))
+   `(lsp-face-semhl-static         ((,class (:foreground ,vscode-keyword))))
+   `(lsp-face-semhl-default-library ((,class (:foreground ,vscode-type))))
+   ;; rust-analyzer: `mutable' modifier is underlined by default
+   `(lsp-rust-analyzer-mutable-modifier-face ((,class (:underline nil))))
+   `(lsp-rust-analyzer-unsafe-modifier-face ((,class (:underline nil))))
+   `(lsp-rust-analyzer-trait-modifier-face ((,class (:underline nil))))
+   `(lsp-rust-analyzer-reference-modifier-face ((,class (:underline nil))))
+   `(lsp-rust-analyzer-consuming-modifier-face ((,class (:underline nil))))
+   `(lsp-face-rename ((,class (:underline nil :background ,vscode-highlight-read))))
 
    ;; Company box
-   `(company-box-background ((,class (:background ,vscode-bg-extra-dark))))
-   `(company-tooltip ((,class (:background ,vscode-bg-extra-dark :foreground ,vscode-fg-light))))
+   `(company-box-background ((,class (:background ,vscode-bg-panel))))
+   `(company-tooltip ((,class (:background ,vscode-bg-panel :foreground ,vscode-fg-light))))
    `(company-tooltip-selection ((,class (:background ,vscode-selection-bg))))
    `(company-tooltip-annotation ((,class (:foreground ,vscode-function))))
-   `(company-tooltip-scrollbar-thumb ((t (:background ,vscode-bg-light))))
-   `(company-tooltip-scrollbar-track ((t (:background ,vscode-bg-extra-dark))))
+   `(company-tooltip-scrollbar-thumb ((t (:background ,vscode-bg-raised))))
+   `(company-tooltip-scrollbar-track ((t (:background ,vscode-bg-panel))))
 
    ;; Modeline
 
    ;; Active modeline
-   `(mode-line ((t (:background ,vscode-bg-extra-dark :foreground ,vscode-fg-light :box nil :height 0.95))))
+   `(mode-line ((t (:background ,vscode-bg-panel :foreground ,vscode-fg-light :box nil :height 0.95))))
    ;; Inactive modeline
-   `(mode-line-inactive ((,class (:background ,vscode-bg-extra-dark :foreground ,vscode-fg-dim :box nil :height 0.95))))
+   `(mode-line-inactive ((,class (:background ,vscode-bg-editor :foreground ,vscode-fg-dim :box nil :height 0.95))))
    `(mode-line-hightlight ((,class (:background unspecified :foreground ,vscode-fg-light :box nil))))
    `(mode-line-buffer-id ((,class (:background unspecified :foreground ,vscode-fg-light))))
    `(mode-line-emphasis ((,class (:background unspecified :foreground ,vscode-fg-light))))
@@ -250,35 +281,35 @@
 
    ;; Matching parenthesis
    `(show-paren-match
-     ((t (:foreground ,vscode-brackets-match
-          :background unspecified
-          :box (:line-width (-1 . -1) :color ,vscode-border-dark :style nil)))))
+     ((t (:foreground unspecified
+          :background ,vscode-bracket-match-bg
+          :box (:line-width (-1 . -1) :color ,vscode-bracket-match-border :style nil)))))
    `(show-paren-match-expression
-     ((t (:foreground ,vscode-brackets-match
-          :background unspecified
-          :box (:line-width (-1 . -1) :color ,vscode-border-dark :style nil)))))
+     ((t (:foreground unspecified
+          :background ,vscode-bracket-match-bg
+          :box (:line-width (-1 . -1) :color ,vscode-bracket-match-border :style nil)))))
    `(show-paren-mismatch
-     ((t (:foreground ,vscode-bg-dark
+     ((t (:foreground ,vscode-bg-editor
           :background ,vscode-error
           :box (:line-width (-1 . -1) :color ,vscode-border-dark :style nil)))))
 
    ;; Org-mode
-   `(org-level-1 ((,class (:foreground ,vscode-markup-heading))))
-   `(org-level-2 ((,class (:foreground ,vscode-markup-heading))))
-   `(org-level-3 ((,class (:foreground ,vscode-markup-heading))))
-   `(org-level-4 ((,class (:foreground ,vscode-markup-heading))))
-   `(org-level-5 ((,class (:foreground ,vscode-markup-heading))))
-   `(org-level-6 ((,class (:foreground ,vscode-markup-heading))))
-   `(org-level-7 ((,class (:foreground ,vscode-markup-heading))))
-   `(org-level-8 ((,class (:foreground ,vscode-markup-heading))))
-   `(org-document-title ((,class (:foreground ,vscode-markup-heading))))
+   `(org-level-1 ((,class (:foreground ,vscode-markup-heading :weight bold))))
+   `(org-level-2 ((,class (:foreground ,vscode-markup-heading :weight bold))))
+   `(org-level-3 ((,class (:foreground ,vscode-markup-heading :weight bold))))
+   `(org-level-4 ((,class (:foreground ,vscode-markup-heading :weight bold))))
+   `(org-level-5 ((,class (:foreground ,vscode-markup-heading :weight bold))))
+   `(org-level-6 ((,class (:foreground ,vscode-markup-heading :weight bold))))
+   `(org-level-7 ((,class (:foreground ,vscode-markup-heading :weight bold))))
+   `(org-level-8 ((,class (:foreground ,vscode-markup-heading :weight bold))))
+   `(org-document-title ((,class (:foreground ,vscode-markup-heading :weight bold))))
    `(org-document-info ((,class (:foreground ,vscode-variable))))
    `(org-document-info-keyword ((,class (:foreground ,vscode-comment))))
    `(org-meta-line ((,class (:foreground ,vscode-comment))))
-   `(org-block ((,class (:background ,vscode-bg-extra-dark :foreground ,vscode-fg-light))))
+   `(org-block ((,class (:background ,vscode-bg-raised :foreground ,vscode-fg-light))))
    `(org-block-begin-line ((,class (:foreground ,vscode-comment))))
    `(org-block-end-line ((,class (:foreground ,vscode-comment))))
-   `(org-code ((,class (:foreground ,vscode-markup-inlinecode :background ,vscode-bg-extra-dark))))
+   `(org-code ((,class (:foreground ,vscode-markup-inlinecode :background ,vscode-bg-raised))))
    `(org-verbatim ((,class (:foreground ,vscode-string))))
    `(org-link ((,class (:foreground ,vscode-info :underline t))))
    `(org-date ((,class (:foreground ,vscode-constant))))
@@ -289,17 +320,17 @@
    `(org-table ((,class (:foreground ,vscode-variable))))
 
    ;; Markdown-mode
-   `(markdown-header-face-1 ((,class (:foreground ,vscode-markup-heading))))
-   `(markdown-header-face-2 ((,class (:foreground ,vscode-markup-heading))))
-   `(markdown-header-face-3 ((,class (:foreground ,vscode-markup-heading))))
-   `(markdown-header-face-4 ((,class (:foreground ,vscode-markup-heading))))
-   `(markdown-header-face-5 ((,class (:foreground ,vscode-markup-heading))))
-   `(markdown-header-face-6 ((,class (:foreground ,vscode-markup-heading))))
-   `(markdown-bold-face ((,class (:foreground ,vscode-markup-bold))))
-   `(markdown-italic-face ((,class (:foreground ,vscode-markup-italic))))
-   `(markdown-code-face ((,class (:foreground ,vscode-markup-inlinecode :background ,vscode-bg-extra-dark))))
-   `(markdown-inline-code-face ((,class (:foreground ,vscode-markup-inlinecode :background ,vscode-bg-extra-dark))))
-   `(markdown-pre-face ((,class (:foreground ,vscode-fg-light :background ,vscode-bg-extra-dark))))
+   `(markdown-header-face-1 ((,class (:foreground ,vscode-markup-heading :weight bold))))
+   `(markdown-header-face-2 ((,class (:foreground ,vscode-markup-heading :weight bold))))
+   `(markdown-header-face-3 ((,class (:foreground ,vscode-markup-heading :weight bold))))
+   `(markdown-header-face-4 ((,class (:foreground ,vscode-markup-heading :weight bold))))
+   `(markdown-header-face-5 ((,class (:foreground ,vscode-markup-heading :weight bold))))
+   `(markdown-header-face-6 ((,class (:foreground ,vscode-markup-heading :weight bold))))
+   `(markdown-bold-face ((,class (:foreground ,vscode-markup-bold :weight bold))))
+   `(markdown-italic-face ((,class (:foreground ,vscode-markup-italic :slant italic))))
+   `(markdown-code-face ((,class (:foreground ,vscode-markup-inlinecode :background ,vscode-bg-raised))))
+   `(markdown-inline-code-face ((,class (:foreground ,vscode-markup-inlinecode :background ,vscode-bg-raised))))
+   `(markdown-pre-face ((,class (:foreground ,vscode-fg-light :background ,vscode-bg-raised))))
    `(markdown-link-face ((,class (:foreground ,vscode-info :underline t))))
    `(markdown-url-face ((,class (:foreground ,vscode-info :underline t))))
    `(markdown-list-face ((,class (:foreground ,vscode-keyword))))
@@ -309,7 +340,7 @@
    `(magit-section-highlight ((,class (:background ,vscode-line-highlight))))
    `(magit-diff-file-heading ((,class (:foreground ,vscode-variable))))
    `(magit-diff-file-heading-highlight ((,class (:background ,vscode-line-highlight :foreground ,vscode-variable))))
-   `(magit-diff-hunk-heading ((,class (:foreground ,vscode-keyword :background ,vscode-bg-extra-dark))))
+   `(magit-diff-hunk-heading ((,class (:foreground ,vscode-keyword :background ,vscode-bg-panel))))
    `(magit-diff-hunk-heading-highlight ((,class (:foreground ,vscode-keyword :background ,vscode-line-highlight))))
    `(magit-diff-added ((,class (:foreground ,vscode-git-added :background unspecified))))
    `(magit-diff-added-highlight ((,class (:foreground ,vscode-git-added :background ,vscode-line-highlight))))
