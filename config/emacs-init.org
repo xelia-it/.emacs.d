@@ -79,10 +79,7 @@ These fonts should be installed manually.
 
         ;; Improve font rendering on Linux
         (when (eq system-type 'gnu/linux)
-          (setq-default line-spacing 0.05)
-          ;; Disable bold font simulation
-          (set-face-attribute 'bold nil :weight 'normal)
-          )
+          (setq-default line-spacing 0.05))
 
         ;; TODO: Uncomment to show informational message
         (message "Using font: %s (%s)"
@@ -300,9 +297,13 @@ In programming modes it's useful to have a vertical line that show the right mar
      '(("\\([][{}()]\\)"   ;; Regex per parentesi tonde, quadre e graffe
         (1 'font-lock-bracket-face)))))
 
+;; MOVED to vscode-dark-modern-theme.el (face is unused here anyway)
+  ;; (defface font-lock-parenthesis-face
+  ;;   '((t :foreground "#d8b804" :weight bold)) ;; Colore giallo per il tema scuro
+  ;;   "Face per evidenziare tutte le parentesi.")
   (defface font-lock-parenthesis-face
-    '((t :foreground "#d8b804" :weight bold)) ;; Colore giallo per il tema scuro
-    "Face per evidenziare tutte le parentesi.")
+    '((t nil))
+    "Face per evidenziare tutte le parentesi (colori nel tema).")
 
   (add-hook 'prog-mode-hook 'my-highlight-parentheses)
 #+END_SRC
@@ -618,22 +619,23 @@ Setup Cut-Paste like most Windows and MAC editors.
     (setq vr/auto-show-help t)
 
     :config
-    (set-face-attribute 'vr/match-0 nil
-       :foreground 'unspecified
-       :background "#623315"
-       :weight 'extra-bold
-       :box '(:line-width (-1 . -1)
-              :color "#767676"
-              :style nil)
-      )
-    (set-face-attribute 'vr/match-1 nil
-      :foreground 'unspecified
-      :background "#623315"
-      :weight 'extra-bold
-      :box '(:line-width (-1 . -1)
-             :color "#767676"
-             :style nil)
-      )
+;; MOVED to vscode-dark-modern-theme.el
+    ;; (set-face-attribute 'vr/match-0 nil
+    ;;    :foreground 'unspecified
+    ;;    :background "#623315"
+    ;;    :weight 'extra-bold
+    ;;    :box '(:line-width (-1 . -1)
+    ;;           :color "#767676"
+    ;;           :style nil)
+    ;;   )
+    ;; (set-face-attribute 'vr/match-1 nil
+    ;;   :foreground 'unspecified
+    ;;   :background "#623315"
+    ;;   :weight 'extra-bold
+    ;;   :box '(:line-width (-1 . -1)
+    ;;          :color "#767676"
+    ;;          :style nil)
+    ;;   )
     :bind (
            ("S-C-r" . vr/mc-mark)
            ("C-S-h" . vr/replace)  ;; VS Code: Ctrl+Shift+H
@@ -757,7 +759,8 @@ Add the ability to manage multiple cursors.
     ;; Safety ceil
     (setq-default mc/max-cursors 30)
 
-    (set-face-attribute 'mc/cursor-bar-face nil :background "white" :height 1)
+    ;; MOVED to vscode-dark-modern-theme.el
+    ;; (set-face-attribute 'mc/cursor-bar-face nil :background "white" :height 1)
 
     ;; NO NOT USE :bind here
     ;; It doesn't seems working well with multiple cursor
